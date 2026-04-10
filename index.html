@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Uppercuts - Premium barber suite in Decatur, GA. Expert fades, cuts, beard work, color, and facials. Book online instantly.">
+    <meta name="theme-color" content="#1A1A2E">
+    <link rel="manifest" href="manifest.json">
+    <title>Uppercuts | Premium Barber Suite - Decatur, GA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Oswald:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1A1A2E;
+            color: #FFFFFF;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        a { text-decoration: none; color: inherit; }
+        img { max-width: 100%; display: block; }
+        button { cursor: pointer; border: none; font-family: inherit; }
+
+        /* ===== CSS VARIABLES ===== */
+        :root {
+            --primary-dark: #0A0A0A;
+            --primary-accent: #C9A96E;
+            --secondary-accent: #E8D5B7;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B8B8B8;
+            --text-dark: #0A0A0A;
+            --surface: #111111;
+            --surface-light: #F5F0E8;
+            --success: #4CAF50;
+            --danger: #E74C3C;
+            --footer-bg: #050505;
+            --nav-height: 80px;
+            --container-width: 1200px;
+        }
+
+
+        /* ===== UTILITY ===== */
+        .container { max-width: var(--container-width); margin: 0 auto; padding: 0 24px; }
+        .gold-line { width: 60px; height: 3px; background: var(--primary-accent); margin: 16px auto 0; }
+        .section-label {
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--primary-accent);
+            margin-bottom: 12px;
+        }
+        .section-heading {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--nav-height);
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(201, 169, 110, 0.15);
+            transition: all 0.3s ease;
+        }
+        .navbar.scrolled {
+            background: rgba(26, 26, 46, 0.98);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .nav-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            letter-spacing: 3px;
+            color: var(--primary-accent);
+        }
+        .nav-links {
+            display: flex;
+            gap: 36px;
+            list-style: none;
+            align-items: center;
+        }
+        .nav-links a {
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-accent);
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover { color: var(--primary-accent); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-cta {
+            background: var(--primary-accent) !important;
+            color: var(--text-dark) !important;
+            padding: 12px 28px !important;
+            font-family: 'Oswald', sans-serif !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            letter-spacing: 2px !important;
+            text-transform: uppercase !important;
+            border-radius: 4px;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 16px rgba(201, 169, 110, 0.3);
+        }
+        .nav-cta:hover {
+            background: var(--secondary-accent) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(201, 169, 110, 0.4);
+        }
+        .nav-cta::after { display: none !important; }
+
+        /* Hamburger */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            padding: 8px;
+        }
+        .hamburger span {
+            width: 28px;
+            height: 2px;
+            background: var(--primary-accent);
+            transition: all 0.3s ease;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: #000;
+            padding: 0 24px;
+            overflow: hidden;
+        }
+        .hero-video {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            opacity: 0.55;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at 50% 40%, rgba(201, 169, 110, 0.12) 0%, transparent 55%), linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7));
+            pointer-events: none;
+            z-index: 1;
+        }
+        .hero-content { position: relative; z-index: 2; }
+        .hero-tagline {
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--primary-accent);
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 80px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+            opacity: 0;
+        }
+        .hero-title span { color: var(--primary-accent); }
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 540px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+            opacity: 0;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.6s forwards;
+            opacity: 0;
+        }
+        .btn-primary {
+            background: var(--primary-accent);
+            color: var(--text-dark);
+            padding: 16px 44px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(201, 169, 110, 0.3);
+        }
+        .btn-primary:hover {
+            background: var(--secondary-accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(201, 169, 110, 0.4);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-accent);
+            padding: 16px 44px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: 2px solid var(--primary-accent);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .btn-outline:hover {
+            background: rgba(201, 169, 110, 0.1);
+            transform: translateY(-2px);
+        }
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: float 2s ease-in-out infinite;
+            color: var(--primary-accent);
+            font-size: 24px;
+        }
+
+        /* ===== SERVICES ===== */
+        .services {
+            padding: 100px 0;
+            background: var(--surface);
+        }
+        .services-header { text-align: center; margin-bottom: 60px; }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .service-card {
+            background: var(--primary-dark);
+            border: 1px solid rgba(201, 169, 110, 0.15);
+            border-radius: 12px;
+            padding: 36px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .service-card:hover {
+            border-color: var(--primary-accent);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(201, 169, 110, 0.1);
+        }
+        .service-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 20px;
+            color: var(--primary-accent);
+        }
+        .service-name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 22px;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+        .service-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .service-price {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--primary-accent);
+            font-weight: 700;
+        }
+        .service-duration {
+            display: inline-block;
+            background: rgba(201, 169, 110, 0.15);
+            color: var(--primary-accent);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 12px;
+        }
+        .service-book-btn {
+            display: inline-block;
+            margin-top: 20px;
+            background: var(--primary-accent);
+            color: var(--text-dark);
+            padding: 10px 28px;
+            border-radius: 4px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+        .service-book-btn:hover {
+            background: var(--secondary-accent);
+            transform: translateY(-2px);
+        }
+
+        /* ===== BOOKING SECTION ===== */
+        .booking {
+            padding: 100px 0;
+            background: var(--primary-dark);
+        }
+        .booking-header { text-align: center; margin-bottom: 50px; }
+        .booking-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 48px;
+            border: 1px solid rgba(201, 169, 110, 0.2);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+        }
+        .booking-steps {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 40px;
+        }
+        .booking-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        .booking-step.active { color: var(--primary-accent); }
+        .booking-step .step-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            border: 2px solid rgba(201, 169, 110, 0.3);
+            transition: all 0.3s ease;
+        }
+        .booking-step.active .step-num {
+            background: var(--primary-accent);
+            color: var(--text-dark);
+            border-color: var(--primary-accent);
+        }
+        .booking-step.completed .step-num {
+            background: var(--success);
+            border-color: var(--success);
+            color: #fff;
+        }
+        .step-divider {
+            width: 40px;
+            height: 2px;
+            background: rgba(201, 169, 110, 0.2);
+        }
+
+        /* Step panels */
+        .step-panel { display: none; }
+        .step-panel.active { display: block; }
+
+        /* Service selection */
+        .service-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--primary-dark);
+            border: 2px solid rgba(201, 169, 110, 0.15);
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .service-option:hover, .service-option.selected {
+            border-color: var(--primary-accent);
+            background: rgba(201, 169, 110, 0.05);
+        }
+        .service-option .svc-info h4 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 18px;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .service-option .svc-info span {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .service-option .svc-price {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--primary-accent);
+            font-weight: 700;
+        }
+
+        /* Date/Time */
+        .date-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .date-cell {
+            text-align: center;
+            padding: 12px 4px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            border: 1px solid transparent;
+        }
+        .date-cell:hover { border-color: var(--primary-accent); }
+        .date-cell.selected {
+            background: var(--primary-accent);
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        .date-cell.unavailable {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .date-cell .day-name {
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 4px;
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 1px;
+        }
+        .date-cell.selected .day-name { color: var(--text-dark); }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .time-slot {
+            text-align: center;
+            padding: 12px;
+            border: 1px solid rgba(201, 169, 110, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .time-slot:hover { border-color: var(--primary-accent); color: var(--primary-accent); }
+        .time-slot.selected {
+            background: var(--primary-accent);
+            color: var(--text-dark);
+            border-color: var(--primary-accent);
+            font-weight: 600;
+        }
+
+        /* Client form */
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            font-family: 'Oswald', sans-serif;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--primary-dark);
+            border: 1px solid rgba(201, 169, 110, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-accent);
+        }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+
+        .booking-summary {
+            background: var(--primary-dark);
+            border: 1px solid rgba(201, 169, 110, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .booking-summary h4 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 16px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--primary-accent);
+            margin-bottom: 16px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        .summary-row .label { color: var(--text-secondary); }
+        .summary-total {
+            border-top: 1px solid rgba(201, 169, 110, 0.2);
+            padding-top: 12px;
+            margin-top: 12px;
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--primary-accent);
+        }
+
+        .btn-next, .btn-back {
+            padding: 14px 36px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .btn-next {
+            background: var(--primary-accent);
+            color: var(--text-dark);
+        }
+        .btn-next:hover { background: var(--secondary-accent); transform: translateY(-2px); }
+        .btn-next:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-back {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .btn-back:hover { border-color: var(--primary-accent); color: var(--primary-accent); }
+        .step-nav { display: flex; justify-content: space-between; margin-top: 32px; }
+
+        /* Confirmation */
+        .confirmation {
+            text-align: center;
+            padding: 40px 0;
+        }
+        .confirmation .check-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+        }
+
+        /* ===== ABOUT ===== */
+        .about {
+            padding: 100px 0;
+            background: var(--surface-light);
+            color: var(--text-dark);
+        }
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        .about-image {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 4/5;
+            background: #ccc;
+        }
+        .about-image::after {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: -12px;
+            bottom: -12px;
+            border: 4px solid var(--primary-accent);
+            border-radius: 12px;
+            z-index: -1;
+        }
+        .about-image img { width: 100%; height: 100%; object-fit: cover; }
+        .about-placeholder {
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #ddd, #bbb);
+            font-family: 'Oswald', sans-serif;
+            font-size: 16px; color: #888;
+            letter-spacing: 2px; text-transform: uppercase;
+        }
+        .about-text h3 { font-size: 40px; margin-bottom: 24px; }
+        .about-text p { font-size: 17px; color: #555; line-height: 1.8; margin-bottom: 16px; }
+        .about-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 32px;
+        }
+        .stat-item { text-align: center; }
+        .stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--primary-accent);
+        }
+        .stat-label {
+            font-family: 'Oswald', sans-serif;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #777;
+            margin-top: 4px;
+        }
+
+        /* ===== GALLERY ===== */
+        .gallery {
+            padding: 100px 0;
+            background: var(--primary-dark);
+        }
+        .gallery-header { text-align: center; margin-bottom: 50px; }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .gallery-item {
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            background: var(--surface);
+            position: relative;
+        }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+        .gallery-item:hover img { transform: scale(1.05); }
+        .gallery-placeholder {
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(201, 169, 110, 0.3);
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px; letter-spacing: 2px;
+        }
+
+        /* ===== TESTIMONIALS ===== */
+        .testimonials {
+            padding: 100px 0;
+            background: var(--surface);
+        }
+        .testimonials-header { text-align: center; margin-bottom: 50px; }
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .testimonial-card {
+            background: var(--primary-dark);
+            border-radius: 12px;
+            padding: 36px;
+            border: 1px solid rgba(201, 169, 110, 0.1);
+        }
+        .stars { color: var(--primary-accent); font-size: 18px; margin-bottom: 16px; letter-spacing: 4px; }
+        .testimonial-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+        .testimonial-author { font-weight: 600; }
+        .testimonial-label { font-size: 13px; color: var(--text-secondary); }
+
+        /* ===== CTA BANNER ===== */
+        .cta-banner {
+            padding: 80px 0;
+            background: linear-gradient(135deg, var(--primary-accent), #B8934A);
+            text-align: center;
+        }
+        .cta-banner h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+        .cta-banner p {
+            font-size: 18px;
+            color: rgba(26, 26, 46, 0.7);
+            margin-bottom: 32px;
+        }
+        .btn-dark {
+            background: var(--primary-dark);
+            color: #fff;
+            padding: 16px 48px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .btn-dark:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+
+        /* ===== CONTACT / LOCATION ===== */
+        .contact {
+            padding: 100px 0;
+            background: var(--primary-dark);
+        }
+        .contact-header { text-align: center; margin-bottom: 50px; }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+        }
+        .contact-info-list { list-style: none; }
+        .contact-info-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 28px;
+            font-size: 16px;
+        }
+        .contact-info-list .icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: rgba(201, 169, 110, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-accent);
+            flex-shrink: 0;
+            font-size: 20px;
+        }
+        .contact-info-list .info-label {
+            font-family: 'Oswald', sans-serif;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--primary-accent);
+            margin-bottom: 4px;
+        }
+        .contact-info-list .info-value { color: var(--text-secondary); line-height: 1.5; }
+        .contact-map {
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 16/12;
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .map-placeholder {
+            font-family: 'Oswald', sans-serif;
+            color: var(--text-secondary);
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--footer-bg);
+            padding: 60px 0 30px;
+            border-top: 2px solid var(--primary-accent);
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+        .footer-brand .nav-logo { margin-bottom: 16px; display: inline-block; }
+        .footer-brand p { color: var(--text-secondary); font-size: 14px; line-height: 1.7; max-width: 320px; }
+        .footer h4 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--primary-accent);
+            margin-bottom: 20px;
+        }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 12px; }
+        .footer-links a { color: var(--text-secondary); font-size: 14px; transition: color 0.3s ease; }
+        .footer-links a:hover { color: var(--primary-accent); }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+        .social-links { display: flex; gap: 16px; margin-top: 20px; }
+        .social-links a {
+            width: 40px; height: 40px;
+            border-radius: 8px;
+            background: rgba(201, 169, 110, 0.1);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary-accent);
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+        .social-links a:hover { background: var(--primary-accent); color: var(--text-dark); }
+
+        /* ===== CHATBOT ===== */
+        .chat-toggle {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-accent);
+            color: var(--text-dark);
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(201, 169, 110, 0.4);
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+        .chat-toggle:hover { transform: scale(1.1); }
+        .chatbox {
+            position: fixed;
+            bottom: 100px;
+            right: 24px;
+            width: 380px;
+            max-height: 520px;
+            background: var(--surface);
+            border-radius: 16px;
+            border: 1px solid rgba(201, 169, 110, 0.2);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+            display: none;
+            flex-direction: column;
+            z-index: 999;
+            overflow: hidden;
+        }
+        .chatbox.open { display: flex; }
+        .chatbox-header {
+            background: var(--primary-dark);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(201, 169, 110, 0.15);
+        }
+        .chatbox-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: var(--primary-accent);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 16px;
+            color: var(--text-dark);
+        }
+        .chatbox-header-info h5 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 15px;
+            letter-spacing: 1px;
+        }
+        .chatbox-header-info span {
+            font-size: 12px;
+            color: var(--success);
+        }
+        .chatbox-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-height: 340px;
+        }
+        .chat-msg {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .chat-msg.bot {
+            background: var(--primary-dark);
+            border: 1px solid rgba(201, 169, 110, 0.1);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .chat-msg.user {
+            background: var(--primary-accent);
+            color: var(--text-dark);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .quick-reply {
+            background: rgba(201, 169, 110, 0.15);
+            color: var(--primary-accent);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(201, 169, 110, 0.3);
+        }
+        .quick-reply:hover {
+            background: var(--primary-accent);
+            color: var(--text-dark);
+        }
+        .chatbox-input {
+            padding: 14px 20px;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid rgba(201, 169, 110, 0.15);
+            background: var(--primary-dark);
+        }
+        .chatbox-input input {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid rgba(201, 169, 110, 0.15);
+            border-radius: 24px;
+            padding: 10px 18px;
+            color: #fff;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+        }
+        .chatbox-input input:focus { outline: none; border-color: var(--primary-accent); }
+        .chatbox-input button {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--primary-accent);
+            color: var(--text-dark);
+            font-size: 18px;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.3s ease;
+        }
+        .chatbox-input button:hover { background: var(--secondary-accent); }
+
+        /* ===== MOBILE STICKY BOOK ===== */
+        .mobile-book {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px 20px;
+            background: rgba(26, 26, 46, 0.98);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(201, 169, 110, 0.2);
+            z-index: 998;
+        }
+        .mobile-book a {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: var(--primary-accent);
+            color: var(--text-dark);
+            padding: 14px;
+            border-radius: 8px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* ===== MOBILE NAV ===== */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100vh;
+            background: var(--primary-dark);
+            z-index: 1001;
+            transition: right 0.3s ease;
+            padding: 100px 40px 40px;
+            border-left: 1px solid rgba(201, 169, 110, 0.2);
+        }
+        .mobile-menu.open { right: 0; }
+        .mobile-menu a {
+            display: block;
+            font-family: 'Oswald', sans-serif;
+            font-size: 18px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: color 0.3s ease;
+        }
+        .mobile-menu a:hover { color: var(--primary-accent); }
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+        }
+        .mobile-overlay.open { display: block; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1023px) {
+            .services-grid, .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+            .about-grid { grid-template-columns: 1fr; }
+            .about-image { max-width: 400px; margin: 0 auto; }
+            .contact-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 767px) {
+            :root { --nav-height: 64px; }
+            .navbar { padding: 0 20px; }
+            .nav-logo { font-size: 24px; }
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .mobile-menu { display: block; }
+            .mobile-book { display: block; }
+            .hero { min-height: 85vh; }
+            .hero-title { font-size: 44px; }
+            .hero-subtitle { font-size: 16px; }
+            .section-heading { font-size: 32px; }
+            .services-grid { grid-template-columns: 1fr; }
+            .testimonials-grid { grid-template-columns: 1fr; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: 1fr; }
+            .about-stats { gap: 24px; }
+            .stat-num { font-size: 32px; }
+            .cta-banner h2 { font-size: 32px; }
+            .booking-container { padding: 28px 20px; }
+            .time-grid { grid-template-columns: repeat(3, 1fr); }
+            .date-grid { grid-template-columns: repeat(7, 1fr); gap: 4px; }
+            .chatbox { width: calc(100% - 48px); right: 24px; bottom: 90px; }
+            .chat-toggle { bottom: 80px; }
+            body { padding-bottom: 70px; }
+            .booking-steps { gap: 4px; }
+            .booking-step { font-size: 11px; }
+            .step-divider { width: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="nav-logo">UPPERCUTS</a>
+        <ul class="nav-links">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#booking">Book</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#booking" class="nav-cta">Book Now</a></li>
+        </ul>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#services">Services</a>
+        <a href="#booking">Book Now</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+        <video autoplay muted loop playsinline class="hero-video">
+            <source src="images/cinematic-hero.mp4" type="video/mp4">
+        </video>
+        <div class="hero-content">
+            <p class="hero-tagline">Premium Grooming &middot; Decatur, GA</p>
+            <h1 class="hero-title">UPPER<span>CUTS</span></h1>
+            <p class="hero-subtitle">A private suite experience where precision meets style. Walk in confident. Walk out untouchable.</p>
+            <div class="hero-buttons">
+                <a href="#booking" class="btn-primary">Book Appointment</a>
+                <a href="#services" class="btn-outline">View Services</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">&#8964;</div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="services-header fade-in">
+                <p class="section-label">What We Offer</p>
+                <h2 class="section-heading">Our Services</h2>
+                <div class="gold-line"></div>
+            </div>
+            <div class="services-grid">
+                <div class="service-card fade-in">
+                    <div class="service-icon">&#9986;</div>
+                    <h3 class="service-name">Kids Cut <span style="font-size:14px;color:var(--text-secondary);">(13 & Under)</span></h3>
+                    <p class="service-desc">Clean, patient cuts for the young kings. We make sure they leave looking and feeling sharp.</p>
+                    <div class="service-price">$25</div>
+                    <div class="service-duration">30 Min</div>
+                    <br><a href="#booking" class="service-book-btn">Book Now</a>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">&#9986;</div>
+                    <h3 class="service-name">Teen Cut <span style="font-size:14px;color:var(--text-secondary);">(14–17)</span></h3>
+                    <p class="service-desc">Sharp cuts for the young adults. Precision fades and styles that keep them looking fresh.</p>
+                    <div class="service-price">$30</div>
+                    <div class="service-duration">30 Min</div>
+                    <br><a href="#booking" class="service-book-btn">Book Now</a>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">&#9986;</div>
+                    <h3 class="service-name">Premium Cut</h3>
+                    <p class="service-desc">Precision fades, tapers, and custom styles tailored to your look. Every detail dialed in.</p>
+                    <div class="service-price">$45</div>
+                    <div class="service-duration">45 Min</div>
+                    <br><a href="#booking" class="service-book-btn">Book Now</a>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">&#9986;</div>
+                    <h3 class="service-name">Signature Cut</h3>
+                    <p class="service-desc">Everything in the Premium Cut plus your choice of beard line up w/ hot oil treatment <em>or</em> dye enhancements.</p>
+                    <div class="service-price">$60</div>
+                    <div class="service-duration">60 Min</div>
+                    <br><a href="#booking" class="service-book-btn">Book Now</a>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">&#127912;</div>
+                    <h3 class="service-name">Beard / Line Up</h3>
+                    <p class="service-desc">Sharp lines, clean edges, sculpted beards. The finishing touch that sets you apart.</p>
+                    <div class="service-price">$30</div>
+                    <div class="service-duration">20 Min</div>
+                    <br><a href="#booking" class="service-book-btn">Book Now</a>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">&#127912;</div>
+                    <h3 class="service-name">Color</h3>
+                    <p class="service-desc">Bold or subtle — custom color work that transforms your look. Consultation included.</p>
+                    <div class="service-price">From $60</div>
+                    <div class="service-duration">60+ Min</div>
+                    <br><a href="#booking" class="service-book-btn">Book Now</a>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">&#10024;</div>
+                    <h3 class="service-name">Facial</h3>
+                    <p class="service-desc">Rejuvenate your skin with our premium facial treatment. Hot towel, cleanse, and glow up.</p>
+                    <div class="service-price">$35 - $40</div>
+                    <div class="service-duration">30 Min</div>
+                    <p class="service-desc" style="margin-top:8px;margin-bottom:0;font-size:13px">$35 with any service &middot; $40 standalone</p>
+                    <br><a href="#booking" class="service-book-btn">Book Now</a>
+                </div>
+                <div class="service-card fade-in">
+                    <div class="service-icon">&#10024;</div>
+                    <h3 class="service-name">Eyebrows</h3>
+                    <p class="service-desc">Razor-precise eyebrow shaping for a clean, defined look. Quick and clean.</p>
+                    <div class="service-price">$15</div>
+                    <div class="service-duration">10 Min</div>
+                    <br><a href="#booking" class="service-book-btn">Book Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOOKING -->
+    <section class="booking" id="booking">
+        <div class="container">
+            <div class="booking-header fade-in">
+                <p class="section-label">Schedule Your Visit</p>
+                <h2 class="section-heading">Book an Appointment</h2>
+                <div class="gold-line"></div>
+            </div>
+            <div class="booking-container" id="bookingApp">
+                <!-- Steps indicator -->
+                <div class="booking-steps">
+                    <div class="booking-step active" data-step="1">
+                        <span class="step-num">1</span> Service
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="booking-step" data-step="2">
+                        <span class="step-num">2</span> Date & Time
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="booking-step" data-step="3">
+                        <span class="step-num">3</span> Details
+                    </div>
+                </div>
+
+                <!-- Step 1: Select Service -->
+                <div class="step-panel active" id="step1">
+                    <div class="service-option" data-service="Kids Cut (13 & Under)" data-price="25">
+                        <div class="svc-info"><h4>Kids Cut</h4><span>13 & Under · 30 min</span></div>
+                        <span class="svc-price">$25</span>
+                    </div>
+                    <div class="service-option" data-service="Teen Cut (14-17)" data-price="30">
+                        <div class="svc-info"><h4>Teen Cut</h4><span>14–17 · 30 min</span></div>
+                        <span class="svc-price">$30</span>
+                    </div>
+                    <div class="service-option" data-service="Premium Cut" data-price="45">
+                        <div class="svc-info"><h4>Premium Cut</h4><span>45 min</span></div>
+                        <span class="svc-price">$45</span>
+                    </div>
+                    <div class="service-option" data-service="Signature Cut" data-price="60">
+                        <div class="svc-info"><h4>Signature Cut</h4><span>60 min &middot; beard w/ hot oil or dye enhancements</span></div>
+                        <span class="svc-price">$60</span>
+                    </div>
+                    <div class="service-option" data-service="Beard / Line Up" data-price="30">
+                        <div class="svc-info"><h4>Beard / Line Up</h4><span>20 min</span></div>
+                        <span class="svc-price">$30</span>
+                    </div>
+                    <div class="service-option" data-service="Color" data-price="60">
+                        <div class="svc-info"><h4>Color</h4><span>60+ min</span></div>
+                        <span class="svc-price">From $60</span>
+                    </div>
+                    <div class="service-option" data-service="Facial" data-price="40">
+                        <div class="svc-info"><h4>Facial</h4><span>30 min &middot; $35 w/ service</span></div>
+                        <span class="svc-price">$40</span>
+                    </div>
+                    <div class="service-option" data-service="Eyebrows" data-price="15">
+                        <div class="svc-info"><h4>Eyebrows (Razor)</h4><span>10 min</span></div>
+                        <span class="svc-price">$15</span>
+                    </div>
+                    <div class="step-nav">
+                        <div></div>
+                        <button class="btn-next" id="toStep2" disabled>Next &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Date & Time -->
+                <div class="step-panel" id="step2">
+                    <h3 style="font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:1px;text-transform:uppercase;color:var(--primary-accent);margin-bottom:20px;">Select a Date</h3>
+                    <div class="date-grid" id="dateGrid"></div>
+                    <h3 style="font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:1px;text-transform:uppercase;color:var(--primary-accent);margin-bottom:16px;margin-top:8px;">Select a Time</h3>
+                    <div class="time-grid" id="timeGrid"></div>
+                    <div class="step-nav">
+                        <button class="btn-back" id="backTo1">&larr; Back</button>
+                        <button class="btn-next" id="toStep3" disabled>Next &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Client Info -->
+                <div class="step-panel" id="step3">
+                    <div class="booking-summary" id="bookingSummary"></div>
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" id="clientName" placeholder="Full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="clientPhone" placeholder="(xxx) xxx-xxxx" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email (optional)</label>
+                        <input type="email" id="clientEmail" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Monthly Client Code (if applicable)</label>
+                        <input type="text" id="clientCode" placeholder="Enter code to skip deposit">
+                    </div>
+                    <div class="form-group">
+                        <label>Notes (optional)</label>
+                        <textarea id="clientNotes" placeholder="Anything you want Sly to know..."></textarea>
+                    </div>
+                    <div class="step-nav">
+                        <button class="btn-back" id="backTo2">&larr; Back</button>
+                        <button class="btn-next" id="confirmBooking">Request Appointment</button>
+                    </div>
+                </div>
+
+                <!-- Confirmation -->
+                <div class="step-panel" id="stepConfirm">
+                    <div class="confirmation">
+                        <div class="check-circle">&#10003;</div>
+                        <h2 style="font-family:'Playfair Display',serif;font-size:32px;margin-bottom:12px;">Request Sent!</h2>
+                        <p style="color:var(--text-secondary);font-size:16px;line-height:1.6;margin-bottom:24px;">Your appointment request has been sent to Sly. You'll receive a text once it's confirmed. Thanks for choosing Uppercuts.</p>
+                        <div class="booking-summary" id="finalSummary"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section class="gallery" id="gallery">
+        <div class="container">
+            <div class="gallery-header fade-in">
+                <p class="section-label">The Work</p>
+                <h2 class="section-heading">Our Gallery</h2>
+                <div class="gold-line"></div>
+            </div>
+            <div class="gallery-grid">
+                <div class="gallery-item fade-in"><img src="images/steam-thumb.jpg" alt="Uppercuts - facial steam treatment"></div>
+                <div class="gallery-item fade-in"><img src="images/suite2.jpg" alt="Uppercuts barber chair - premium suite"></div>
+                <div class="gallery-item fade-in"><img src="images/products1.jpg" alt="Premium facial products - TheSKCare"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-0033.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-0895.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-0942.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-1021.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-1735.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-1819.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-2903.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-3286.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-3480.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-4181.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-4619.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-5264.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-5486.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-5705.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-5870.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-6872.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-7343.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-7543.jpg" alt="Uppercuts - fresh cut"></div>
+                <div class="gallery-item fade-in"><img src="images/Tezza-9911.jpg" alt="Uppercuts - fresh cut"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-image fade-in">
+                    <div class="about-placeholder">YOUR PHOTO HERE</div>
+                </div>
+                <div class="about-text fade-in">
+                    <p class="section-label" style="color:var(--primary-accent);">About Uppercuts</p>
+                    <h3 class="section-heading" style="color:var(--text-dark);">Precision. Style. Experience.</h3>
+                    <p>Uppercuts is a private barber suite in Decatur, GA — built for men who take their appearance seriously. No waiting room chaos. No rushing. Just you, the chair, and a barber who takes pride in every single detail.</p>
+                    <p>From skin fades to color transformations, every service is delivered with precision and care in a clean, private setting. This isn't a barbershop — it's an experience.</p>
+                    <div class="about-stats">
+                        <div class="stat-item">
+                            <div class="stat-num" data-count="1000">1K+</div>
+                            <div class="stat-label">Happy Clients</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-num">5.0</div>
+                            <div class="stat-label">Star Rating</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-num">Private</div>
+                            <div class="stat-label">Suite Experience</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="testimonials-header fade-in">
+                <p class="section-label">Client Love</p>
+                <h2 class="section-heading">What Clients Say</h2>
+                <div class="gold-line"></div>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card fade-in">
+                    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testimonial-text">"Best barber in Decatur, hands down. The private suite is a game changer — no waiting, no distractions. Sly takes his time and the fade is always perfect."</p>
+                    <p class="testimonial-author">Marcus T.</p>
+                    <p class="testimonial-label">Regular Client</p>
+                </div>
+                <div class="testimonial-card fade-in">
+                    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testimonial-text">"I've been going to Sly for over a year. He actually listens to what you want and the attention to detail is unmatched. Clean suite, great vibes."</p>
+                    <p class="testimonial-author">DeAndre W.</p>
+                    <p class="testimonial-label">Regular Client</p>
+                </div>
+                <div class="testimonial-card fade-in">
+                    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testimonial-text">"Brought my son here for his first real cut. Sly was patient and made him feel comfortable. We both left looking right. This is our spot now."</p>
+                    <p class="testimonial-author">James R.</p>
+                    <p class="testimonial-label">Client</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA BANNER -->
+    <section class="cta-banner">
+        <div class="container">
+            <h2>Ready for a Fresh Cut?</h2>
+            <p>Book your appointment and experience the Uppercuts difference.</p>
+            <a href="#booking" class="btn-dark">Book Now</a>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="contact-header fade-in">
+                <p class="section-label">Find Us</p>
+                <h2 class="section-heading">Location & Hours</h2>
+                <div class="gold-line"></div>
+            </div>
+            <div class="contact-grid">
+                <div class="fade-in">
+                    <ul class="contact-info-list">
+                        <li>
+                            <div class="icon">&#128205;</div>
+                            <div>
+                                <div class="info-label">Location</div>
+                                <div class="info-value">Decatur, GA 30033<br><em>Private barber suite</em></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="icon">&#128222;</div>
+                            <div>
+                                <div class="info-label">Phone</div>
+                                <div class="info-value"><a href="tel:" style="color:var(--text-secondary);">Contact via booking</a></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="icon">&#128337;</div>
+                            <div>
+                                <div class="info-label">Hours</div>
+                                <div class="info-value">
+                                    By Appointment Only<br>
+                                    Book online 24/7
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="icon">&#128176;</div>
+                            <div>
+                                <div class="info-label">Payment</div>
+                                <div class="info-value">Square (Card, Apple Pay, Google Pay)</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="contact-map fade-in">
+                    <div class="map-placeholder">MAP &middot; DECATUR, GA 30033</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <span class="nav-logo">UPPERCUTS</span>
+                    <p>Premium barber suite in Decatur, GA. Private setting. Precision cuts. Walk in confident. Walk out untouchable.</p>
+                    <div class="social-links">
+                        <a href="https://instagram.com/slybarber" target="_blank" aria-label="Instagram">IG</a>
+                        <a href="#" aria-label="TikTok">TT</a>
+                        <a href="https://facebook.com/slybarber" target="_blank" aria-label="Facebook">FB</a>
+                    </div>
+                </div>
+                <div>
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#booking">Book Now</a></li>
+                        <li><a href="#gallery">Gallery</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="#booking">Adult Haircut</a></li>
+                        <li><a href="#booking">Kids Haircut</a></li>
+                        <li><a href="#booking">Beard / Line Up</a></li>
+                        <li><a href="#booking">Color</a></li>
+                        <li><a href="#booking">Eyebrows</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 Uppercuts. All rights reserved. | Decatur, GA
+            </div>
+        </div>
+    </footer>
+
+    <!-- MOBILE STICKY BOOK BUTTON -->
+    <div class="mobile-book">
+        <a href="#booking">Book Your Appointment</a>
+    </div>
+
+    <!-- CHAT TOGGLE -->
+    <button class="chat-toggle" id="chatToggle" aria-label="Chat">&#128172;</button>
+
+    <!-- CHATBOX -->
+    <div class="chatbox" id="chatbox">
+        <div class="chatbox-header">
+            <div class="chatbox-avatar">U</div>
+            <div class="chatbox-header-info">
+                <h5>Uppercuts Assistant</h5>
+                <span>&#9679; Online now</span>
+            </div>
+        </div>
+        <div class="chatbox-messages" id="chatMessages">
+            <div class="chat-msg bot">
+                Hey! Welcome to Uppercuts. I can help you book an appointment, check prices, or answer any questions. What do you need?
+                <div class="chat-quick-replies">
+                    <span class="quick-reply" data-msg="What are your prices?">Prices</span>
+                    <span class="quick-reply" data-msg="I want to book an appointment">Book Now</span>
+                    <span class="quick-reply" data-msg="Where are you located?">Location</span>
+                    <span class="quick-reply" data-msg="What services do you offer?">Services</span>
+                </div>
+            </div>
+        </div>
+        <div class="chatbox-input">
+            <input type="text" id="chatInput" placeholder="Type a message...">
+            <button id="chatSend">&#10148;</button>
+        </div>
+    </div>
+
+    <script>
+        // ===== NAVBAR SCROLL =====
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // ===== MOBILE MENU =====
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('open');
+            mobileOverlay.classList.toggle('open');
+        });
+        mobileOverlay.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            mobileMenu.classList.remove('open');
+            mobileOverlay.classList.remove('open');
+        });
+        document.querySelectorAll('.mobile-menu a').forEach(a => {
+            a.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('open');
+                mobileOverlay.classList.remove('open');
+            });
+        });
+
+        // ===== FADE IN ON SCROLL =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // ===== CLIENT DATABASE =====
+        function getClients() { return JSON.parse(localStorage.getItem('uc_clients') || '{}'); }
+        function saveClients(data) { localStorage.setItem('uc_clients', JSON.stringify(data)); }
+        function getBookings() { return JSON.parse(localStorage.getItem('uc_bookings') || '[]'); }
+        function saveBookings(data) { localStorage.setItem('uc_bookings', JSON.stringify(data)); }
+
+        function getClientStatus(phone) {
+            const clients = getClients();
+            const clean = phone.replace(/\D/g, '');
+            return clients[clean] || 'new';
+        }
+
+        // ===== BOOKING SYSTEM =====
+        let selectedService = null;
+        let selectedDate = null;
+        let selectedTime = null;
+        let currentStep = 1;
+        let clientStatus = null;
+        let monthlyCode = '';
+
+        // Service selection
+        document.querySelectorAll('.service-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                document.querySelectorAll('.service-option').forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+                selectedService = {
+                    name: opt.dataset.service,
+                    price: opt.querySelector('.svc-price').textContent,
+                    rawPrice: parseFloat(opt.dataset.price)
+                };
+                document.getElementById('toStep2').disabled = false;
+            });
+        });
+
+        function goToStep(step) {
+            currentStep = step;
+            document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(step === 4 ? 'stepConfirm' : 'step' + step).classList.add('active');
+            document.querySelectorAll('.booking-step').forEach(s => {
+                const sNum = parseInt(s.dataset.step);
+                s.classList.remove('active', 'completed');
+                if (sNum === step) s.classList.add('active');
+                if (sNum < step) s.classList.add('completed');
+            });
+            if (step === 2) generateDates();
+            if (step === 3) showSummary();
+        }
+
+        document.getElementById('toStep2').addEventListener('click', () => goToStep(2));
+        document.getElementById('toStep3').addEventListener('click', () => goToStep(3));
+        document.getElementById('backTo1').addEventListener('click', () => goToStep(1));
+        document.getElementById('backTo2').addEventListener('click', () => goToStep(2));
+
+        // Generate next 14 days
+        function generateDates() {
+            const grid = document.getElementById('dateGrid');
+            grid.innerHTML = '';
+            const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+            const today = new Date();
+            for (let i = 0; i < 14; i++) {
+                const d = new Date(today);
+                d.setDate(today.getDate() + i);
+                const cell = document.createElement('div');
+                cell.className = 'date-cell';
+                cell.innerHTML = `<span class="day-name">${days[d.getDay()]}</span>${d.getDate()}`;
+                cell.dataset.date = d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+                if (d.getDay() === 0) {
+                    cell.classList.add('unavailable');
+                } else {
+                    cell.addEventListener('click', () => {
+                        document.querySelectorAll('.date-cell').forEach(c => c.classList.remove('selected'));
+                        cell.classList.add('selected');
+                        selectedDate = cell.dataset.date;
+                        checkStep2Ready();
+                    });
+                }
+                grid.appendChild(cell);
+            }
+            generateTimes();
+        }
+
+        function generateTimes() {
+            const grid = document.getElementById('timeGrid');
+            grid.innerHTML = '';
+            const times = ['9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','12:00 PM','12:30 PM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM','5:00 PM','5:30 PM','6:00 PM','6:30 PM'];
+            times.forEach(t => {
+                const slot = document.createElement('div');
+                slot.className = 'time-slot';
+                slot.textContent = t;
+                slot.addEventListener('click', () => {
+                    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                    slot.classList.add('selected');
+                    selectedTime = t;
+                    checkStep2Ready();
+                });
+                grid.appendChild(slot);
+            });
+        }
+
+        function checkStep2Ready() {
+            document.getElementById('toStep3').disabled = !(selectedDate && selectedTime);
+        }
+
+        function getDepositInfo(phone, code) {
+            const status = getClientStatus(phone.replace(/\D/g, ''));
+            if (code.toUpperCase() === 'MONTHLY') return { type: 'monthly', label: 'Monthly Client', amount: 0, message: '✅ Monthly client verified — no deposit required!' };
+            if (status === 'noshow') return { type: 'noshow', label: 'No-Show on File', amount: selectedService.rawPrice, message: '⚠️ Previous no-show on file — full payment required upfront.' };
+            if (status === 'late') return { type: 'late', label: 'Late Client', amount: Math.ceil(selectedService.rawPrice * 0.5), message: '⚠️ Deposit required to confirm your booking.' };
+            return { type: 'new', label: 'New Client', amount: Math.ceil(selectedService.rawPrice * 0.5), message: '💳 50% deposit required to confirm your booking.' };
+        }
+
+        function showSummary() {
+            const phone = document.getElementById('clientPhone').value || '';
+            const code = document.getElementById('clientCode') ? document.getElementById('clientCode').value : '';
+            const deposit = getDepositInfo(phone, code);
+            let paymentRow = '';
+            if (deposit.amount > 0) {
+                paymentRow = `<div class="summary-row" style="color:#E74C3C;font-size:13px;margin-top:8px;">${deposit.message}</div>
+                <div class="summary-row summary-total"><span class="label">Deposit Due</span><span>$${deposit.amount}</span></div>`;
+            } else {
+                paymentRow = `<div class="summary-row" style="color:#4CAF50;font-size:13px;margin-top:8px;">${deposit.message}</div>
+                <div class="summary-row summary-total"><span class="label">Due Today</span><span>$0</span></div>`;
+            }
+            const html = `
+                <h4>Booking Summary</h4>
+                <div class="summary-row"><span class="label">Service</span><span>${selectedService.name}</span></div>
+                <div class="summary-row"><span class="label">Date</span><span>${selectedDate}</span></div>
+                <div class="summary-row"><span class="label">Time</span><span>${selectedTime}</span></div>
+                <div class="summary-row"><span class="label">Full Price</span><span>${selectedService.price}</span></div>
+                ${paymentRow}
+            `;
+            document.getElementById('bookingSummary').innerHTML = html;
+        }
+
+        document.getElementById('confirmBooking').addEventListener('click', () => {
+            const name = document.getElementById('clientName').value.trim();
+            const phone = document.getElementById('clientPhone').value.trim();
+            const code = document.getElementById('clientCode') ? document.getElementById('clientCode').value.trim() : '';
+            const notes = document.getElementById('clientNotes').value.trim();
+            if (!name || !phone) { alert('Please enter your name and phone number.'); return; }
+
+            const deposit = getDepositInfo(phone, code);
+
+            // Save booking
+            const bookings = getBookings();
+            bookings.push({
+                id: Date.now(),
+                name, phone,
+                service: selectedService.name,
+                price: selectedService.price,
+                date: selectedDate,
+                time: selectedTime,
+                status: deposit.type,
+                depositPaid: deposit.amount > 0 ? false : true,
+                depositAmount: deposit.amount,
+                notes,
+                createdAt: new Date().toISOString()
+            });
+            saveBookings(bookings);
+
+            // Auto-register new clients
+            if (deposit.type === 'new') {
+                const clients = getClients();
+                const clean = phone.replace(/\D/g, '');
+                if (!clients[clean]) { clients[clean] = 'regular'; saveClients(clients); }
+            }
+
+            document.getElementById('finalSummary').innerHTML = `
+                <h4>Your Appointment</h4>
+                <div class="summary-row"><span class="label">Name</span><span>${name}</span></div>
+                <div class="summary-row"><span class="label">Service</span><span>${selectedService.name}</span></div>
+                <div class="summary-row"><span class="label">Date</span><span>${selectedDate}</span></div>
+                <div class="summary-row"><span class="label">Time</span><span>${selectedTime}</span></div>
+                <div class="summary-row summary-total"><span class="label">Price</span><span>${selectedService.price}</span></div>
+                ${deposit.amount > 0 ? `<div class="summary-row" style="color:#E74C3C;margin-top:8px;"><span class="label">Deposit Due</span><span>$${deposit.amount}</span></div>` : '<div class="summary-row" style="color:#4CAF50;margin-top:8px;"><span>✅ No deposit required</span></div>'}
+            `;
+
+            // 🔔 Notify Sly via SMS
+            const NOTIFY_URL = 'https://script.google.com/macros/s/AKfycbxDs7_Gw-JQ7oA0gaCV8X2INaSGrLZiNQBJxFv75DJXlZ4uEXxgkX2fcPbgPTlSUOua/exec';
+            if (NOTIFY_URL) {
+                const msg = `🔔 NEW BOOKING REQUEST\n👤 ${name}\n📞 ${phone}\n✂️ ${selectedService.name}\n📅 ${selectedDate} @ ${selectedTime}\n💰 ${selectedService.price}${deposit.amount > 0 ? `\n💳 Deposit: $${deposit.amount}` : '\n✅ No deposit (returning client)'}${notes ? `\n📝 ${notes}` : ''}`;
+                fetch(NOTIFY_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ to: '+17703340126', msg })
+                }).catch(() => {});
+            }
+
+            if (deposit.amount > 0) {
+                const squareLinks = {
+                    8:  'https://square.link/u/TW7YhnpR',
+                    13: 'https://square.link/u/UwY6p0Ex',
+                    15: 'https://square.link/u/CW3bdun7',
+                    20: 'https://square.link/u/ALKC6WMt',
+                    23: 'https://square.link/u/hzmPM0aR',
+                    30: 'https://square.link/u/sGbZmlBn'
+                };
+                const link = squareLinks[deposit.amount];
+                if (link) {
+                    setTimeout(() => { window.open(link, '_blank'); }, 1500);
+                }
+            }
+
+            goToStep(4);
+        });
+
+        // ===== CHATBOT =====
+        const chatToggle = document.getElementById('chatToggle');
+        const chatbox = document.getElementById('chatbox');
+        chatToggle.addEventListener('click', () => chatbox.classList.toggle('open'));
+
+        const responses = {
+            'prices': `Here are our prices:\n\n• Kids Haircut: $25 - $30\n• Adult Haircut: $45 - $60\n• Beard / Line Up: $30\n• Color: Starting at $60\n• Facial: $35 w/ service / $40 standalone\n• Eyebrows (razor): $15\n\nWant to book?`,
+            'book': `You can book right now! Just scroll up and click "Book Appointment" or I can take you there. We're available Mon-Sat by appointment.`,
+            'location': `We're located in Decatur, GA 30033 — it's a private barber suite so you get the full VIP experience. No waiting room, just you and the chair.`,
+            'services': `We offer:\n\n• Kids & Adult Haircuts\n• Beard work & Line Ups\n• Color services\n• Eyebrow shaping (razor)\n• Facials (coming soon!)\n\nEverything is done in a clean, private suite. Which service are you interested in?`,
+            'hours': `We're open by appointment, Mon-Sat. You can book online 24/7 right here on the site.`,
+            'payment': `We accept Square payments — that includes credit/debit cards, Apple Pay, and Google Pay.`
+        };
+
+        function getResponse(msg) {
+            const m = msg.toLowerCase();
+            if (m.includes('price') || m.includes('cost') || m.includes('how much') || m.includes('rate')) return responses.prices;
+            if (m.includes('book') || m.includes('appointment') || m.includes('schedule')) return responses.book;
+            if (m.includes('where') || m.includes('location') || m.includes('address') || m.includes('find')) return responses.location;
+            if (m.includes('service') || m.includes('offer') || m.includes('do you do') || m.includes('what do')) return responses.services;
+            if (m.includes('hour') || m.includes('open') || m.includes('close') || m.includes('time')) return responses.hours;
+            if (m.includes('pay') || m.includes('cash') || m.includes('card') || m.includes('square')) return responses.payment;
+            return "Great question! For anything specific, you can book an appointment and Sly will take care of you. Want me to help you book?";
+        }
+
+        function addMessage(text, type) {
+            const msgs = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = `chat-msg ${type}`;
+            div.textContent = text;
+            msgs.appendChild(div);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        function handleChat(msg) {
+            addMessage(msg, 'user');
+            setTimeout(() => addMessage(getResponse(msg), 'bot'), 600);
+        }
+
+        document.getElementById('chatSend').addEventListener('click', () => {
+            const input = document.getElementById('chatInput');
+            if (input.value.trim()) { handleChat(input.value.trim()); input.value = ''; }
+        });
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('chatSend').click();
+        });
+        document.querySelectorAll('.quick-reply').forEach(btn => {
+            btn.addEventListener('click', () => handleChat(btn.dataset.msg));
+        });
+    </script>
+</body>
+</html>
