@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1A1A2E">
+    <title>Check In | Uppercuts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Oswald:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1A1A2E;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .checkin-card {
+            background: #16213E;
+            border-radius: 20px;
+            padding: 48px 32px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            border: 1px solid rgba(201,169,110,0.15);
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .logo span { color: #C9A96E; }
+        .subtitle {
+            font-family: 'Oswald', sans-serif;
+            font-size: 13px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #C9A96E;
+            margin-bottom: 32px;
+        }
+        .checkin-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(201,169,110,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 36px;
+        }
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .desc {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+        .input-group {
+            margin-bottom: 16px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(201,169,110,0.25);
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .input-group input:focus {
+            border-color: #C9A96E;
+        }
+        .input-group input::placeholder {
+            color: rgba(255,255,255,0.35);
+        }
+        .btn-checkin {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #C9A96E, #B8944F);
+            color: #0A0A0A;
+            font-family: 'Oswald', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-checkin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(201,169,110,0.3);
+        }
+        .btn-checkin:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Success state */
+        .success-view { display: none; }
+        .success-view.active { display: block; }
+        .form-view.hidden { display: none; }
+        .check-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #C9A96E, #B8944F);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: #0A0A0A;
+            animation: popIn 0.4s ease;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            70% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        .success-msg {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-top: 12px;
+        }
+        .timestamp {
+            color: rgba(201,169,110,0.7);
+            font-size: 12px;
+            margin-top: 16px;
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="checkin-card">
+        <!-- Form View -->
+        <div class="form-view" id="formView">
+            <div class="logo">UPPER<span>CUTS</span></div>
+            <div class="subtitle">Premium Grooming</div>
+            <div class="checkin-icon">📍</div>
+            <h2>You've Arrived</h2>
+            <p class="desc">Let Sly know you're here. Enter your name below and check in.</p>
+            <div class="input-group">
+                <input type="text" id="clientName" placeholder="Your name" autocomplete="name" required>
+            </div>
+            <div class="input-group">
+                <input type="tel" id="clientPhone" placeholder="Phone number" autocomplete="tel">
+            </div>
+            <button class="btn-checkin" id="checkinBtn" onclick="checkIn()">I'm Here</button>
+        </div>
+
+        <!-- Success View -->
+        <div class="success-view" id="successView">
+            <div class="logo">UPPER<span>CUTS</span></div>
+            <div class="subtitle">Premium Grooming</div>
+            <div class="check-circle">✓</div>
+            <h2>You're Checked In</h2>
+            <p class="success-msg">Sly knows you're here. Have a seat and relax — he'll be with you shortly.</p>
+            <p class="timestamp" id="checkinTime"></p>
+        </div>
+    </div>
+
+    <script>
+        function checkIn() {
+            const name = document.getElementById('clientName').value.trim();
+            const phone = document.getElementById('clientPhone').value.trim();
+            if (!name) { document.getElementById('clientName').focus(); return; }
+
+            const btn = document.getElementById('checkinBtn');
+            btn.disabled = true;
+            btn.textContent = 'CHECKING IN...';
+
+            const checkin = {
+                name,
+                phone,
+                time: new Date().toISOString(),
+                timeDisplay: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+            };
+
+            // Store check-ins in localStorage for admin panel
+            const KEY = 'uppercuts_checkins';
+            const checkins = JSON.parse(localStorage.getItem(KEY) || '[]');
+            checkins.unshift(checkin);
+            localStorage.setItem(KEY, JSON.stringify(checkins));
+
+            setTimeout(() => {
+                document.getElementById('formView').classList.add('hidden');
+                document.getElementById('successView').classList.add('active');
+                document.getElementById('checkinTime').textContent = 'Checked in at ' + checkin.timeDisplay;
+            }, 800);
+        }
+
+        // Enter key submits
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkIn();
+            });
+        });
+    </script>
+</body>
+</html>

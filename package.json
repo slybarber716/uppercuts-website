@@ -1,0 +1,17 @@
+{
+  "name": "uppercuts-by-sly",
+  "version": "1.0.0",
+  "description": "UpperCuts by Sly - Barber Booking Site",
+  "main": "index.html",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'No build needed for static site'"
+  },
+  "dependencies": {
+    "twilio": "^4.0.0"
+  },
+  "devDependencies": {},
+  "keywords": ["barber", "booking"],
+  "author": "Sly",
+  "license": "MIT"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "uppercuts-functions",
+  "version": "1.0.0",
+  "description": "Netlify Functions for Uppercuts Barbershop",
+  "dependencies": {
+    "twilio": "^3.92.0"
+  }
+}
