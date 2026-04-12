@@ -1795,11 +1795,8 @@
         }
 
         function getDepositInfo(phone, code) {
-            const status = getClientStatus(phone.replace(/\D/g, ''));
             if (code.toUpperCase() === 'MONTHLY') return { type: 'monthly', label: 'Monthly Client', amount: 0, message: '✅ Monthly client verified — no deposit required!' };
-            if (status === 'noshow') return { type: 'noshow', label: 'No-Show on File', amount: selectedService.rawPrice, message: '⚠️ Previous no-show on file — full payment required upfront.' };
-            if (status === 'late') return { type: 'late', label: 'Late Client', amount: Math.ceil(selectedService.rawPrice * 0.5), message: '⚠️ Deposit required to confirm your booking.' };
-            return { type: 'new', label: 'New Client', amount: Math.ceil(selectedService.rawPrice * 0.5), message: '💳 50% deposit required to confirm your booking.' };
+            return { type: 'standard', label: 'Deposit Required', amount: Math.ceil(selectedService.rawPrice * 0.5), message: '💳 50% deposit required to confirm your booking.' };
         }
 
         function showSummary() {
