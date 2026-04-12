@@ -441,6 +441,39 @@
     <button class="btn btn-outline" onclick="switchPanel('panelDash')" style="margin-top:16px">Back to Dashboard</button>
 </div>
 
+<!-- ===== EDIT BOOKING MODAL ===== -->
+<div class="modal-overlay" id="editBookingModal">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">Edit Appointment</div>
+        <div id="editBookingName" style="font-weight:600;font-size:16px;margin-bottom:16px;color:var(--gold)"></div>
+        <div class="fg">
+            <label>Date</label>
+            <input type="date" id="editDate">
+        </div>
+        <div class="fg">
+            <label>Time</label>
+            <input type="time" id="editTime">
+        </div>
+        <div class="fg">
+            <label>Service</label>
+            <select id="editService">
+                <option>Kids Cut (13 & Under)</option>
+                <option>Teen Cut (14-17)</option>
+                <option>Premium Cut</option>
+                <option>Signature Cut</option>
+                <option>Signature + Shampoo</option>
+                <option>Beard / Line Up</option>
+                <option>Color</option>
+                <option>Facial</option>
+                <option>Eyebrows</option>
+            </select>
+        </div>
+        <button class="btn btn-gold" onclick="saveEditBooking()">Save Changes</button>
+        <button class="btn btn-outline" onclick="closeModal('editBookingModal')">Cancel</button>
+    </div>
+</div>
+
 <!-- ===== CLIENTS PANEL ===== -->
 <div class="panel" id="panelClients">
     <div class="hdr">Client List</div>
@@ -1418,6 +1451,63 @@ function approveBooking(idx){
     }
 }
 
+let editingIdx=null;
+function editBooking(idx){
+    const bookings=getStore(BOOKINGS_KEY,[]);
+    const b=bookings[idx];
+    if(!b) return;
+    editingIdx=idx;
+    document.getElementById('editBookingName').textContent=b.name+' — '+b.phone;
+    document.getElementById('editDate').value=b.date||'';
+    // Convert time like "2:00 PM" to 24hr for input
+    const t=b.time||'';
+    const match=t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if(match){
+        let h=parseInt(match[1]);
+        const m=match[2];
+        const ap=match[3].toUpperCase();
+        if(ap==='PM'&&h!==12) h+=12;
+        if(ap==='AM'&&h===12) h=0;
+        document.getElementById('editTime').value=String(h).padStart(2,'0')+':'+m;
+    }
+    // Set service dropdown
+    const sel=document.getElementById('editService');
+    for(let i=0;i<sel.options.length;i++){
+        if(sel.options[i].text===b.service){sel.selectedIndex=i;break;}
+    }
+    openModal('editBookingModal');
+}
+
+function saveEditBooking(){
+    const bookings=getStore(BOOKINGS_KEY,[]);
+    const b=bookings[editingIdx];
+    if(!b) return;
+    const newDate=document.getElementById('editDate').value;
+    const rawTime=document.getElementById('editTime').value;
+    const newService=document.getElementById('editService').value;
+    // Convert 24hr to 12hr display
+    if(rawTime){
+        const[h,m]=rawTime.split(':');
+        let hr=parseInt(h);
+        const ap=hr>=12?'PM':'AM';
+        if(hr>12) hr-=12;
+        if(hr===0) hr=12;
+        b.time=hr+':'+m+' '+ap;
+    }
+    if(newDate){
+        b.date=newDate;
+        const d=new Date(newDate+'T12:00:00');
+        const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        b.dateLabel=days[d.getDay()]+', '+months[d.getMonth()]+' '+d.getDate();
+    }
+    b.service=newService;
+    setStore(BOOKINGS_KEY,bookings);
+    closeModal('editBookingModal');
+    refreshDash();
+    alert('Appointment updated! ✅');
+}
+
 function denyBooking(idx){
     const bookings=getStore(BOOKINGS_KEY,[]);
     if(bookings[idx]){
@@ -1476,6 +1566,7 @@ async function refreshDash(){
                 </div>
                 <div style="display:flex;gap:8px">
                     <button class="btn btn-gold" style="flex:1;margin:0;padding:10px;font-size:12px" onclick="approveBooking(${b.idx})">✅ Approve</button>
+                    <button class="btn btn-outline" style="flex:1;margin:0;padding:10px;font-size:12px" onclick="editBooking(${b.idx})">✏️ Edit</button>
                     <button class="btn btn-red" style="flex:1;margin:0;padding:10px;font-size:12px" onclick="denyBooking(${b.idx})">❌ Deny</button>
                 </div>
             </div>
@@ -1488,15 +1579,17 @@ async function refreshDash(){
     if(!upcoming.length){
         c.innerHTML='<div class="acard" style="text-align:center;color:var(--text2)">No confirmed bookings yet</div>';
     } else {
-        c.innerHTML=upcoming.map(b=>`
-            <div class="booking-card">
+        c.innerHTML=upcoming.map((b,i)=>{
+            const bIdx=bookings.indexOf(b);
+            return `<div class="booking-card">
                 <div class="bc-top">
                     <span class="bc-name">${b.name}</span>
                     <span class="bc-svc">${b.service}</span>
                 </div>
                 <div class="bc-detail">${b.dateLabel||b.date} at ${b.time} &middot; ${b.phone}</div>
-            </div>
-        `).join('');
+                <div style="margin-top:8px"><button class="btn-sm btn-outline" style="font-size:11px" onclick="editBooking(${bIdx})">✏️ Edit Time</button></div>
+            </div>`;
+        }).join('');
     }
 }
 
