@@ -474,6 +474,51 @@
     </div>
 </div>
 
+<!-- ===== CASH OUT MODAL ===== -->
+<div class="modal-overlay" id="cashOutModal">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">Cash Out</div>
+        <div id="cashOutClient" style="font-weight:600;font-size:16px;color:var(--gold);margin-bottom:4px"></div>
+        <div id="cashOutService" style="font-size:13px;color:var(--text2);margin-bottom:16px"></div>
+
+        <div class="acard" style="margin-bottom:16px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                <span style="color:var(--text2);font-size:13px">Service Total</span>
+                <span id="cashOutPrice" style="font-weight:600;font-size:15px"></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                <span style="color:var(--text2);font-size:13px">Deposit Paid</span>
+                <span id="cashOutDeposit" style="font-weight:600;font-size:15px;color:var(--green)"></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:8px">
+                <span style="font-weight:600;font-size:14px">Remaining</span>
+                <span id="cashOutRemaining" style="font-weight:600;font-size:16px;color:var(--gold)"></span>
+            </div>
+        </div>
+
+        <div class="sec">Add a Tip</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+            <button class="btn-sm btn-outline tip-btn" onclick="setTip(15)">15%</button>
+            <button class="btn-sm btn-outline tip-btn" onclick="setTip(20)">20%</button>
+            <button class="btn-sm btn-outline tip-btn" onclick="setTip(25)">25%</button>
+            <button class="btn-sm btn-outline tip-btn" onclick="setTip(30)">30%</button>
+            <button class="btn-sm btn-outline tip-btn" onclick="setCustomTip()">Custom</button>
+            <button class="btn-sm btn-outline tip-btn" onclick="setTip(0)">No Tip</button>
+        </div>
+        <div id="tipAmount" style="font-size:14px;color:var(--gold);margin-bottom:12px;text-align:center"></div>
+
+        <div class="acard" style="background:rgba(201,169,110,0.1);text-align:center;margin-bottom:16px">
+            <div style="font-size:12px;color:var(--text2);margin-bottom:4px">Total Due</div>
+            <div id="cashOutTotal" style="font-size:28px;font-weight:700;color:var(--gold);font-family:'Oswald',sans-serif"></div>
+        </div>
+
+        <button class="btn btn-gold" onclick="cashOutSquare()">💳 Send to Square</button>
+        <button class="btn btn-outline" style="margin-top:8px" onclick="markPaidCash()">💵 Paid Cash</button>
+        <button class="btn btn-outline" onclick="closeModal('cashOutModal')">Cancel</button>
+    </div>
+</div>
+
 <!-- ===== CLIENTS PANEL ===== -->
 <div class="panel" id="panelClients">
     <div class="hdr">Client List</div>
@@ -1508,6 +1553,89 @@ function saveEditBooking(){
     alert('Appointment updated! ✅');
 }
 
+// ===== CASH OUT =====
+let cashOutData={remaining:0,tip:0,bookingIdx:null};
+
+function openCashOut(idx){
+    const bookings=getStore(BOOKINGS_KEY,[]);
+    const b=bookings[idx];
+    if(!b) return;
+    const price=parseFloat(b.price?.replace(/[^0-9.]/g,''))||0;
+    const deposit=b.depositAmount||0;
+    const remaining=Math.max(price-deposit,0);
+    cashOutData={remaining,tip:0,price,deposit,bookingIdx:idx};
+
+    document.getElementById('cashOutClient').textContent=b.name;
+    document.getElementById('cashOutService').textContent=b.service+' · '+b.time;
+    document.getElementById('cashOutPrice').textContent='$'+price;
+    document.getElementById('cashOutDeposit').textContent=deposit>0?'-$'+deposit:'$0';
+    document.getElementById('cashOutRemaining').textContent='$'+remaining;
+    document.getElementById('tipAmount').textContent='';
+    updateCashOutTotal();
+    // Reset tip buttons
+    document.querySelectorAll('.tip-btn').forEach(b=>b.style.background='transparent');
+    openModal('cashOutModal');
+}
+
+function setTip(pct){
+    document.querySelectorAll('.tip-btn').forEach(b=>b.style.background='transparent');
+    if(pct===0){
+        cashOutData.tip=0;
+        document.getElementById('tipAmount').textContent='No tip';
+    } else {
+        cashOutData.tip=Math.ceil(cashOutData.price*pct/100);
+        document.getElementById('tipAmount').textContent=`${pct}% tip = $${cashOutData.tip}`;
+    }
+    event.target.style.background='var(--gold)';event.target.style.color='#000';
+    updateCashOutTotal();
+}
+
+function setCustomTip(){
+    const amt=prompt('Enter tip amount ($):');
+    if(!amt) return;
+    cashOutData.tip=Math.max(parseInt(amt)||0,0);
+    document.getElementById('tipAmount').textContent=`Custom tip = $${cashOutData.tip}`;
+    document.querySelectorAll('.tip-btn').forEach(b=>b.style.background='transparent');
+    updateCashOutTotal();
+}
+
+function updateCashOutTotal(){
+    const total=cashOutData.remaining+cashOutData.tip;
+    document.getElementById('cashOutTotal').textContent='$'+total;
+}
+
+function cashOutSquare(){
+    const total=cashOutData.remaining+cashOutData.tip;
+    // Open Square payment link - generic link for custom amount
+    const bookings=getStore(BOOKINGS_KEY,[]);
+    const b=bookings[cashOutData.bookingIdx];
+    const phone=b?.phone?.replace(/\D/g,'')||'';
+    // Copy amount to clipboard for Square
+    navigator.clipboard.writeText('$'+total).catch(()=>{});
+    window.open('https://squareup.com/dashboard/sales/transactions','_blank');
+    b.status='completed';
+    b.tipAmount=cashOutData.tip;
+    setStore(BOOKINGS_KEY,bookings);
+    closeModal('cashOutModal');
+    refreshDash();
+    alert(`Cash out complete! $${total} total ($${cashOutData.tip} tip). Amount copied to clipboard.`);
+}
+
+function markPaidCash(){
+    const total=cashOutData.remaining+cashOutData.tip;
+    const bookings=getStore(BOOKINGS_KEY,[]);
+    const b=bookings[cashOutData.bookingIdx];
+    if(b){
+        b.status='completed';
+        b.tipAmount=cashOutData.tip;
+        b.paidCash=true;
+        setStore(BOOKINGS_KEY,bookings);
+    }
+    closeModal('cashOutModal');
+    refreshDash();
+    alert(`Marked as paid cash — $${total} total ($${cashOutData.tip} tip) ✅`);
+}
+
 function denyBooking(idx){
     const bookings=getStore(BOOKINGS_KEY,[]);
     if(bookings[idx]){
@@ -1590,7 +1718,10 @@ async function refreshDash(){
                     <span class="bc-svc">${b.service}</span>
                 </div>
                 <div class="bc-detail">${b.dateLabel||b.date} at ${b.time} &middot; ${b.phone}</div>
-                <div style="margin-top:8px"><button class="btn-sm btn-outline" style="font-size:11px" onclick="editBooking(${bIdx})">✏️ Edit Time</button></div>
+                <div style="margin-top:8px;display:flex;gap:8px">
+                    <button class="btn-sm btn-outline" style="font-size:11px" onclick="editBooking(${bIdx})">✏️ Edit</button>
+                    <button class="btn-sm btn-gold" style="font-size:11px" onclick="openCashOut(${bIdx})">💰 Cash Out</button>
+                </div>
             </div>`;
         }).join('');
     }
