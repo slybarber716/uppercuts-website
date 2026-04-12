@@ -572,24 +572,42 @@ if('Notification' in window && Notification.permission==='default'){
     Notification.requestPermission();
 }
 
-// Create alert sound (simple chime using Web Audio API)
+// Unlock audio on first tap anywhere on the page
+let audioUnlocked=false;
+const alertAudio=new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdH2LkZeXk4+Hf3VsZGRneIOPlp2hn5mRiH13bmhkZm11gIuUmp6dlpCIgHdwamVlanuGj5abn5yXkYiAeHFrZ2ZqcoGLlJqdnJiSiYF6c21oZmlxfYmSl5uampaSiYJ7dW9raGlxfYiQlpqamJOOh4B6dXBsaWtxfIiQlZmZl5OOiIJ8d3JuamxxfIaPk5eYlpKNh4J9eHRwa210fIaNkpaXlpKNiIN+eXVxb3B0fIWMkJSWlJGMh4N/e3dzcXF1fIWLj5OVk5CMiISDf3x5dnN0eH+FioyQkpCNioeEgn98endzc3Z7gIaJjI+QjouIhoOBfnt5d3V1eHyAhYiLjo6Mi4mHhYKAfnx6eHd3eXyAhIeLjIyLiomHhYOBf316eXh4eXt+goWIiouLioiHhoWDgX9+fHt6eXp7fYCDhoiKiomIh4aFg4KAf358e3p6ent9gIKFh4mJiYiHhoWEg4GAfn17enp6e31/goSGiIiIh4eGhYSDgoF/fnx7enp7fH6AgoSGh4eHhoaFhIOCgYB/fnx7e3t7fH6AgoOFhoeHhoWFhISDgoGAf357e3t7fH1/gIKEhYaGhoWFhISDgoGAf358e3t7fH1+gIGDBYWGhoaFhISDgoKBgH9+fHt7e3x9f4CBg4SFhoaFhYSEg4KBgH9/fnt7e3x9foCAgoOEhYWFhYSEg4OC');
+// Pre-create audio context
 function playAlertSound(){
+    // Use multiple methods to ensure sound plays
+    try{
+        alertAudio.currentTime=0;
+        alertAudio.volume=1.0;
+        alertAudio.play().catch(()=>{});
+    }catch(e){}
+    // Also try Web Audio as backup
     try{
         const ctx=new(window.AudioContext||window.webkitAudioContext)();
-        // Play two-tone chime
-        [523.25, 659.25].forEach((freq,i)=>{
+        [660, 880, 1100].forEach((freq,i)=>{
             const osc=ctx.createOscillator();
             const gain=ctx.createGain();
             osc.connect(gain);gain.connect(ctx.destination);
             osc.frequency.value=freq;
-            osc.type='sine';
-            gain.gain.setValueAtTime(0.3, ctx.currentTime+i*0.15);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+i*0.15+0.5);
-            osc.start(ctx.currentTime+i*0.15);
-            osc.stop(ctx.currentTime+i*0.15+0.5);
+            osc.type='triangle';
+            gain.gain.setValueAtTime(0.4, ctx.currentTime+i*0.2);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+i*0.2+0.4);
+            osc.start(ctx.currentTime+i*0.2);
+            osc.stop(ctx.currentTime+i*0.2+0.4);
         });
     }catch(e){}
 }
+// Unlock audio on first interaction
+document.addEventListener('click',()=>{
+    if(!audioUnlocked){
+        alertAudio.volume=0;
+        alertAudio.play().then(()=>{alertAudio.pause();alertAudio.volume=1.0;}).catch(()=>{});
+        try{const c=new(window.AudioContext||window.webkitAudioContext)();c.resume();}catch(e){}
+        audioUnlocked=true;
+    }
+},{once:false});
 
 function showCheckinAlert(checkin){
     // Play sound
@@ -628,26 +646,29 @@ function showCheckinAlert(checkin){
     setTimeout(dismiss,15000);
 }
 
-// Poll check-ins on ALL panels (not just Messages) so alerts always fire
+// Poll check-ins on ALL panels so alerts always fire
+let checkinReady=false;
 setInterval(async()=>{
     try{
         const r=await fetch('https://uppercutsbysly.com/api/checkins');
         const data=await r.json();
         const todayCheckins=data.checkins||[];
+        const count=todayCheckins.length;
 
-        // Detect NEW check-ins
-        if(lastKnownCheckins>0 && todayCheckins.length>lastKnownCheckins){
-            // New check-in detected — alert for each new one
-            const newOnes=todayCheckins.slice(0, todayCheckins.length-lastKnownCheckins);
+        // Only alert after first poll has set the baseline
+        if(checkinReady && count>lastKnownCheckins){
+            const newCount=count-lastKnownCheckins;
+            const newOnes=todayCheckins.slice(todayCheckins.length-newCount);
             newOnes.forEach(c=>showCheckinAlert(c));
         }
-        lastKnownCheckins=todayCheckins.length;
+        lastKnownCheckins=count;
+        checkinReady=true;
 
         // Update Messages panel if active
         const msgPanel=document.getElementById('panelMessages');
         if(msgPanel&&msgPanel.classList.contains('active')) loadCheckins();
-    }catch(e){}
-},10000); // Poll every 10 seconds
+    }catch(e){console.log('poll error',e);}
+},5000); // Poll every 5 seconds
 
 async function sendPromptToPhone(phone,type){
     currentPrompt=PROMPTS[type];
