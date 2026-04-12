@@ -428,6 +428,15 @@
             <div style="font-size:20px;">→</div>
         </div>
     </div>
+    <div class="acard" style="cursor:pointer" onclick="sendPrompt('shampoo')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:4px;">🧴 Shampoo Reminder</div>
+                <div style="font-size:12px;color:var(--text2)">Please arrive with hair freshly shampooed for best results.</div>
+            </div>
+            <div style="font-size:20px;">→</div>
+        </div>
+    </div>
 
     <button class="btn btn-outline" onclick="switchPanel('panelDash')" style="margin-top:16px">Back to Dashboard</button>
 </div>
@@ -489,7 +498,8 @@ const PROMPTS={
     confirmed:"Your appointment is confirmed. See you at Uppercuts! 📅",
     thanks:"Thanks for coming in! Appreciate you. See you next time 🤝 - Uppercuts",
     review:"If you liked the cut, I'd really appreciate a review! It helps a lot ⭐ - Uppercuts",
-    reminder:"Reminder: you have an appointment tomorrow at Uppercuts. See you then! 🔔"
+    reminder:"Reminder: you have an appointment tomorrow at Uppercuts. See you then! 🔔",
+    shampoo:"Hey! Quick reminder — please arrive with your hair freshly shampooed for your appointment. Clean hair helps Sly give you the best cut possible. Appreciate you! 💈 - Uppercuts"
 };
 let currentPrompt='';
 
