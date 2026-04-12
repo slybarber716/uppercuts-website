@@ -1291,6 +1291,15 @@
                         <div class="svc-info"><h4>Signature + Shampoo</h4><span>90 min · full signature cut + premium shampoo</span></div>
                         <span class="svc-price">$75</span>
                     </div>
+                    <div id="facialAddon" style="display:none;margin:10px 0 14px;padding:14px 16px;background:rgba(201,169,110,0.08);border:1.5px solid rgba(201,169,110,0.25);border-radius:10px;cursor:pointer" onclick="toggleFacialAddon()">
+                        <label style="display:flex;align-items:center;gap:12px;cursor:pointer;margin:0">
+                            <input type="checkbox" id="facialCheck" style="width:20px;height:20px;accent-color:#C9A96E" onclick="event.stopPropagation();toggleFacialAddon()">
+                            <div>
+                                <div style="font-weight:600;font-size:14px;color:#fff">Add Facial <span style="color:#C9A96E">+$35</span></div>
+                                <div style="font-size:12px;color:#8888aa;margin-top:2px">Adds 30 min · hot towel, cleanse & glow up</div>
+                            </div>
+                        </label>
+                    </div>
                     <div class="service-option" data-service="Beard / Line Up" data-price="30">
                         <div class="svc-info"><h4>Beard / Line Up</h4><span>20 min</span></div>
                         <span class="svc-price">$30</span>
@@ -1667,15 +1676,50 @@
         let clientStatus = null;
         let monthlyCode = '';
 
+        // Facial addon eligible services
+        const FACIAL_ELIGIBLE = ['Premium Cut', 'Signature Cut', 'Signature + Shampoo'];
+        let facialAdded = false;
+        let baseService = null;
+
+        function toggleFacialAddon() {
+            const cb = document.getElementById('facialCheck');
+            // If called from the div, toggle the checkbox; if from checkbox itself, it already toggled
+            if(event && event.currentTarget !== cb) cb.checked = !cb.checked;
+            facialAdded = cb.checked;
+            if(baseService) {
+                selectedService = {
+                    name: facialAdded ? baseService.name + ' + Facial' : baseService.name,
+                    price: facialAdded ? '$' + (baseService.rawPrice + 35) : '$' + baseService.rawPrice,
+                    rawPrice: facialAdded ? baseService.rawPrice + 35 : baseService.rawPrice
+                };
+            }
+        }
+
         // Service selection
         document.querySelectorAll('.service-option').forEach(opt => {
             opt.addEventListener('click', () => {
                 document.querySelectorAll('.service-option').forEach(o => o.classList.remove('selected'));
                 opt.classList.add('selected');
-                selectedService = {
+                baseService = {
                     name: opt.dataset.service,
                     price: opt.querySelector('.svc-price').textContent,
                     rawPrice: parseFloat(opt.dataset.price)
+                };
+                // Reset facial addon
+                facialAdded = false;
+                const cb = document.getElementById('facialCheck');
+                cb.checked = false;
+                const addonBox = document.getElementById('facialAddon');
+                // Show facial addon only for eligible cuts
+                if(FACIAL_ELIGIBLE.includes(opt.dataset.service)) {
+                    addonBox.style.display = 'block';
+                } else {
+                    addonBox.style.display = 'none';
+                }
+                selectedService = {
+                    name: baseService.name,
+                    price: baseService.price,
+                    rawPrice: baseService.rawPrice
                 };
                 document.getElementById('toStep2').disabled = false;
             });
