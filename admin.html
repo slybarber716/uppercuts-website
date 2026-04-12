@@ -2,501 +2,1232 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a1a">
     <title>Uppercuts Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --dark: #0A0A0A;
-            --surface: #111111;
-            --gold: #C9A96E;
-            --gold-light: #E8D5B7;
-            --text: #FFFFFF;
-            --text-muted: #B8B8B8;
-            --success: #4CAF50;
-            --danger: #E74C3C;
-            --warning: #F39C12;
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --gold:#C9A96E;--gold-dim:rgba(201,169,110,0.15);--bg:#0a0a1a;
+            --surface:#12122a;--surface2:#1a1a3e;--border:rgba(201,169,110,0.12);
+            --green:#4CAF50;--red:#E74C3C;--yellow:#F59E0B;--text2:#8888aa;
         }
-        body { font-family: 'Inter', sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; }
+        body{font-family:'Inter',sans-serif;background:var(--bg);color:#fff;
+            min-height:100vh;min-height:100dvh;padding-bottom:80px}
+        button{cursor:pointer;border:none;font-family:inherit}
 
-        /* LOGIN */
-        .login-screen {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* NAV */
+        .admin-nav{
+            position:fixed;bottom:0;left:0;right:0;
+            background:rgba(10,10,26,0.98);backdrop-filter:blur(20px);
+            border-top:1px solid var(--border);
+            display:flex;justify-content:space-around;
+            padding:8px 0 env(safe-area-inset-bottom,8px);z-index:100;
         }
-        .login-box {
-            background: var(--surface);
-            border: 1px solid rgba(201,169,110,0.2);
-            border-radius: 16px;
-            padding: 48px;
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
+        .anav{
+            display:flex;flex-direction:column;align-items:center;gap:3px;
+            font-size:10px;font-family:'Oswald',sans-serif;letter-spacing:1px;
+            text-transform:uppercase;color:var(--text2);padding:6px 10px;
         }
-        .login-box h1 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 40px;
-            color: var(--gold);
-            letter-spacing: 3px;
-            margin-bottom: 8px;
-        }
-        .login-box p { color: var(--text-muted); margin-bottom: 32px; font-size: 14px; }
-        .login-box input {
-            width: 100%;
-            padding: 14px 18px;
-            background: var(--dark);
-            border: 1px solid rgba(201,169,110,0.2);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 15px;
-            margin-bottom: 16px;
-            font-family: 'Inter', sans-serif;
-        }
-        .login-box input:focus { outline: none; border-color: var(--gold); }
-        .login-box button {
-            width: 100%;
-            padding: 14px;
-            background: var(--gold);
-            color: var(--dark);
-            border: none;
-            border-radius: 8px;
-            font-family: 'Oswald', sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .login-box button:hover { background: var(--gold-light); }
-        .login-error { color: var(--danger); font-size: 13px; margin-top: 12px; display: none; }
+        .anav.active{color:var(--gold)}
+        .anav .icon{font-size:20px}
 
-        /* ADMIN PANEL */
-        .admin-panel { display: none; }
-        .admin-nav {
-            background: var(--surface);
-            padding: 0 32px;
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 2px solid var(--gold);
-        }
-        .admin-nav h1 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--gold); letter-spacing: 3px; }
-        .admin-nav button {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.2);
-            color: var(--text-muted);
-            padding: 8px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.3s;
-        }
-        .admin-nav button:hover { border-color: var(--gold); color: var(--gold); }
+        /* SCREENS */
+        .panel{display:none;padding:20px;padding-top:20px}
+        .panel.active{display:block}
 
-        .admin-content { padding: 32px; max-width: 1200px; margin: 0 auto; }
-
-        .tabs { display: flex; gap: 4px; margin-bottom: 32px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .tab {
-            padding: 12px 24px;
-            font-family: 'Oswald', sans-serif;
-            font-size: 14px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s;
-            background: none;
-            border-top: none;
-            border-left: none;
-            border-right: none;
+        .hdr{
+            font-family:'Oswald',sans-serif;font-size:22px;letter-spacing:2px;
+            color:var(--gold);margin-bottom:4px;
         }
-        .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; }
+        .hdr-sub{font-size:12px;color:var(--text2);margin-bottom:20px}
+
+        .sec{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:2px;
+            text-transform:uppercase;color:var(--gold);margin:20px 0 12px}
+
+        /* CARDS */
+        .acard{
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:12px;padding:18px;margin-bottom:12px;
+        }
+
+        /* BUTTONS */
+        .btn{
+            display:block;width:100%;padding:14px;text-align:center;
+            font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;
+            letter-spacing:2px;text-transform:uppercase;border-radius:6px;
+            transition:all 0.2s;margin-top:10px;
+        }
+        .btn-gold{background:var(--gold);color:#0a0a1a}
+        .btn-red{background:var(--red);color:#fff}
+        .btn-outline{background:transparent;color:var(--gold);border:1.5px solid rgba(201,169,110,0.3)}
+        .btn-sm{display:inline-block;width:auto;padding:8px 16px;font-size:12px;margin:0}
+
+        /* FORMS */
+        .fg{margin-bottom:14px}
+        .fg label{
+            display:block;font-family:'Oswald',sans-serif;font-size:11px;
+            letter-spacing:1px;text-transform:uppercase;color:var(--text2);margin-bottom:5px;
+        }
+        .fg input,.fg select,.fg textarea{
+            width:100%;padding:12px 14px;background:var(--surface2);
+            border:1px solid var(--border);border-radius:8px;
+            color:#fff;font-family:'Inter',sans-serif;font-size:14px;
+        }
+        .fg input:focus,.fg select:focus{outline:none;border-color:var(--gold)}
+
+        /* CHECK-IN ALERT POPUP */
+        .checkin-alert-popup{
+            position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-120px);
+            background:linear-gradient(135deg,#1a1a3e,#16213E);
+            border:2px solid #C9A96E;border-radius:16px;padding:20px 24px;
+            z-index:9999;max-width:360px;width:calc(100% - 40px);
+            box-shadow:0 12px 40px rgba(201,169,110,0.3),0 0 60px rgba(201,169,110,0.1);
+            transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+            cursor:pointer;text-align:center;
+        }
+        .checkin-alert-popup.visible{transform:translateX(-50%) translateY(0)}
+
+        /* TOGGLE */
+        .toggle-row{
+            display:flex;align-items:center;justify-content:space-between;
+            padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04);
+        }
+        .toggle-row:last-child{border:none}
+        .toggle-label{font-size:14px}
+        .toggle-sub{font-size:12px;color:var(--text2)}
+        .toggle{
+            width:48px;height:28px;border-radius:14px;
+            background:rgba(255,255,255,0.1);position:relative;
+            cursor:pointer;transition:background 0.2s;flex-shrink:0;
+        }
+        .toggle.on{background:var(--green)}
+        .toggle::after{
+            content:'';position:absolute;top:3px;left:3px;
+            width:22px;height:22px;border-radius:50%;
+            background:#fff;transition:transform 0.2s;
+        }
+        .toggle.on::after{transform:translateX(20px)}
+
+        /* SCHEDULE */
+        .sched-date{
+            display:flex;align-items:center;justify-content:space-between;
+            padding:14px 16px;background:var(--surface2);
+            border:1px solid var(--border);border-radius:10px;
+            margin-bottom:8px;
+        }
+        .sched-date .day{font-family:'Oswald',sans-serif;font-size:15px;letter-spacing:0.5px}
+        .sched-date .status{font-size:12px;font-weight:600;letter-spacing:0.5px}
+        .sched-date .status.open{color:var(--green)}
+        .sched-date .status.off{color:var(--red)}
+        .sched-date .status.custom{color:var(--yellow)}
+
+        /* TIME PILLS */
+        .time-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+        .tpill{
+            padding:6px 12px;border-radius:16px;font-size:12px;font-weight:500;
+            background:var(--gold-dim);color:var(--gold);cursor:pointer;
+            border:1px solid transparent;transition:all 0.2s;
+        }
+        .tpill.selected{background:var(--gold);color:#0a0a1a;border-color:var(--gold)}
+        .tpill.remove{background:rgba(231,76,60,0.15);color:var(--red);border-color:rgba(231,76,60,0.3)}
+
+        /* BLOCK LIST */
+        .block-item{
+            display:flex;align-items:center;justify-content:space-between;
+            padding:14px 16px;background:var(--surface2);border:1px solid var(--border);
+            border-radius:10px;margin-bottom:8px;
+        }
+        .block-info .bname{font-size:14px;font-weight:500}
+        .block-info .bdetail{font-size:12px;color:var(--text2);margin-top:2px}
+        .unblock-btn{
+            padding:6px 14px;border-radius:6px;font-size:11px;
+            font-family:'Oswald',sans-serif;letter-spacing:1px;
+            background:rgba(231,76,60,0.15);color:var(--red);
+        }
+
+        /* BOOKINGS */
+        .booking-card{
+            background:var(--surface2);border:1px solid var(--border);
+            border-radius:10px;padding:16px;margin-bottom:10px;
+        }
+        .booking-card .bc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+        .booking-card .bc-name{font-weight:600;font-size:15px}
+        .booking-card .bc-svc{
+            font-size:11px;padding:4px 10px;border-radius:12px;
+            background:var(--gold-dim);color:var(--gold);font-weight:600;
+        }
+        .booking-card .bc-detail{font-size:13px;color:var(--text2);line-height:1.5}
+        .booking-card .bc-actions{display:flex;gap:8px;margin-top:10px}
 
         /* STATS */
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; }
-        .stat-card {
-            background: var(--surface);
-            border: 1px solid rgba(201,169,110,0.15);
-            border-radius: 12px;
-            padding: 24px;
-            text-align: center;
+        .stat-row{display:flex;gap:10px;margin-bottom:16px}
+        .stat-box{
+            flex:1;background:var(--surface);border:1px solid var(--border);
+            border-radius:10px;padding:16px;text-align:center;
         }
-        .stat-card .num { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--gold); }
-        .stat-card .lbl { font-family: 'Oswald', sans-serif; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-top: 4px; }
+        .stat-num{font-family:'Playfair Display',serif;font-size:28px;color:var(--gold)}
+        .stat-lbl{font-size:11px;color:var(--text2);font-family:'Oswald',sans-serif;
+            letter-spacing:1px;text-transform:uppercase;margin-top:4px}
 
-        /* TABLE */
-        .table-wrap { background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid rgba(201,169,110,0.15); }
-        table { width: 100%; border-collapse: collapse; }
-        th {
-            background: var(--dark);
-            padding: 14px 20px;
-            text-align: left;
-            font-family: 'Oswald', sans-serif;
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--gold);
+        /* MODAL */
+        .modal-overlay{
+            display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+            background:rgba(0,0,0,0.7);z-index:200;
+            align-items:flex-end;justify-content:center;
         }
-        td { padding: 14px 20px; font-size: 14px; border-top: 1px solid rgba(255,255,255,0.05); color: var(--text-muted); }
-        tr:hover td { background: rgba(201,169,110,0.03); }
+        .modal-overlay.open{display:flex}
+        .modal-sheet{
+            background:var(--surface);border-radius:16px 16px 0 0;
+            padding:24px;width:100%;max-width:500px;max-height:80vh;overflow-y:auto;
+            border:1px solid var(--border);border-bottom:none;
+        }
+        .modal-handle{
+            width:40px;height:4px;border-radius:2px;background:rgba(255,255,255,0.15);
+            margin:0 auto 16px;
+        }
+        .modal-title{font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:1px;
+            color:var(--gold);margin-bottom:16px}
 
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        @media(max-width:400px){
+            .stat-row{flex-direction:column}
         }
-        .badge-new { background: rgba(201,169,110,0.15); color: var(--gold); }
-        .badge-monthly { background: rgba(76,175,80,0.15); color: var(--success); }
-        .badge-noshow { background: rgba(231,76,60,0.15); color: var(--danger); }
-        .badge-late { background: rgba(243,156,18,0.15); color: var(--warning); }
-        .badge-regular { background: rgba(255,255,255,0.1); color: var(--text-muted); }
-
-        .action-btn {
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-family: 'Oswald', sans-serif;
-            letter-spacing: 1px;
-            cursor: pointer;
-            border: none;
-            margin-right: 4px;
-            transition: all 0.2s;
-        }
-        .btn-flag-noshow { background: rgba(231,76,60,0.2); color: var(--danger); }
-        .btn-flag-noshow:hover { background: var(--danger); color: #fff; }
-        .btn-flag-late { background: rgba(243,156,18,0.2); color: var(--warning); }
-        .btn-flag-late:hover { background: var(--warning); color: #fff; }
-        .btn-clear { background: rgba(76,175,80,0.2); color: var(--success); }
-        .btn-clear:hover { background: var(--success); color: #fff; }
-        .btn-danger { background: rgba(231,76,60,0.2); color: var(--danger); }
-        .btn-danger:hover { background: var(--danger); color: #fff; }
-
-        /* CLIENTS TAB */
-        .search-bar {
-            width: 100%;
-            padding: 12px 18px;
-            background: var(--surface);
-            border: 1px solid rgba(201,169,110,0.2);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 15px;
-            margin-bottom: 20px;
-            font-family: 'Inter', sans-serif;
-        }
-        .search-bar:focus { outline: none; border-color: var(--gold); }
-
-        .add-client-form {
-            background: var(--surface);
-            border: 1px solid rgba(201,169,110,0.15);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr auto;
-            gap: 12px;
-            align-items: end;
-        }
-        .add-client-form input, .add-client-form select {
-            padding: 12px 16px;
-            background: var(--dark);
-            border: 1px solid rgba(201,169,110,0.2);
-            border-radius: 8px;
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-        }
-        .add-client-form input:focus, .add-client-form select:focus { outline: none; border-color: var(--gold); }
-        .add-client-form select option { background: var(--dark); }
-        .add-client-form label { font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 6px; }
-        .btn-add {
-            padding: 12px 24px;
-            background: var(--gold);
-            color: var(--dark);
-            border: none;
-            border-radius: 8px;
-            font-family: 'Oswald', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .btn-add:hover { background: var(--gold-light); }
-
-        .empty-state { text-align: center; padding: 60px; color: var(--text-muted); font-size: 15px; }
     </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div class="login-screen" id="loginScreen">
-    <div class="login-box">
-        <h1>UPPERCUTS</h1>
-        <p>Admin Panel — Barber Access Only</p>
-        <input type="password" id="adminPass" placeholder="Enter password" onkeypress="if(event.key==='Enter')login()">
-        <button onclick="login()">LOGIN</button>
-        <p class="login-error" id="loginError">Incorrect password. Try again.</p>
+<!-- ===== DASHBOARD ===== -->
+<div class="panel active" id="panelDash">
+    <div class="hdr">Uppercuts Admin</div>
+    <div class="hdr-sub" id="adminDate"></div>
+
+    <div class="stat-row">
+        <div class="stat-box">
+            <div class="stat-num" id="statBookings">0</div>
+            <div class="stat-lbl">Bookings</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-num" id="statToday">0</div>
+            <div class="stat-lbl">Today</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-num" id="statBlocked">0</div>
+            <div class="stat-lbl">Blocked</div>
+        </div>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div class="sec">Business Insights</div>
+    <div id="insightsPanel"></div>
+
+    <div class="sec">Pending Requests</div>
+    <div id="pendingList"><div class="acard" style="text-align:center;color:var(--text2);font-size:13px;">No pending requests</div></div>
+
+    <div class="sec">Upcoming Bookings</div>
+    <div id="upcomingList"></div>
+
+    <div class="sec">Quick Actions</div>
+    <button class="btn btn-gold" onclick="switchPanel('panelSchedule')">Manage Schedule</button>
+    <button class="btn btn-outline" onclick="switchPanel('panelServices')">Edit Services</button>
+    <button class="btn btn-outline" onclick="switchPanel('panelBlock')">Block List</button>
+</div>
+
+<!-- ===== SCHEDULE ===== -->
+<div class="panel" id="panelSchedule">
+    <div class="hdr">Schedule Manager</div>
+    <div class="hdr-sub">Set your availability daily, weekly, or monthly</div>
+
+    <!-- View Toggle -->
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button class="btn-sm btn-gold" id="viewDay" onclick="setSchedView('day')">Daily</button>
+        <button class="btn-sm btn-outline" id="viewWeek" onclick="setSchedView('week')">Weekly</button>
+        <button class="btn-sm btn-outline" id="viewMonth" onclick="setSchedView('month')">Monthly</button>
+    </div>
+
+    <!-- Navigation -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <button class="btn-sm btn-outline" onclick="schedNav(-1)">&larr;</button>
+        <span id="schedLabel" style="font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:1px"></span>
+        <button class="btn-sm btn-outline" onclick="schedNav(1)">&rarr;</button>
+    </div>
+
+    <div id="schedContent"></div>
+
+    <!-- Set Hours Modal Trigger -->
+    <button class="btn btn-gold" onclick="openSetHours()">Set Hours for Selected Day</button>
+    <button class="btn btn-outline" onclick="switchPanel('panelDash')">Back to Dashboard</button>
+</div>
+
+<!-- ===== BLOCK LIST ===== -->
+<div class="panel" id="panelBlock">
+    <div class="hdr">Block List</div>
+    <div class="hdr-sub">Blocked clients see "no available appointments" — no drama</div>
+
+    <button class="btn btn-red" onclick="openBlockModal()" style="margin-bottom:16px">+ Block a Client</button>
+
+    <div id="blockList"></div>
+
+    <button class="btn btn-outline" onclick="switchPanel('panelDash')" style="margin-top:8px">Back to Dashboard</button>
+</div>
+
+<!-- ===== BOOKINGS ===== -->
+<div class="panel" id="panelBookings">
+    <div class="hdr">All Bookings</div>
+    <div class="hdr-sub">Manage client appointments</div>
+
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button class="btn-sm btn-gold" onclick="filterBookings('upcoming')">Upcoming</button>
+        <button class="btn-sm btn-outline" onclick="filterBookings('past')">Past</button>
+        <button class="btn-sm btn-outline" onclick="filterBookings('all')">All</button>
+    </div>
+
+    <div id="allBookingsList"></div>
+
+    <button class="btn btn-outline" onclick="switchPanel('panelDash')" style="margin-top:8px">Back</button>
+</div>
+
+<!-- ===== SET HOURS MODAL ===== -->
+<div class="modal-overlay" id="hoursModal">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title" id="hoursModalTitle">Set Hours</div>
+
+        <div class="fg">
+            <label>Day Status</label>
+            <select id="dayStatus">
+                <option value="open">Open (Default Hours)</option>
+                <option value="custom">Custom Hours</option>
+                <option value="off">Day Off</option>
+            </select>
+        </div>
+
+        <div id="customTimesSection" style="display:none">
+            <div class="fg">
+                <label>Start Time</label>
+                <input type="time" id="customStart" value="09:00">
+            </div>
+            <div class="fg">
+                <label>End Time</label>
+                <input type="time" id="customEnd" value="18:30">
+            </div>
+            <div class="fg">
+                <label>Interval</label>
+                <select id="customInterval">
+                    <option value="30">Every 30 min</option>
+                    <option value="45">Every 45 min</option>
+                    <option value="60">Every 60 min</option>
+                </select>
+            </div>
+            <div class="sec">Preview Time Slots</div>
+            <div class="time-pills" id="previewSlots"></div>
+        </div>
+
+        <button class="btn btn-gold" onclick="saveHours()">Save</button>
+        <button class="btn btn-outline" onclick="closeModal('hoursModal')">Cancel</button>
     </div>
 </div>
 
-<!-- ADMIN PANEL -->
-<div class="admin-panel" id="adminPanel">
-    <nav class="admin-nav">
-        <h1>UPPERCUTS ADMIN</h1>
-        <button onclick="logout()">Logout</button>
-    </nav>
-    <div class="admin-content">
-
-        <!-- TABS -->
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('bookings', this)">Bookings</button>
-            <button class="tab" onclick="switchTab('clients', this)">Clients</button>
+<!-- ===== BLOCK MODAL ===== -->
+<div class="modal-overlay" id="blockModal">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">Block a Client</div>
+        <div class="fg">
+            <label>Client Name</label>
+            <input type="text" id="blockName" placeholder="Full name">
         </div>
-
-        <!-- BOOKINGS TAB -->
-        <div class="tab-panel active" id="tab-bookings">
-            <div class="stats-grid" id="statsGrid"></div>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th>Service</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Status</th>
-                            <th>Deposit</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="bookingsTable"></tbody>
-                </table>
-                <div class="empty-state" id="bookingsEmpty" style="display:none;">No bookings yet. They'll show up here when clients book.</div>
-            </div>
+        <div class="fg">
+            <label>Phone Number</label>
+            <input type="tel" id="blockPhone" placeholder="(xxx) xxx-xxxx">
         </div>
-
-        <!-- CLIENTS TAB -->
-        <div class="tab-panel" id="tab-clients">
-            <div class="add-client-form">
-                <div>
-                    <label>Client Name</label>
-                    <input type="text" id="newClientName" placeholder="Full name">
-                </div>
-                <div>
-                    <label>Phone Number</label>
-                    <input type="tel" id="newClientPhone" placeholder="(xxx) xxx-xxxx">
-                </div>
-                <div>
-                    <label>Status</label>
-                    <select id="newClientStatus">
-                        <option value="regular">Regular</option>
-                        <option value="monthly">Monthly Client</option>
-                        <option value="noshow">No-Show</option>
-                        <option value="late">Late Client</option>
-                    </select>
-                </div>
-                <button class="btn-add" onclick="addClient()">Add Client</button>
-            </div>
-            <input type="text" class="search-bar" id="clientSearch" placeholder="Search by name or phone..." oninput="renderClients()">
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="clientsTable"></tbody>
-                </table>
-                <div class="empty-state" id="clientsEmpty" style="display:none;">No clients yet. They'll be added automatically when someone books.</div>
-            </div>
+        <div class="fg">
+            <label>Reason (private — only you see this)</label>
+            <input type="text" id="blockReason" placeholder="No-show, rude, etc.">
         </div>
-
+        <button class="btn btn-red" onclick="addBlock()">Block Client</button>
+        <button class="btn btn-outline" onclick="closeModal('blockModal')">Cancel</button>
     </div>
 </div>
+
+<!-- ===== SERVICES SETTINGS ===== -->
+<div class="panel" id="panelServices">
+    <div class="hdr">Service Settings</div>
+    <div class="hdr-sub">Set duration for each service — controls booking slot length</div>
+
+    <div id="servicesList"></div>
+
+    <button class="btn btn-gold" onclick="saveServices()" style="margin-top:16px">Save Changes</button>
+    <button class="btn btn-outline" onclick="switchPanel('panelDash')">Back to Dashboard</button>
+</div>
+
+<!-- ===== MESSAGES PANEL ===== -->
+<div class="panel" id="panelMessages">
+    <div class="hdr">Messages</div>
+    <div class="hdr-sub">Quick prompts & check-ins</div>
+
+    <div class="sec">Check-Ins</div>
+    <div id="checkinsList">
+        <div class="acard" style="text-align:center;color:var(--text2);font-size:13px;">No check-ins yet</div>
+    </div>
+
+    <div class="sec">Quick Prompts</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:12px;">Tap a prompt → enter client's number → sends via SMS</p>
+
+    <div class="acard" style="cursor:pointer" onclick="sendPrompt('ready')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:4px;">✅ Ready</div>
+                <div style="font-size:12px;color:var(--text2)">Sly is ready for you. Head on in!</div>
+            </div>
+            <div style="font-size:20px;">→</div>
+        </div>
+    </div>
+    <div class="acard" style="cursor:pointer" onclick="sendPrompt('running_late')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:4px;">⏰ Running Late</div>
+                <div style="font-size:12px;color:var(--text2)">Running about 10 min behind. Appreciate your patience!</div>
+            </div>
+            <div style="font-size:20px;">→</div>
+        </div>
+    </div>
+    <div class="acard" style="cursor:pointer" onclick="sendPrompt('confirmed')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:4px;">📅 Confirmed</div>
+                <div style="font-size:12px;color:var(--text2)">Your appointment is confirmed. See you at Uppercuts!</div>
+            </div>
+            <div style="font-size:20px;">→</div>
+        </div>
+    </div>
+    <div class="acard" style="cursor:pointer" onclick="sendPrompt('thanks')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:4px;">🙏 Thanks</div>
+                <div style="font-size:12px;color:var(--text2)">Thanks for coming in! Appreciate you.</div>
+            </div>
+            <div style="font-size:20px;">→</div>
+        </div>
+    </div>
+    <div class="acard" style="cursor:pointer" onclick="sendPrompt('review')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:4px;">⭐ Review Request</div>
+                <div style="font-size:12px;color:var(--text2)">If you liked the cut, drop a review! It helps a lot.</div>
+            </div>
+            <div style="font-size:20px;">→</div>
+        </div>
+    </div>
+    <div class="acard" style="cursor:pointer" onclick="sendPrompt('reminder')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:4px;">🔔 Reminder</div>
+                <div style="font-size:12px;color:var(--text2)">Reminder: you have an appointment tomorrow at Uppercuts.</div>
+            </div>
+            <div style="font-size:20px;">→</div>
+        </div>
+    </div>
+
+    <button class="btn btn-outline" onclick="switchPanel('panelDash')" style="margin-top:16px">Back to Dashboard</button>
+</div>
+
+<!-- ===== SEND PROMPT MODAL ===== -->
+<div class="modal-overlay" id="promptModal">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">Send Message</div>
+        <div class="acard" style="margin-bottom:16px">
+            <div style="font-size:12px;color:var(--text2);margin-bottom:4px;">Message Preview</div>
+            <div id="promptPreview" style="font-size:14px;line-height:1.5;"></div>
+        </div>
+        <div class="fg">
+            <label>Client Phone Number</label>
+            <input type="tel" id="promptPhone" placeholder="(xxx) xxx-xxxx">
+        </div>
+        <button class="btn btn-gold" onclick="fireSMS()">Send via Text</button>
+        <button class="btn btn-outline" onclick="closeModal('promptModal')">Cancel</button>
+    </div>
+</div>
+
+<!-- ===== BOTTOM NAV ===== -->
+<nav class="admin-nav">
+    <div class="anav active" data-panel="panelDash">
+        <span class="icon">&#128200;</span>Dash
+    </div>
+    <div class="anav" data-panel="panelSchedule">
+        <span class="icon">&#128197;</span>Schedule
+    </div>
+    <div class="anav" data-panel="panelMessages">
+        <span class="icon">💬</span>Messages
+    </div>
+    <div class="anav" data-panel="panelServices">
+        <span class="icon">&#9986;</span>Services
+    </div>
+    <div class="anav" data-panel="panelBlock">
+        <span class="icon">&#128683;</span>Block
+    </div>
+    <div class="anav" data-panel="panelBookings">
+        <span class="icon">&#128203;</span>Bookings
+    </div>
+</nav>
 
 <script>
-    const PASS = 'AugieDog76';
+// ===== STORAGE =====
+const SCHED_KEY='uppercuts_schedule';
+const BLOCK_KEY='uppercuts_blocklist';
+const BOOKINGS_KEY='uppercuts_bookings';
+const SERVICES_KEY='uppercuts_services';
+function getStore(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}
+function setStore(k,v){localStorage.setItem(k,JSON.stringify(v))}
 
-    function login() {
-        const val = document.getElementById('adminPass').value;
-        if (val === PASS) {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
-            renderAll();
-        } else {
-            document.getElementById('loginError').style.display = 'block';
-        }
-    }
+// ===== MESSAGES & PROMPTS =====
+const CHECKIN_KEY='uppercuts_checkins';
+const PROMPTS={
+    ready:"Hey! Sly is ready for you. Head on in! 💈 - Uppercuts",
+    running_late:"Hey! Running about 10 min behind. Appreciate your patience! 🙏 - Uppercuts",
+    confirmed:"Your appointment is confirmed. See you at Uppercuts! 📅",
+    thanks:"Thanks for coming in! Appreciate you. See you next time 🤝 - Uppercuts",
+    review:"If you liked the cut, I'd really appreciate a review! It helps a lot ⭐ - Uppercuts",
+    reminder:"Reminder: you have an appointment tomorrow at Uppercuts. See you then! 🔔"
+};
+let currentPrompt='';
 
-    function logout() {
-        document.getElementById('loginScreen').style.display = 'flex';
-        document.getElementById('adminPanel').style.display = 'none';
-        document.getElementById('adminPass').value = '';
-    }
+function sendPrompt(type){
+    currentPrompt=PROMPTS[type];
+    document.getElementById('promptPreview').textContent=currentPrompt;
+    document.getElementById('promptPhone').value='';
+    openModal('promptModal');
+}
 
-    function switchTab(tab, el) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        el.classList.add('active');
-        document.getElementById('tab-' + tab).classList.add('active');
-        renderAll();
-    }
-
-    function getClients() { return JSON.parse(localStorage.getItem('uc_clients') || '{}'); }
-    function saveClients(d) { localStorage.setItem('uc_clients', JSON.stringify(d)); }
-    function getClientNames() { return JSON.parse(localStorage.getItem('uc_client_names') || '{}'); }
-    function saveClientNames(d) { localStorage.setItem('uc_client_names', JSON.stringify(d)); }
-    function getBookings() { return JSON.parse(localStorage.getItem('uc_bookings') || '[]'); }
-    function saveBookings(d) { localStorage.setItem('uc_bookings', JSON.stringify(d)); }
-
-    function badgeHTML(status) {
-        const map = { new: 'badge-new', monthly: 'badge-monthly', noshow: 'badge-noshow', late: 'badge-late', regular: 'badge-regular' };
-        const labels = { new: 'New', monthly: 'Monthly', noshow: 'No-Show', late: 'Late', regular: 'Regular' };
-        return `<span class="badge ${map[status] || 'badge-regular'}">${labels[status] || status}</span>`;
-    }
-
-    function renderAll() {
-        renderBookings();
-        renderClients();
-        renderStats();
-    }
-
-    function renderStats() {
-        const bookings = getBookings();
-        const clients = getClients();
-        const noShows = Object.values(clients).filter(s => s === 'noshow').length;
-        const monthly = Object.values(clients).filter(s => s === 'monthly').length;
-        const depositsOwed = bookings.filter(b => !b.depositPaid && b.depositAmount > 0).length;
-        document.getElementById('statsGrid').innerHTML = `
-            <div class="stat-card"><div class="num">${bookings.length}</div><div class="lbl">Total Bookings</div></div>
-            <div class="stat-card"><div class="num">${monthly}</div><div class="lbl">Monthly Clients</div></div>
-            <div class="stat-card"><div class="num" style="color:var(--danger)">${noShows}</div><div class="lbl">No-Shows</div></div>
-            <div class="stat-card"><div class="num" style="color:var(--warning)">${depositsOwed}</div><div class="lbl">Deposits Pending</div></div>
-        `;
-    }
-
-    function renderBookings() {
-        const bookings = getBookings().slice().reverse();
-        const tbody = document.getElementById('bookingsTable');
-        if (bookings.length === 0) {
-            tbody.innerHTML = '';
-            document.getElementById('bookingsEmpty').style.display = 'block';
-            return;
-        }
-        document.getElementById('bookingsEmpty').style.display = 'none';
-        tbody.innerHTML = bookings.map((b, i) => `
-            <tr>
-                <td style="color:#fff;font-weight:500;">${b.name}</td>
-                <td>${b.phone}</td>
-                <td>${b.service}</td>
-                <td>${b.date}</td>
-                <td>${b.time}</td>
-                <td>${badgeHTML(b.status)}</td>
-                <td>${b.depositAmount > 0 ? (b.depositPaid ? '<span style="color:var(--success)">✅ Paid</span>' : `<span style="color:var(--warning)">⏳ $${b.depositAmount} Owed</span>`) : '<span style="color:var(--text-muted)">—</span>'}</td>
-                <td>
-                    <button class="action-btn btn-flag-noshow" onclick="flagBookingClient('${b.phone}', 'noshow')">No-Show</button>
-                    <button class="action-btn btn-flag-late" onclick="flagBookingClient('${b.phone}', 'late')">Late</button>
-                    <button class="action-btn btn-clear" onclick="flagBookingClient('${b.phone}', 'regular')">Clear</button>
-                    ${b.depositAmount > 0 && !b.depositPaid ? `<button class="action-btn btn-clear" onclick="markDepositPaid(${b.id})">Mark Paid</button>` : ''}
-                </td>
-            </tr>
-        `).join('');
-    }
-
-    function flagBookingClient(phone, status) {
-        const clients = getClients();
-        const clean = phone.replace(/\D/g, '');
-        clients[clean] = status;
-        saveClients(clients);
-        renderAll();
-    }
-
-    function markDepositPaid(id) {
-        const bookings = getBookings();
-        const idx = bookings.findIndex(b => b.id === id);
-        if (idx > -1) { bookings[idx].depositPaid = true; saveBookings(bookings); }
-        renderAll();
-    }
-
-    function renderClients() {
-        const clients = getClients();
-        const names = getClientNames();
-        const search = (document.getElementById('clientSearch')?.value || '').toLowerCase();
-        const tbody = document.getElementById('clientsTable');
-        const entries = Object.entries(clients).filter(([phone, status]) => {
-            const name = (names[phone] || '').toLowerCase();
-            return !search || phone.includes(search) || name.includes(search);
+async function fireSMS(){
+    const phone=document.getElementById('promptPhone').value.trim().replace(/\D/g,'');
+    if(!phone){document.getElementById('promptPhone').focus();return;}
+    const btn=document.querySelector('#promptModal .btn.btn-gold');
+    btn.textContent='SENDING...';btn.disabled=true;
+    try{
+        const r=await fetch('https://uppercutsbysly.com/api/send-prompt',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({to:phone,message:currentPrompt})
         });
-        if (entries.length === 0) {
-            tbody.innerHTML = '';
-            document.getElementById('clientsEmpty').style.display = 'block';
-            return;
+        if(r.ok){
+            alert('Message sent! ✅');
+        } else {
+            alert('Failed to send. Try again.');
         }
-        document.getElementById('clientsEmpty').style.display = 'none';
-        tbody.innerHTML = entries.map(([phone, status]) => `
-            <tr>
-                <td style="color:#fff;font-weight:500;">${names[phone] || '—'}</td>
-                <td>${phone}</td>
-                <td>${badgeHTML(status)}</td>
-                <td>
-                    <button class="action-btn btn-flag-noshow" onclick="updateClientStatus('${phone}', 'noshow')">No-Show</button>
-                    <button class="action-btn btn-flag-late" onclick="updateClientStatus('${phone}', 'late')">Late</button>
-                    <button class="action-btn btn-clear" onclick="updateClientStatus('${phone}', 'regular')">Clear</button>
-                    <button class="action-btn btn-clear" onclick="updateClientStatus('${phone}', 'monthly')">Monthly</button>
-                    <button class="action-btn btn-danger" onclick="deleteClient('${phone}')">Delete</button>
-                </td>
-            </tr>
+    }catch(e){
+        alert('Error sending. Check connection.');
+    }
+    btn.textContent='SEND VIA TEXT';btn.disabled=false;
+    closeModal('promptModal');
+}
+
+async function loadCheckins(){
+    const el=document.getElementById('checkinsList');
+    let todayCheckins=[];
+    try{
+        const r=await fetch('https://uppercutsbysly.com/api/checkins');
+        const data=await r.json();
+        todayCheckins=data.checkins||[];
+    }catch(e){
+        const checkins=getStore(CHECKIN_KEY,[]);
+        const today=new Date().toDateString();
+        todayCheckins=checkins.filter(c=>new Date(c.time).toDateString()===today);
+    }
+    if(!todayCheckins.length){
+        el.innerHTML='<div class="acard" style="text-align:center;color:var(--text2);font-size:13px;">No check-ins today</div>';
+        return;
+    }
+    el.innerHTML=todayCheckins.map(c=>`
+        <div class="acard" style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+                <div style="font-weight:600;font-size:14px;">📍 ${c.name}</div>
+                <div style="font-size:12px;color:var(--text2)">${c.phone||'No phone'}</div>
+            </div>
+            <div style="text-align:right">
+                <div style="font-size:13px;color:var(--gold)">${c.timeDisplay}</div>
+                ${c.phone?`<div style="margin-top:4px;cursor:pointer;font-size:11px;color:var(--green)" onclick="sendPromptToPhone('${c.phone}','ready')">Tap: Ready ✅</div>`:''}
+            </div>
+        </div>
+    `).join('');
+}
+
+// ===== LIVE CHECK-IN ALERTS =====
+let lastKnownCheckins=0;
+let alertSound=null;
+
+// Request browser notification permission on load
+if('Notification' in window && Notification.permission==='default'){
+    Notification.requestPermission();
+}
+
+// Create alert sound (simple chime using Web Audio API)
+function playAlertSound(){
+    try{
+        const ctx=new(window.AudioContext||window.webkitAudioContext)();
+        // Play two-tone chime
+        [523.25, 659.25].forEach((freq,i)=>{
+            const osc=ctx.createOscillator();
+            const gain=ctx.createGain();
+            osc.connect(gain);gain.connect(ctx.destination);
+            osc.frequency.value=freq;
+            osc.type='sine';
+            gain.gain.setValueAtTime(0.3, ctx.currentTime+i*0.15);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+i*0.15+0.5);
+            osc.start(ctx.currentTime+i*0.15);
+            osc.stop(ctx.currentTime+i*0.15+0.5);
+        });
+    }catch(e){}
+}
+
+function showCheckinAlert(checkin){
+    // Play sound
+    playAlertSound();
+
+    // Browser notification
+    if('Notification' in window && Notification.permission==='granted'){
+        new Notification('📍 Client Arrived!',{
+            body:`${checkin.name} just checked in${checkin.phone?' ('+checkin.phone+')':''}`,
+            icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💈</text></svg>',
+            tag:'checkin-'+Date.now(),
+            requireInteraction:true
+        });
+    }
+
+    // On-screen popup alert
+    const popup=document.createElement('div');
+    popup.className='checkin-alert-popup';
+    popup.innerHTML=`
+        <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:32px">📍</div>
+            <div>
+                <div style="font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:1px;color:#C9A96E;">CLIENT ARRIVED</div>
+                <div style="font-size:18px;font-weight:600;margin:4px 0">${checkin.name}</div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.6)">${checkin.phone||'No phone'} · ${checkin.timeDisplay||'Just now'}</div>
+            </div>
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.5)">Tap to dismiss</div>
+    `;
+    document.body.appendChild(popup);
+    setTimeout(()=>popup.classList.add('visible'),10);
+
+    // Auto-dismiss after 15 seconds or on tap
+    const dismiss=()=>{popup.classList.remove('visible');setTimeout(()=>popup.remove(),300);};
+    popup.addEventListener('click',dismiss);
+    setTimeout(dismiss,15000);
+}
+
+// Poll check-ins on ALL panels (not just Messages) so alerts always fire
+setInterval(async()=>{
+    try{
+        const r=await fetch('https://uppercutsbysly.com/api/checkins');
+        const data=await r.json();
+        const todayCheckins=data.checkins||[];
+
+        // Detect NEW check-ins
+        if(lastKnownCheckins>0 && todayCheckins.length>lastKnownCheckins){
+            // New check-in detected — alert for each new one
+            const newOnes=todayCheckins.slice(0, todayCheckins.length-lastKnownCheckins);
+            newOnes.forEach(c=>showCheckinAlert(c));
+        }
+        lastKnownCheckins=todayCheckins.length;
+
+        // Update Messages panel if active
+        const msgPanel=document.getElementById('panelMessages');
+        if(msgPanel&&msgPanel.classList.contains('active')) loadCheckins();
+    }catch(e){}
+},10000); // Poll every 10 seconds
+
+async function sendPromptToPhone(phone,type){
+    currentPrompt=PROMPTS[type];
+    const clean=phone.replace(/\D/g,'');
+    try{
+        const r=await fetch('https://uppercutsbysly.com/api/send-prompt',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({to:clean,message:currentPrompt})
+        });
+        if(r.ok) alert('Message sent to client! ✅');
+        else alert('Failed to send.');
+    }catch(e){alert('Error sending.');}
+}
+
+// ===== DEFAULT SERVICES =====
+const DEFAULT_SERVICES=[
+    {id:'kids',name:'Kids Haircut',price:'$25-$30',duration:30,active:true},
+    {id:'adult',name:'Adult Haircut',price:'$45-$60',duration:45,active:true},
+    {id:'beard',name:'Beard / Line Up',price:'$30',duration:20,active:true},
+    {id:'color',name:'Color',price:'From $60',duration:60,active:true},
+    {id:'facial',name:'Facial',price:'$35-$40',duration:30,active:true},
+    {id:'eyebrows',name:'Eyebrows (Razor)',price:'$15',duration:10,active:true}
+];
+
+function getServices(){
+    return getStore(SERVICES_KEY,DEFAULT_SERVICES);
+}
+
+function renderServices(){
+    const svcs=getServices();
+    const c=document.getElementById('servicesList');
+    c.innerHTML=svcs.map((s,i)=>`
+        <div class="acard" style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                <div>
+                    <span style="font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:0.5px">${s.name}</span>
+                    <span style="font-size:13px;color:var(--gold);margin-left:8px">${s.price}</span>
+                </div>
+                <div class="toggle ${s.active?'on':''}" onclick="toggleService(${i})" title="${s.active?'Active':'Disabled'}"></div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center">
+                <div class="fg" style="flex:1;margin:0">
+                    <label>Duration (min)</label>
+                    <select data-svc-idx="${i}" class="svc-dur-select">
+                        ${[10,15,20,25,30,35,40,45,50,55,60,75,90,120].map(d=>
+                            `<option value="${d}" ${d===s.duration?'selected':''}>${d} min</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                <div class="fg" style="flex:1;margin:0">
+                    <label>Price</label>
+                    <input type="text" data-svc-price-idx="${i}" value="${s.price}" style="font-size:14px;padding:10px 12px">
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function toggleService(idx){
+    const svcs=getServices();
+    svcs[idx].active=!svcs[idx].active;
+    setStore(SERVICES_KEY,svcs);
+    renderServices();
+}
+
+function saveServices(){
+    const svcs=getServices();
+    document.querySelectorAll('.svc-dur-select').forEach(sel=>{
+        const idx=parseInt(sel.dataset.svcIdx);
+        svcs[idx].duration=parseInt(sel.value);
+    });
+    document.querySelectorAll('[data-svc-price-idx]').forEach(inp=>{
+        const idx=parseInt(inp.dataset.svcPriceIdx);
+        svcs[idx].price=inp.value;
+    });
+    setStore(SERVICES_KEY,svcs);
+    renderServices();
+    alert('Services saved!');
+}
+
+// ===== NAV =====
+function switchPanel(id){
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.anav').forEach(n=>n.classList.toggle('active',n.dataset.panel===id));
+    window.scrollTo(0,0);
+    if(id==='panelDash')refreshDash();
+    if(id==='panelBlock')renderBlockList();
+    if(id==='panelBookings')filterBookings('upcoming');
+    if(id==='panelServices')renderServices();
+    if(id==='panelMessages')loadCheckins();
+}
+document.querySelectorAll('.anav').forEach(n=>{
+    n.addEventListener('click',()=>switchPanel(n.dataset.panel));
+});
+
+// ===== DATE HELPERS =====
+const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function fmtDate(d){return `${DAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}`}
+function isoDate(d){return d.toISOString().slice(0,10)}
+function parseISO(s){const[y,m,d]=s.split('-');return new Date(y,m-1,d)}
+
+// ===== SCHEDULE =====
+let schedView='day';
+let schedOffset=0;
+let selectedSchedDate=null;
+
+function setSchedView(v){
+    schedView=v;schedOffset=0;
+    document.querySelectorAll('#panelSchedule .btn-sm').forEach(b=>b.className='btn-sm btn-outline');
+    document.getElementById('view'+v.charAt(0).toUpperCase()+v.slice(1)).className='btn-sm btn-gold';
+    renderSchedule();
+}
+
+function schedNav(dir){schedOffset+=dir;renderSchedule()}
+
+function renderSchedule(){
+    const c=document.getElementById('schedContent');
+    const today=new Date();
+    const schedule=getStore(SCHED_KEY,{});
+    c.innerHTML='';
+
+    if(schedView==='day'){
+        const d=new Date(today);d.setDate(today.getDate()+schedOffset);
+        const key=isoDate(d);
+        document.getElementById('schedLabel').textContent=fmtDate(d);
+        selectedSchedDate=key;
+        const ds=schedule[key];
+        const status=ds?ds.off?'off':ds.times?'custom':'open':'open';
+        c.innerHTML=`
+            <div class="acard">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                    <span style="font-family:'Oswald',sans-serif;font-size:16px">${fmtDate(d)}</span>
+                    <span style="font-size:12px;font-weight:600;color:${status==='off'?'var(--red)':status==='custom'?'var(--yellow)':'var(--green)'}">${status.toUpperCase()}</span>
+                </div>
+                ${status==='off'?'<p style="color:var(--text2);font-size:13px">Day off — no bookings accepted</p>':
+                  status==='custom'?`<div class="time-pills">${ds.times.map(t=>`<span class="tpill selected">${t}</span>`).join('')}</div>`:
+                  '<p style="color:var(--text2);font-size:13px">Default hours: 9:00 AM - 6:30 PM (30 min slots)</p>'}
+            </div>
+        `;
+    } else if(schedView==='week'){
+        const weekStart=new Date(today);weekStart.setDate(today.getDate()+schedOffset*7);
+        const sun=new Date(weekStart);sun.setDate(weekStart.getDate()-weekStart.getDay());
+        document.getElementById('schedLabel').textContent=`Week of ${MONTHS[sun.getMonth()]} ${sun.getDate()}`;
+        for(let i=0;i<7;i++){
+            const d=new Date(sun);d.setDate(sun.getDate()+i);
+            const key=isoDate(d);
+            const ds=schedule[key];
+            const status=ds?ds.off?'off':ds.times?'custom':'open':'open';
+            const el=document.createElement('div');
+            el.className='sched-date';
+            el.innerHTML=`
+                <span class="day">${DAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}</span>
+                <span class="status ${status}">${status==='off'?'OFF':status==='custom'?'CUSTOM':'OPEN'}</span>
+            `;
+            el.style.cursor='pointer';
+            el.addEventListener('click',()=>{
+                selectedSchedDate=key;
+                schedView='day';schedOffset=Math.round((d-today)/(86400000));
+                setSchedView('day');
+            });
+            c.appendChild(el);
+        }
+    } else {
+        const month=new Date(today.getFullYear(),today.getMonth()+schedOffset,1);
+        document.getElementById('schedLabel').textContent=`${MONTHS[month.getMonth()]} ${month.getFullYear()}`;
+        const daysInMonth=new Date(month.getFullYear(),month.getMonth()+1,0).getDate();
+        for(let i=1;i<=daysInMonth;i++){
+            const d=new Date(month.getFullYear(),month.getMonth(),i);
+            const key=isoDate(d);
+            const ds=schedule[key];
+            const status=ds?ds.off?'off':ds.times?'custom':'open':'open';
+            const el=document.createElement('div');
+            el.className='sched-date';
+            el.innerHTML=`
+                <span class="day">${DAYS[d.getDay()]} ${i}</span>
+                <span class="status ${status}">${status==='off'?'OFF':status==='custom'?'CUSTOM':'OPEN'}</span>
+            `;
+            el.style.cursor='pointer';
+            el.addEventListener('click',()=>{
+                selectedSchedDate=key;
+                schedView='day';schedOffset=Math.round((d-today)/(86400000));
+                setSchedView('day');
+            });
+            c.appendChild(el);
+        }
+    }
+}
+
+function openSetHours(){
+    if(!selectedSchedDate){
+        // Default to today
+        selectedSchedDate=isoDate(new Date());
+    }
+    const d=parseISO(selectedSchedDate);
+    document.getElementById('hoursModalTitle').textContent=`Set Hours — ${fmtDate(d)}`;
+    document.getElementById('hoursModal').classList.add('open');
+
+    const schedule=getStore(SCHED_KEY,{});
+    const ds=schedule[selectedSchedDate];
+    if(ds&&ds.off){
+        document.getElementById('dayStatus').value='off';
+        document.getElementById('customTimesSection').style.display='none';
+    } else if(ds&&ds.times){
+        document.getElementById('dayStatus').value='custom';
+        document.getElementById('customTimesSection').style.display='block';
+    } else {
+        document.getElementById('dayStatus').value='open';
+        document.getElementById('customTimesSection').style.display='none';
+    }
+}
+
+document.getElementById('dayStatus').addEventListener('change',function(){
+    document.getElementById('customTimesSection').style.display=this.value==='custom'?'block':'none';
+    if(this.value==='custom')previewTimeSlots();
+});
+
+['customStart','customEnd','customInterval'].forEach(id=>{
+    document.getElementById(id).addEventListener('change',previewTimeSlots);
+});
+
+function previewTimeSlots(){
+    const start=document.getElementById('customStart').value;
+    const end=document.getElementById('customEnd').value;
+    const interval=parseInt(document.getElementById('customInterval').value);
+    const slots=generateSlots(start,end,interval);
+    document.getElementById('previewSlots').innerHTML=slots.map(s=>`<span class="tpill selected">${s}</span>`).join('');
+}
+
+function generateSlots(start,end,interval){
+    const slots=[];
+    let[sh,sm]=start.split(':').map(Number);
+    const[eh,em]=end.split(':').map(Number);
+    while(sh<eh||(sh===eh&&sm<=em)){
+        const h=sh>12?sh-12:sh===0?12:sh;
+        const ampm=sh>=12?'PM':'AM';
+        slots.push(`${h}:${sm.toString().padStart(2,'0')} ${ampm}`);
+        sm+=interval;
+        if(sm>=60){sh++;sm-=60}
+    }
+    return slots;
+}
+
+function saveHours(){
+    const schedule=getStore(SCHED_KEY,{});
+    const status=document.getElementById('dayStatus').value;
+
+    if(status==='off'){
+        schedule[selectedSchedDate]={off:true};
+    } else if(status==='custom'){
+        const start=document.getElementById('customStart').value;
+        const end=document.getElementById('customEnd').value;
+        const interval=parseInt(document.getElementById('customInterval').value);
+        schedule[selectedSchedDate]={times:generateSlots(start,end,interval)};
+    } else {
+        delete schedule[selectedSchedDate]; // revert to default
+    }
+
+    setStore(SCHED_KEY,schedule);
+    closeModal('hoursModal');
+    renderSchedule();
+}
+
+// ===== BLOCK LIST =====
+function openBlockModal(){document.getElementById('blockModal').classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+    m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')});
+});
+
+function addBlock(){
+    const name=document.getElementById('blockName').value.trim();
+    const phone=document.getElementById('blockPhone').value.trim();
+    const reason=document.getElementById('blockReason').value.trim();
+    if(!name&&!phone){alert('Enter a name or phone number');return}
+    const blocked=getStore(BLOCK_KEY,[]);
+    blocked.push({name:name||'Unknown',phone,reason,date:new Date().toISOString()});
+    setStore(BLOCK_KEY,blocked);
+    document.getElementById('blockName').value='';
+    document.getElementById('blockPhone').value='';
+    document.getElementById('blockReason').value='';
+    closeModal('blockModal');
+    renderBlockList();
+    refreshDash();
+}
+
+function removeBlock(idx){
+    const blocked=getStore(BLOCK_KEY,[]);
+    blocked.splice(idx,1);
+    setStore(BLOCK_KEY,blocked);
+    renderBlockList();
+    refreshDash();
+}
+
+function renderBlockList(){
+    const blocked=getStore(BLOCK_KEY,[]);
+    const c=document.getElementById('blockList');
+    if(!blocked.length){
+        c.innerHTML='<div class="acard" style="text-align:center;color:var(--text2)">No blocked clients. That\'s a good thing.</div>';
+        return;
+    }
+    c.innerHTML=blocked.map((b,i)=>`
+        <div class="block-item">
+            <div class="block-info">
+                <div class="bname">${b.name}</div>
+                <div class="bdetail">${b.phone||'No phone'} &middot; ${b.reason||'No reason'}</div>
+            </div>
+            <button class="unblock-btn" onclick="removeBlock(${i})">Unblock</button>
+        </div>
+    `).join('');
+}
+
+// ===== BOOKINGS =====
+function filterBookings(type){
+    const bookings=getStore(BOOKINGS_KEY,[]);
+    const today=isoDate(new Date());
+    let filtered=bookings;
+    if(type==='upcoming')filtered=bookings.filter(b=>b.date>=today);
+    if(type==='past')filtered=bookings.filter(b=>b.date<today);
+    filtered.sort((a,b)=>a.date>b.date?1:-1);
+    const c=document.getElementById('allBookingsList');
+    if(!filtered.length){
+        c.innerHTML='<div class="acard" style="text-align:center;color:var(--text2)">No bookings yet. Share your booking link to get started!</div>';
+        return;
+    }
+    c.innerHTML=filtered.map((b,i)=>`
+        <div class="booking-card">
+            <div class="bc-top">
+                <span class="bc-name">${b.name}</span>
+                <span class="bc-svc">${b.service}</span>
+            </div>
+            <div class="bc-detail">
+                ${b.dateLabel||b.date} at ${b.time}<br>
+                ${b.phone} ${b.price?'&middot; '+b.price:''}
+                ${b.notes?'<br><em>'+b.notes+'</em>':''}
+            </div>
+            <div class="bc-actions">
+                <button class="btn-sm btn-outline" onclick="blockFromBooking('${b.name}','${b.phone}')">Block</button>
+                <button class="btn-sm btn-outline" style="color:var(--red);border-color:rgba(231,76,60,0.3)" onclick="cancelBooking(${i})">Cancel</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function blockFromBooking(name,phone){
+    document.getElementById('blockName').value=name;
+    document.getElementById('blockPhone').value=phone;
+    openBlockModal();
+}
+
+function cancelBooking(idx){
+    if(!confirm('Cancel this booking?'))return;
+    const bookings=getStore(BOOKINGS_KEY,[]);
+    bookings.splice(idx,1);
+    setStore(BOOKINGS_KEY,bookings);
+    filterBookings('upcoming');
+    refreshDash();
+}
+
+// ===== INSIGHTS =====
+function renderInsights(){
+    const bookings=getStore(BOOKINGS_KEY,[]);
+    const today=new Date();
+    const todayStr=isoDate(today);
+
+    // This week (Mon-Sun)
+    const dayOfWeek=today.getDay()||7;
+    const weekStart=new Date(today);weekStart.setDate(today.getDate()-(dayOfWeek-1));
+    const weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+6);
+    const thisWeek=bookings.filter(b=>b.date>=isoDate(weekStart)&&b.date<=isoDate(weekEnd));
+
+    // Last week
+    const lastWeekStart=new Date(weekStart);lastWeekStart.setDate(weekStart.getDate()-7);
+    const lastWeekEnd=new Date(weekStart);lastWeekEnd.setDate(weekStart.getDate()-1);
+    const lastWeek=bookings.filter(b=>b.date>=isoDate(lastWeekStart)&&b.date<=isoDate(lastWeekEnd));
+
+    // This month
+    const monthStart=isoDate(new Date(today.getFullYear(),today.getMonth(),1));
+    const monthEnd=isoDate(new Date(today.getFullYear(),today.getMonth()+1,0));
+    const thisMonth=bookings.filter(b=>b.date>=monthStart&&b.date<=monthEnd);
+
+    // Service breakdown
+    const svcCount={};
+    bookings.forEach(b=>{svcCount[b.service]=(svcCount[b.service]||0)+1});
+    const topService=Object.entries(svcCount).sort((a,b)=>b[1]-a[1])[0];
+
+    // Repeat clients (same phone booked 2+ times)
+    const phoneCounts={};
+    bookings.forEach(b=>{if(b.phone)phoneCounts[b.phone]=(phoneCounts[b.phone]||0)+1});
+    const repeatClients=Object.values(phoneCounts).filter(c=>c>=2).length;
+    const totalClients=Object.keys(phoneCounts).length;
+    const repeatRate=totalClients?Math.round((repeatClients/totalClients)*100):0;
+
+    // Busiest day
+    const dayCounts={Mon:0,Tue:0,Wed:0,Thu:0,Fri:0,Sat:0,Sun:0};
+    bookings.forEach(b=>{
+        const d=parseISO(b.date);
+        const dayName=DAYS[d.getDay()];
+        if(dayCounts[dayName]!==undefined)dayCounts[dayName]++;
+    });
+    const busiestDay=Object.entries(dayCounts).sort((a,b)=>b[1]-a[1])[0];
+
+    // Peak hour
+    const hourCounts={};
+    bookings.forEach(b=>{
+        if(b.time){
+            const hr=b.time.split(':')[0]+b.time.slice(-2);
+            hourCounts[b.time]=(hourCounts[b.time]||0)+1;
+        }
+    });
+    const peakTime=Object.entries(hourCounts).sort((a,b)=>b[1]-a[1])[0];
+
+    // Week over week trend
+    const weekTrend=thisWeek.length-lastWeek.length;
+    const trendIcon=weekTrend>0?'&#9650;':weekTrend<0?'&#9660;':'&#9644;';
+    const trendColor=weekTrend>0?'var(--green)':weekTrend<0?'var(--red)':'var(--text2)';
+
+    const ip=document.getElementById('insightsPanel');
+    ip.innerHTML=`
+        <div class="acard">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+                <span style="font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:1px;color:var(--gold)">THIS WEEK</span>
+                <span style="font-size:13px;color:${trendColor};font-weight:600">${trendIcon} ${Math.abs(weekTrend)} vs last week</span>
+            </div>
+            <div style="display:flex;gap:10px">
+                <div class="stat-box" style="margin:0">
+                    <div class="stat-num">${thisWeek.length}</div>
+                    <div class="stat-lbl">Bookings</div>
+                </div>
+                <div class="stat-box" style="margin:0">
+                    <div class="stat-num">${thisMonth.length}</div>
+                    <div class="stat-lbl">This Month</div>
+                </div>
+                <div class="stat-box" style="margin:0">
+                    <div class="stat-num">${bookings.length}</div>
+                    <div class="stat-lbl">All Time</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="acard">
+            <div style="font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:1px;color:var(--gold);margin-bottom:12px">CLIENT INSIGHTS</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div style="background:var(--surface2);border-radius:8px;padding:14px;text-align:center">
+                    <div style="font-family:'Playfair Display',serif;font-size:24px;color:var(--gold)">${totalClients}</div>
+                    <div style="font-size:11px;color:var(--text2);margin-top:4px">Unique Clients</div>
+                </div>
+                <div style="background:var(--surface2);border-radius:8px;padding:14px;text-align:center">
+                    <div style="font-family:'Playfair Display',serif;font-size:24px;color:${repeatRate>=50?'var(--green)':'var(--yellow)'}">${repeatRate}%</div>
+                    <div style="font-size:11px;color:var(--text2);margin-top:4px">Repeat Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="acard">
+            <div style="font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:1px;color:var(--gold);margin-bottom:12px">PATTERNS</div>
+            <div style="font-size:14px;line-height:2">
+                ${topService?`<div>&#9733; <strong>Top service:</strong> <span style="color:var(--gold)">${topService[0]}</span> (${topService[1]} bookings)</div>`:''}
+                ${busiestDay?`<div>&#128197; <strong>Busiest day:</strong> <span style="color:var(--gold)">${busiestDay[0]}</span> (${busiestDay[1]} bookings)</div>`:''}
+                ${peakTime?`<div>&#9200; <strong>Peak time:</strong> <span style="color:var(--gold)">${peakTime[0]}</span> (${peakTime[1]} bookings)</div>`:''}
+                <div>&#128257; <strong>Repeat clients:</strong> <span style="color:var(--gold)">${repeatClients}</span> clients booked 2+ times</div>
+            </div>
+        </div>
+
+        ${bookings.length<10?`
+        <div class="acard" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.05)">
+            <div style="font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:1px;color:var(--yellow);margin-bottom:8px">&#128161; TIPS TO GROW</div>
+            <div style="font-size:13px;color:var(--text2);line-height:1.7">
+                <div style="margin-bottom:6px">&#8226; Share your booking link with all 107 Plannie clients</div>
+                <div style="margin-bottom:6px">&#8226; Ask every client for a Google review this week</div>
+                <div style="margin-bottom:6px">&#8226; Post your first 3 social media posts from the content calendar</div>
+                <div style="margin-bottom:6px">&#8226; Upsell eyebrows ($15) with every cut — "want me to clean up the brows too?"</div>
+                <div>&#8226; Announce facials on Instagram — "$35 when you add it to any service"</div>
+            </div>
+        </div>
+        `:`
+        <div class="acard" style="border-color:rgba(76,175,80,0.3);background:rgba(76,175,80,0.05)">
+            <div style="font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:1px;color:var(--green);margin-bottom:8px">&#128200; GROWTH MOVES</div>
+            <div style="font-size:13px;color:var(--text2);line-height:1.7">
+                ${weekTrend<0?'<div style="margin-bottom:6px">&#8226; Bookings are down — send reactivation texts to clients who haven\'t booked in 3+ weeks</div>':''}
+                ${repeatRate<50?'<div style="margin-bottom:6px">&#8226; Repeat rate under 50% — focus on follow-ups and rebooking before they leave</div>':''}
+                <div style="margin-bottom:6px">&#8226; Your top service is ${topService?topService[0]:'haircuts'} — consider a combo deal to increase ticket size</div>
+                <div>&#8226; ${busiestDay?busiestDay[0]+' is your busiest day':'Track more bookings'} — consider premium pricing for peak slots</div>
+            </div>
+        </div>
+        `}
+    `;
+}
+
+// ===== DASHBOARD REFRESH =====
+function approveBooking(idx){
+    const bookings=getStore(BOOKINGS_KEY,[]);
+    if(bookings[idx]){
+        bookings[idx].status='confirmed';
+        setStore(BOOKINGS_KEY,bookings);
+        // Open Google Voice to notify client
+        const phone=bookings[idx].phone?.replace(/\D/g,'');
+        const msg=`Your appointment at Uppercuts is confirmed! ${bookings[idx].dateLabel||bookings[idx].date} at ${bookings[idx].time}. See you at the suite! 💈`;
+        if(phone){
+            navigator.clipboard.writeText(msg);
+            window.open('https://voice.google.com/u/0/messages?compose=+1'+phone);
+        }
+        refreshDash();
+    }
+}
+
+function denyBooking(idx){
+    const bookings=getStore(BOOKINGS_KEY,[]);
+    if(bookings[idx]){
+        bookings[idx].status='denied';
+        setStore(BOOKINGS_KEY,bookings);
+        refreshDash();
+    }
+}
+
+function refreshDash(){
+    const bookings=getStore(BOOKINGS_KEY,[]);
+    const blocked=getStore(BLOCK_KEY,[]);
+    const today=isoDate(new Date());
+    const todayBookings=bookings.filter(b=>b.date>=today&&b.status!=='denied');
+
+    document.getElementById('statBookings').textContent=bookings.filter(b=>b.status==='confirmed').length;
+    document.getElementById('statToday').textContent=bookings.filter(b=>b.date===today&&b.status!=='denied').length;
+    document.getElementById('statBlocked').textContent=blocked.length;
+    document.getElementById('adminDate').textContent=fmtDate(new Date());
+
+    // Render insights
+    renderInsights();
+
+    // Pending requests
+    const pending=bookings.map((b,i)=>({...b,idx:i})).filter(b=>!b.status||b.status==='pending');
+    const pl=document.getElementById('pendingList');
+    if(!pending.length){
+        pl.innerHTML='<div class="acard" style="text-align:center;color:var(--text2);font-size:13px;">No pending requests</div>';
+    } else {
+        pl.innerHTML=pending.map(b=>`
+            <div class="acard">
+                <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px">
+                    <div>
+                        <div style="font-weight:600;font-size:15px">${b.name}</div>
+                        <div style="font-size:12px;color:var(--text2)">${b.service} &middot; ${b.dateLabel||b.date} at ${b.time}</div>
+                        <div style="font-size:12px;color:var(--text2)">${b.phone||'No phone'}</div>
+                        ${b.notes?`<div style="font-size:11px;color:var(--gold);margin-top:4px">"${b.notes}"</div>`:''}
+                    </div>
+                    <div style="font-size:11px;background:var(--yellow);color:#000;padding:2px 8px;border-radius:4px;font-weight:600">PENDING</div>
+                </div>
+                <div style="display:flex;gap:8px">
+                    <button class="btn btn-gold" style="flex:1;margin:0;padding:10px;font-size:12px" onclick="approveBooking(${b.idx})">✅ Approve</button>
+                    <button class="btn btn-red" style="flex:1;margin:0;padding:10px;font-size:12px" onclick="denyBooking(${b.idx})">❌ Deny</button>
+                </div>
+            </div>
         `).join('');
     }
 
-    function updateClientStatus(phone, status) {
-        const clients = getClients();
-        clients[phone] = status;
-        saveClients(clients);
-        renderAll();
+    // Upcoming confirmed bookings
+    const upcoming=bookings.filter(b=>b.date>=today&&b.status==='confirmed').sort((a,b)=>a.date>b.date?1:-1).slice(0,5);
+    const c=document.getElementById('upcomingList');
+    if(!upcoming.length){
+        c.innerHTML='<div class="acard" style="text-align:center;color:var(--text2)">No confirmed bookings yet</div>';
+    } else {
+        c.innerHTML=upcoming.map(b=>`
+            <div class="booking-card">
+                <div class="bc-top">
+                    <span class="bc-name">${b.name}</span>
+                    <span class="bc-svc">${b.service}</span>
+                </div>
+                <div class="bc-detail">${b.dateLabel||b.date} at ${b.time} &middot; ${b.phone}</div>
+            </div>
+        `).join('');
     }
+}
 
-    function deleteClient(phone) {
-        if (!confirm('Remove this client?')) return;
-        const clients = getClients();
-        const names = getClientNames();
-        delete clients[phone];
-        delete names[phone];
-        saveClients(clients);
-        saveClientNames(names);
-        renderAll();
-    }
+// ===== INIT =====
+document.getElementById('adminDate').textContent=fmtDate(new Date());
+selectedSchedDate=isoDate(new Date());
+renderSchedule();
+refreshDash();
 
-    function addClient() {
-        const name = document.getElementById('newClientName').value.trim();
-        const phone = document.getElementById('newClientPhone').value.trim().replace(/\D/g, '');
-        const status = document.getElementById('newClientStatus').value;
-        if (!phone) { alert('Phone number required.'); return; }
-        const clients = getClients();
-        const names = getClientNames();
-        clients[phone] = status;
-        if (name) names[phone] = name;
-        saveClients(clients);
-        saveClientNames(names);
-        document.getElementById('newClientName').value = '';
-        document.getElementById('newClientPhone').value = '';
-        renderAll();
-    }
+// Initialize check-in count so we don't alert for existing check-ins on page load
+(async()=>{
+    try{
+        const r=await fetch('https://uppercutsbysly.com/api/checkins');
+        const data=await r.json();
+        lastKnownCheckins=(data.checkins||[]).length;
+    }catch(e){lastKnownCheckins=0;}
+})();
 </script>
 </body>
 </html>
