@@ -957,6 +957,7 @@ function renderClients(list){
                 <a href="tel:+1${c.phone}" class="btn-sm btn-outline" style="text-decoration:none;font-size:11px">📞</a>
                 <div class="btn-sm btn-gold" style="font-size:11px;cursor:pointer" onclick="sendPromptToPhone('${c.phone}','ready')">✉️</div>
                 <div class="btn-sm" style="font-size:11px;cursor:pointer;background:var(--red);color:#fff" onclick="blockFromClients('${c.name}','${c.phone}')">🚫</div>
+                <div class="btn-sm" style="font-size:11px;cursor:pointer;background:#333;color:#fff" onclick="deleteClient(${list.indexOf(c)})">✕</div>
             </div>
         </div>`;
     }).join('');
@@ -967,6 +968,14 @@ function filterClients(){
     if(!q){renderClients(ALL_CLIENTS);return;}
     const filtered=ALL_CLIENTS.filter(c=>c.name.toLowerCase().includes(q)||c.phone.includes(q));
     renderClients(filtered);
+}
+
+function deleteClient(idx){
+    const c=ALL_CLIENTS[idx];
+    if(!c) return;
+    if(!confirm(`Delete ${c.name} from your client list?`)) return;
+    ALL_CLIENTS.splice(idx,1);
+    filterClients();
 }
 
 function blockFromClients(name,phone){
