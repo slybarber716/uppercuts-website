@@ -1201,6 +1201,14 @@
                     <br><a href="#booking" class="service-book-btn">Book Now</a>
                 </div>
                 <div class="service-card fade-in">
+                    <div class="service-icon">🧴</div>
+                    <h3 class="service-name">Signature + Shampoo</h3>
+                    <p class="service-desc">The full Signature Cut experience plus a premium shampoo. Walk out fresh from scalp to style.</p>
+                    <div class="service-price">$75</div>
+                    <div class="service-duration">75 Min</div>
+                    <br><a href="#booking" class="service-book-btn">Book Now</a>
+                </div>
+                <div class="service-card fade-in">
                     <div class="service-icon">&#127912;</div>
                     <h3 class="service-name">Beard / Line Up</h3>
                     <p class="service-desc">Sharp lines, clean edges, sculpted beards. The finishing touch that sets you apart.</p>
@@ -1278,6 +1286,10 @@
                     <div class="service-option" data-service="Signature Cut" data-price="60">
                         <div class="svc-info"><h4>Signature Cut</h4><span>60 min &middot; beard w/ hot oil or dye enhancements</span></div>
                         <span class="svc-price">$60</span>
+                    </div>
+                    <div class="service-option" data-service="Signature + Shampoo" data-price="75">
+                        <div class="svc-info"><h4>Signature + Shampoo</h4><span>75 min · full signature cut + premium shampoo</span></div>
+                        <span class="svc-price">$75</span>
                     </div>
                     <div class="service-option" data-service="Beard / Line Up" data-price="30">
                         <div class="svc-info"><h4>Beard / Line Up</h4><span>20 min</span></div>
@@ -1466,7 +1478,8 @@
             <p class="section-label" style="font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:5px;text-transform:uppercase;color:#C9A96E;margin-bottom:16px;">Arriving?</p>
             <h2 class="section-heading" style="font-family:'Playfair Display',serif;font-size:40px;margin-bottom:12px;">Check In</h2>
             <div class="gold-line" style="width:60px;height:2px;background:#C9A96E;margin:0 auto 24px;"></div>
-            <p style="color:rgba(255,255,255,0.6);font-size:16px;max-width:480px;margin:0 auto 32px;line-height:1.6;">When you arrive at the suite, scan this QR code to let Sly know you're here.</p>
+            <p style="color:rgba(255,255,255,0.6);font-size:16px;max-width:480px;margin:0 auto 20px;line-height:1.6;">When you arrive, scan this QR code to let Sly know you're here.</p>
+            <p style="color:rgba(201,169,110,0.7);font-size:14px;max-width:480px;margin:0 auto 32px;line-height:1.6;font-style:italic;">Out of respect for the client currently being served, please have a seat in the lobby until Sly comes to get you. Your time in the chair is just as private.</p>
             <div style="background:#16213E;border-radius:20px;padding:32px;display:inline-block;border:1px solid rgba(201,169,110,0.15);">
                 <img src="images/checkin-qr.png" alt="Check-in QR Code" style="width:200px;height:200px;border-radius:12px;">
             </div>
@@ -1575,12 +1588,13 @@
 
     <!-- CHATBOX -->
     <div class="chatbox" id="chatbox">
-        <div class="chatbox-header">
+        <div class="chatbox-header" style="position:relative;">
             <div class="chatbox-avatar">U</div>
             <div class="chatbox-header-info">
                 <h5>Uppercuts Assistant</h5>
                 <span>&#9679; Online now</span>
             </div>
+            <button onclick="document.getElementById('chatbox').classList.remove('open')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:4px 8px;opacity:0.7;">✕</button>
         </div>
         <div class="chatbox-messages" id="chatMessages">
             <div class="chat-msg bot">
@@ -1845,23 +1859,79 @@
         chatToggle.addEventListener('click', () => chatbox.classList.toggle('open'));
 
         const responses = {
-            'prices': `Here are our prices:\n\n• Kids Haircut: $25 - $30\n• Adult Haircut: $45 - $60\n• Beard / Line Up: $30\n• Color: Starting at $60\n• Facial: $35 w/ service / $40 standalone\n• Eyebrows (razor): $15\n\nWant to book?`,
+            'greeting': `Hey! Welcome to Uppercuts 💈 I'm Sly's virtual assistant. I can help with:\n\n• Pricing info\n• Booking an appointment\n• Location & hours\n• Services we offer\n\nWhat can I help you with?`,
+            'prices': `Here are our prices:\n\n• Kids Haircut: $25 - $30\n• Adult Haircut: $45 - $60\n• Signature + Shampoo: $75\n• Beard / Line Up: $30\n• Color: Starting at $60\n• Facial: $35 w/ service / $40 standalone\n• Eyebrows (razor): $15\n\nWant to book?`,
             'book': `You can book right now! Just scroll up and click "Book Appointment" or I can take you there. We're available Mon-Sat by appointment.`,
             'location': `We're located in Decatur, GA 30033 — it's a private barber suite so you get the full VIP experience. No waiting room, just you and the chair.`,
-            'services': `We offer:\n\n• Kids & Adult Haircuts\n• Beard work & Line Ups\n• Color services\n• Eyebrow shaping (razor)\n• Facials (coming soon!)\n\nEverything is done in a clean, private suite. Which service are you interested in?`,
+            'services': `We offer:\n\n• Kids & Adult Haircuts\n• Beard work & Line Ups\n• Color services\n• Eyebrow shaping (razor)\n• Facials\n\nEverything is done in a clean, private suite. Which service are you interested in?`,
             'hours': `We're open by appointment, Mon-Sat. You can book online 24/7 right here on the site.`,
-            'payment': `We accept Square payments — that includes credit/debit cards, Apple Pay, and Google Pay.`
+            'payment': `We accept Square payments — that includes credit/debit cards, Apple Pay, and Google Pay.`,
+            'haircut': `We do both kids ($25-$30) and adult ($45-$60) haircuts. Every cut includes a consultation so Sly knows exactly what you want. Ready to book?`,
+            'beard': `Beard work and line ups are $30. Clean, precise, and done in a private suite. Want to book?`,
+            'color': `Color services start at $60 depending on what you're looking for. Sly can walk you through options during your appointment. Want to book a color consultation?`,
+            'facial': `Facials are $35 when added to a service, or $40 standalone. Great for skin health and relaxation. Want to add one to your next visit?`,
+            'eyebrows': `Eyebrow shaping with a razor is $15. Quick, clean, and precise. Want to book?`,
+            'kids': `Kids haircuts are $25-$30. Sly is great with kids — patient and precise. Want to book one?`,
+            'wait': `No wait times here! Uppercuts is a private suite — it's just you and the barber. Your appointment time is YOUR time.`,
+            'parking': `There's parking available right at the suite location in Decatur. Easy in, easy out.`,
+            'contact': `Best way to reach Sly is through the booking system right here on the site, or text (347) 709-8004. You can also find us on Instagram @slybarber.`,
+            'instagram': `Follow us on Instagram @slybarber for the latest cuts, styles, and updates!`,
+            'thanks': `Appreciate you! If you need anything else, I'm right here. 💈`,
+            'cancel': `Need to cancel or reschedule? Text us at (347) 709-8004 and we'll get you sorted. We just ask for at least 2 hours notice.`,
+            'walkin': `We're appointment-only to give every client the full VIP experience. But booking is quick — you can do it right here on the site!`,
+            'first': `Welcome! For your first visit, just book online and show up 5 minutes early. Sly will consult with you on exactly what you want. It's a private suite so you'll have the whole space to yourself.`,
+            'review': `We'd love a review! It really helps the business grow. You can leave one on Google or just tell a friend about us. 🙏`
         };
 
         function getResponse(msg) {
             const m = msg.toLowerCase();
-            if (m.includes('price') || m.includes('cost') || m.includes('how much') || m.includes('rate')) return responses.prices;
-            if (m.includes('book') || m.includes('appointment') || m.includes('schedule')) return responses.book;
-            if (m.includes('where') || m.includes('location') || m.includes('address') || m.includes('find')) return responses.location;
-            if (m.includes('service') || m.includes('offer') || m.includes('do you do') || m.includes('what do')) return responses.services;
-            if (m.includes('hour') || m.includes('open') || m.includes('close') || m.includes('time')) return responses.hours;
-            if (m.includes('pay') || m.includes('cash') || m.includes('card') || m.includes('square')) return responses.payment;
-            return "Great question! For anything specific, you can book an appointment and Sly will take care of you. Want me to help you book?";
+            // Greetings
+            if (/^(hey|hi|hello|yo|sup|what'?s up|howdy|good morning|good afternoon|good evening|hola|whats good)/.test(m)) return responses.greeting;
+            // Pricing
+            if (m.includes('price') || m.includes('cost') || m.includes('how much') || m.includes('rate') || m.includes('charge') || m.includes('fee')) return responses.prices;
+            // Specific services
+            if (m.includes('kid') || m.includes('child') || m.includes('son') || m.includes('daughter') || m.includes('boy') || m.includes('girl')) return responses.kids;
+            if (m.includes('beard') || m.includes('line up') || m.includes('lineup') || m.includes('edge up') || m.includes('trim')) return responses.beard;
+            if (m.includes('color') || m.includes('dye') || m.includes('bleach') || m.includes('highlight')) return responses.color;
+            if (m.includes('facial') || m.includes('face') || m.includes('skin') || m.includes('steam')) return responses.facial;
+            if (m.includes('eyebrow') || m.includes('brow')) return responses.eyebrows;
+            if (m.includes('haircut') || m.includes('cut') || m.includes('fade') || m.includes('taper') || m.includes('hair')) return responses.haircut;
+            // Booking
+            if (m.includes('book') || m.includes('appointment') || m.includes('schedule') || m.includes('reserve') || m.includes('available') || m.includes('slot')) return responses.book;
+            // Walk-in
+            if (m.includes('walk in') || m.includes('walk-in') || m.includes('walkin') || m.includes('drop in')) return responses.walkin;
+            // Location
+            if (m.includes('where') || m.includes('location') || m.includes('address') || m.includes('find') || m.includes('directions') || m.includes('map') || m.includes('decatur')) return responses.location;
+            // Parking
+            if (m.includes('park')) return responses.parking;
+            // Hours
+            if (m.includes('hour') || m.includes('open') || m.includes('close') || m.includes('time') || m.includes('when')) return responses.hours;
+            // Payment
+            if (m.includes('pay') || m.includes('cash') || m.includes('card') || m.includes('square') || m.includes('apple pay') || m.includes('venmo') || m.includes('zelle')) return responses.payment;
+            // Wait
+            if (m.includes('wait') || m.includes('long') || m.includes('busy')) return responses.wait;
+            // Contact
+            if (m.includes('contact') || m.includes('call') || m.includes('text') || m.includes('phone') || m.includes('number') || m.includes('reach')) return responses.contact;
+            // Social
+            if (m.includes('instagram') || m.includes('ig') || m.includes('social') || m.includes('facebook') || m.includes('fb')) return responses.instagram;
+            // Cancel/reschedule
+            if (m.includes('cancel') || m.includes('reschedule') || m.includes('change') || m.includes('move my')) return responses.cancel;
+            // First time
+            if (m.includes('first') || m.includes('new') || m.includes('never been') || m.includes('what to expect')) return responses.first;
+            // Services general
+            if (m.includes('service') || m.includes('offer') || m.includes('do you do') || m.includes('what do') || m.includes('menu')) return responses.services;
+            // Thanks
+            if (m.includes('thank') || m.includes('appreciate') || m.includes('dope') || m.includes('cool') || m.includes('bet') || m.includes('perfect') || m.includes('awesome')) return responses.thanks;
+            // Review
+            if (m.includes('review') || m.includes('rate') || m.includes('google')) return responses.review;
+            // Fallback with variety
+            const fallbacks = [
+                "I can help with pricing, booking, services, location, or hours — what are you looking for?",
+                "Not sure I caught that! Try asking about our services, prices, or how to book an appointment.",
+                "I'm here to help! Ask me about pricing, services, booking, location, or hours.",
+                "Hmm, let me redirect you — I can help with bookings, prices, services, or location info. What do you need?"
+            ];
+            return fallbacks[Math.floor(Math.random()*fallbacks.length)];
         }
 
         function addMessage(text, type) {
