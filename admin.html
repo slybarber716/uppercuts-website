@@ -1190,8 +1190,24 @@ function denyBooking(idx){
     }
 }
 
-function refreshDash(){
-    const bookings=getStore(BOOKINGS_KEY,[]);
+async function refreshDash(){
+    // Pull bookings from server AND localStorage, merge them
+    let serverBookings=[];
+    try{
+        const r=await fetch('https://uppercutsbysly.com/api/bookings');
+        const data=await r.json();
+        serverBookings=data.bookings||[];
+    }catch(e){}
+    const localBookings=getStore(BOOKINGS_KEY,[]);
+    // Merge: add server bookings that aren't already local (by matching name+date+time)
+    serverBookings.forEach(sb=>{
+        const exists=localBookings.find(lb=>lb.name===sb.name&&lb.date===sb.date&&lb.time===sb.time);
+        if(!exists){
+            localBookings.push({...sb,status:sb.status||'pending'});
+            setStore(BOOKINGS_KEY,localBookings);
+        }
+    });
+    const bookings=localBookings;
     const blocked=getStore(BLOCK_KEY,[]);
     const today=isoDate(new Date());
     const todayBookings=bookings.filter(b=>b.date>=today&&b.status!=='denied');

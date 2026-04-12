@@ -1851,6 +1851,21 @@
             });
             saveBookings(bookings);
 
+            // Save to server so admin panel can see it from any device
+            fetch('https://uppercutsbysly.com/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name, phone,
+                    service: selectedService.name,
+                    price: selectedService.price,
+                    date: selectedDate,
+                    dateLabel: selectedDate,
+                    time: selectedTime,
+                    notes
+                })
+            }).catch(() => {});
+
             // Auto-register new clients
             if (deposit.type === 'new') {
                 const clients = getClients();
