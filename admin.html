@@ -1252,7 +1252,8 @@ function saveHours(){
 }
 
 // ===== BLOCK LIST =====
-function openBlockModal(){document.getElementById('blockModal').classList.add('open')}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function openBlockModal(){openModal('blockModal')}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
 
 // Close modals on overlay click
