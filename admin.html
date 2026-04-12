@@ -441,6 +441,20 @@
     <button class="btn btn-outline" onclick="switchPanel('panelDash')" style="margin-top:16px">Back to Dashboard</button>
 </div>
 
+<!-- ===== CLIENTS PANEL ===== -->
+<div class="panel" id="panelClients">
+    <div class="hdr">Client List</div>
+    <div class="hdr-sub">107 active clients from Plannie</div>
+
+    <div class="fg" style="margin-bottom:16px">
+        <input type="text" id="clientSearch" placeholder="Search by name or number..." oninput="filterClients()" style="font-size:15px">
+    </div>
+    <div id="clientCount" style="font-size:12px;color:var(--text2);margin-bottom:12px">Showing 107 clients</div>
+    <div id="clientsList"></div>
+
+    <button class="btn btn-outline" onclick="switchPanel('panelDash')" style="margin-top:16px">Back to Dashboard</button>
+</div>
+
 <!-- ===== SEND PROMPT MODAL ===== -->
 <div class="modal-overlay" id="promptModal">
     <div class="modal-sheet">
@@ -472,6 +486,9 @@
     </div>
     <div class="anav" data-panel="panelServices">
         <span class="icon">&#9986;</span>Services
+    </div>
+    <div class="anav" data-panel="panelClients">
+        <span class="icon">👥</span>Clients
     </div>
     <div class="anav" data-panel="panelBlock">
         <span class="icon">&#128683;</span>Block
@@ -799,6 +816,157 @@ function saveServices(){
     alert('Services saved!');
 }
 
+// ===== CLIENTS =====
+const ALL_CLIENTS=[
+{name:"Aaron Pennyman",phone:"4045879671"},
+{name:"Ace New",phone:"8039911007"},
+{name:"Al Key",phone:"4045612509"},
+{name:"Ant Blanton (Jr)",phone:"4046107680"},
+{name:"Anthony Watts",phone:"7068175102"},
+{name:"Antoine G Blanton",phone:"4044243964"},
+{name:"Antonio",phone:"6312147232"},
+{name:"Antonio Saintiague",phone:"8438779128"},
+{name:"Asher Allen",phone:"6785771003"},
+{name:"Ashley Hunter",phone:"7707802251"},
+{name:"Baby Girl",phone:"7709998083"},
+{name:"Bjorn Bade",phone:"5075812366"},
+{name:"Brandon",phone:"4704848771"},
+{name:"Brandon",phone:"6789009022"},
+{name:"Brandon",phone:"6019872770"},
+{name:"Brandon",phone:"4703227804"},
+{name:"Brandon Johnson",phone:"4702659404"},
+{name:"Brandon New",phone:"6019558700"},
+{name:"Carves Rodgers",phone:"4047591678"},
+{name:"Cassandra James",phone:"4703345695"},
+{name:"Cedric",phone:"6783688534"},
+{name:"Cedric Hunter",phone:"6784370946"},
+{name:"Chad Jackson",phone:"6787552605"},
+{name:"Chris",phone:"6462586052"},
+{name:"Cincerely Collier",phone:"6789387603"},
+{name:"Cliff",phone:"4047132627"},
+{name:"Collier",phone:"2025491455"},
+{name:"Cool",phone:"4044374780"},
+{name:"Craig Evertsz",phone:"7703303367"},
+{name:"Dalvis Anderson",phone:"4702140007"},
+{name:"David Harris-Ping",phone:"4049971871"},
+{name:"Dejon Tco",phone:"4707537441"},
+{name:"Demian",phone:"4044413557"},
+{name:"Derrick",phone:"4046009487"},
+{name:"Derrick",phone:"4044279318"},
+{name:"Desmond Willis",phone:"4693495498"},
+{name:"Desmund Cottingham",phone:"3139777592"},
+{name:"Donna",phone:"4042717877"},
+{name:"Donnie",phone:"4043860505"},
+{name:"Donte Nephew",phone:"4708006139"},
+{name:"Earl New",phone:"6785925814"},
+{name:"Eddie",phone:"7708834331"},
+{name:"Elchos Tony",phone:"4042907886"},
+{name:"Elijah",phone:"4045784000"},
+{name:"Elijah",phone:"4709901784"},
+{name:"Eulado Mcfarlane",phone:"4048341823"},
+{name:"Eustace Mcfarlane",phone:"4045794007"},
+{name:"Felix Johnson",phone:"2065883067"},
+{name:"Fred Hunter",phone:"6787605803"},
+{name:"Fred Tucker",phone:"6783080711"},
+{name:"G Strickland",phone:"6786440201"},
+{name:"Glen",phone:"7739637917"},
+{name:"Glen Pops",phone:"4043125158"},
+{name:"Harry",phone:"4043544213"},
+{name:"Hayley",phone:"6014026005"},
+{name:"Herman Prawl",phone:"4046959186"},
+{name:"Jaden Patton",phone:"6784626998"},
+{name:"Jaden Proby",phone:"7027678230"},
+{name:"Jalen",phone:"7164189321"},
+{name:"Jalen Smith",phone:"7706860707"},
+{name:"Jalon",phone:"4046715942"},
+{name:"Jamel Forehand",phone:"4047899019"},
+{name:"James Forehand",phone:"4704614006"},
+{name:"Jason",phone:"9177483324"},
+{name:"Jeremiah Knox",phone:"6783259900"},
+{name:"Jordan Anderson",phone:"4044914775"},
+{name:"Josh",phone:"4708254036"},
+{name:"Jude Hylton",phone:"4044995317"},
+{name:"Kaleb",phone:"7164466092"},
+{name:"Kashh",phone:"4048010684"},
+{name:"Kashh",phone:"6786516055"},
+{name:"Ken Griffin",phone:"4044863247"},
+{name:"Kenneth Lymon",phone:"6268774751"},
+{name:"Kenny",phone:"4045805104"},
+{name:"Kevin Custis",phone:"4702779126"},
+{name:"Khalil Brown",phone:"7708991078"},
+{name:"Larry",phone:"6784915319"},
+{name:"Lawrence Cosby",phone:"6784641968"},
+{name:"Lawrence Goods",phone:"2018782405"},
+{name:"Levy",phone:"6788139968"},
+{name:"Mahalaleel Israel",phone:"4707864420"},
+{name:"Marlando West",phone:"4048344606"},
+{name:"Matt",phone:"4045561283"},
+{name:"Melvin Smith",phone:"7705084871"},
+{name:"Messiah",phone:"4042819050"},
+{name:"Micah Crawford",phone:"4046046964"},
+{name:"Mo Client",phone:"9179680069"},
+{name:"Moon",phone:"4043979235"},
+{name:"Mr Mike",phone:"6466444947"},
+{name:"Nic Perry",phone:"3142402803"},
+{name:"Nico",phone:"6783658051"},
+{name:"Nina",phone:"4046806824"},
+{name:"Otis McNabb",phone:"7703546601"},
+{name:"Pam Simmons",phone:"4044357937"},
+{name:"Paul Roberts",phone:"4704545653"},
+{name:"Philip Ruff",phone:"6785149937"},
+{name:"Randy",phone:"6789136627"},
+{name:"Rashonda Robinson",phone:"4705064389"},
+{name:"Rhonda Ross",phone:"7702412852"},
+{name:"Rich",phone:"4045362976"},
+{name:"Richard Echols",phone:"4045529941"},
+{name:"Rod Parker",phone:"6786994241"},
+{name:"Rodney Galloway",phone:"4702319935"},
+{name:"Rodney Galloway",phone:"7064733478"},
+{name:"Rook",phone:"4044363642"},
+{name:"Seven",phone:"4232980613"},
+{name:"Shawn Stewart",phone:"7703634082"},
+{name:"Sis Persons",phone:"4047364016"},
+{name:"Stacey Jackson",phone:"6783878257"},
+{name:"Steven",phone:"4708309340"},
+{name:"Terrell McGee",phone:"7343520406"},
+{name:"Tim Cam",phone:"4044065767"},
+{name:"Tim Cam",phone:"6786837816"},
+{name:"Tim Cameron",phone:"4706377318"},
+{name:"Tim Duggan",phone:"7708020359"},
+{name:"Tobit Zakar",phone:"7705723358"},
+{name:"Tony New",phone:"6788223719"},
+{name:"Tree",phone:"4049923211"},
+{name:"Tyrone Jackson",phone:"6786085237"},
+{name:"Will Griffin",phone:"7572829573"},
+{name:"William Walker",phone:"4044841449"},
+{name:"Yvonne Wallace",phone:"4709033672"}
+];
+
+function renderClients(list){
+    const el=document.getElementById('clientsList');
+    document.getElementById('clientCount').textContent=`Showing ${list.length} client${list.length!==1?'s':''}`;
+    el.innerHTML=list.map(c=>{
+        const ph=c.phone.replace(/(\d{3})(\d{3})(\d{4})/,'($1) $2-$3');
+        return `<div class="acard" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px">
+            <div>
+                <div style="font-weight:600;font-size:15px">${c.name}</div>
+                <div style="font-size:13px;color:var(--text2)">${ph}</div>
+            </div>
+            <div style="display:flex;gap:8px">
+                <a href="tel:+1${c.phone}" class="btn-sm btn-outline" style="text-decoration:none;font-size:11px">📞 Call</a>
+                <div class="btn-sm btn-gold" style="font-size:11px;cursor:pointer" onclick="sendPromptToPhone('${c.phone}','ready')">✉️ Text</div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function filterClients(){
+    const q=document.getElementById('clientSearch').value.toLowerCase();
+    if(!q){renderClients(ALL_CLIENTS);return;}
+    const filtered=ALL_CLIENTS.filter(c=>c.name.toLowerCase().includes(q)||c.phone.includes(q));
+    renderClients(filtered);
+}
+
 // ===== NAV =====
 function switchPanel(id){
     document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -810,6 +978,7 @@ function switchPanel(id){
     if(id==='panelBookings')filterBookings('upcoming');
     if(id==='panelServices')renderServices();
     if(id==='panelMessages')loadCheckins();
+    if(id==='panelClients')renderClients(ALL_CLIENTS);
 }
 document.querySelectorAll('.anav').forEach(n=>{
     n.addEventListener('click',()=>switchPanel(n.dataset.panel));
