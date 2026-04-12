@@ -954,8 +954,9 @@ function renderClients(list){
                 <div style="font-size:13px;color:var(--text2)">${ph}</div>
             </div>
             <div style="display:flex;gap:8px">
-                <a href="tel:+1${c.phone}" class="btn-sm btn-outline" style="text-decoration:none;font-size:11px">📞 Call</a>
-                <div class="btn-sm btn-gold" style="font-size:11px;cursor:pointer" onclick="sendPromptToPhone('${c.phone}','ready')">✉️ Text</div>
+                <a href="tel:+1${c.phone}" class="btn-sm btn-outline" style="text-decoration:none;font-size:11px">📞</a>
+                <div class="btn-sm btn-gold" style="font-size:11px;cursor:pointer" onclick="sendPromptToPhone('${c.phone}','ready')">✉️</div>
+                <div class="btn-sm" style="font-size:11px;cursor:pointer;background:var(--red);color:#fff" onclick="blockFromClients('${c.name}','${c.phone}')">🚫</div>
             </div>
         </div>`;
     }).join('');
@@ -966,6 +967,16 @@ function filterClients(){
     if(!q){renderClients(ALL_CLIENTS);return;}
     const filtered=ALL_CLIENTS.filter(c=>c.name.toLowerCase().includes(q)||c.phone.includes(q));
     renderClients(filtered);
+}
+
+function blockFromClients(name,phone){
+    if(!confirm(`Block ${name}?`)) return;
+    const reason=prompt('Reason (only you see this):','');
+    const blocked=getStore(BLOCK_KEY,[]);
+    blocked.push({name,phone,reason:reason||'',date:new Date().toISOString()});
+    setStore(BLOCK_KEY,blocked);
+    alert(`${name} blocked.`);
+    filterClients();
 }
 
 // ===== NAV =====
