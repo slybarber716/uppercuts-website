@@ -702,7 +702,7 @@
             background: var(--surface);
             position: relative;
         }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; filter: contrast(1.18) saturate(0.85) brightness(1.05) url(#sharpen); -webkit-filter: contrast(1.18) saturate(0.85) brightness(1.05); }
         .gallery-item:hover img { transform: scale(1.05); }
         .gallery-placeholder {
             width: 100%; height: 100%;
@@ -1115,6 +1115,12 @@
     </style>
 </head>
 <body>
+<!-- SVG Sharpen Filter for Gallery -->
+<svg style="position:absolute;width:0;height:0">
+<filter id="sharpen">
+<feConvolveMatrix order="3" kernelMatrix="0 -0.5 0 -0.5 3 -0.5 0 -0.5 0" preserveAlpha="true"/>
+</filter>
+</svg>
 
     <!-- NAVBAR -->
     <nav class="navbar" id="navbar">
