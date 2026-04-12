@@ -1862,7 +1862,10 @@
                     date: selectedDate,
                     dateLabel: selectedDate,
                     time: selectedTime,
-                    notes
+                    notes,
+                    depositRequired: deposit.amount > 0,
+                    depositAmount: deposit.amount,
+                    depositPaid: false
                 })
             }).catch(() => {});
 
