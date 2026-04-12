@@ -8,10 +8,21 @@
     "build": "echo 'No build needed for static site'"
   },
   "dependencies": {
-    "twilio": "^4.0.0"
+    "twilio": "^4.23.0"
   },
-  "devDependencies": {},
-  "keywords": ["barber", "booking"],
+  "keywords": [
+    "barber",
+    "booking"
+  ],
   "author": "Sly",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slybarber716/uppercuts-website.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/slybarber716/uppercuts-website/issues"
+  },
+  "homepage": "https://github.com/slybarber716/uppercuts-website#readme"
 }
