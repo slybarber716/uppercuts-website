@@ -1825,47 +1825,29 @@
             document.getElementById('bookingSummary').innerHTML = html;
         }
 
-        document.getElementById('confirmBooking').addEventListener('click', () => {
-            const name = document.getElementById('clientName').value.trim();
-            const phone = document.getElementById('clientPhone').value.trim();
-            const code = document.getElementById('clientCode') ? document.getElementById('clientCode').value.trim() : '';
-            const notes = document.getElementById('clientNotes').value.trim();
-            if (!name || !phone) { alert('Please enter your name and phone number.'); return; }
-
-            const deposit = getDepositInfo(phone, code);
-
-            // Save booking
+        function submitBookingToServer(name, phone, service, price, date, time, notes, deposit) {
+            // Save locally
             const bookings = getBookings();
             bookings.push({
-                id: Date.now(),
-                name, phone,
-                service: selectedService.name,
-                price: selectedService.price,
-                date: selectedDate,
-                time: selectedTime,
-                status: deposit.type,
-                depositPaid: deposit.amount > 0 ? false : true,
+                id: Date.now(), name, phone,
+                service, price, date, time,
+                status: 'pending',
+                depositPaid: deposit.amount <= 0,
                 depositAmount: deposit.amount,
-                notes,
-                createdAt: new Date().toISOString()
+                notes, createdAt: new Date().toISOString()
             });
             saveBookings(bookings);
 
-            // Save to server so admin panel can see it from any device
+            // Save to server
             fetch('https://uppercutsbysly.com/api/bookings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    name, phone,
-                    service: selectedService.name,
-                    price: selectedService.price,
-                    date: selectedDate,
-                    dateLabel: selectedDate,
-                    time: selectedTime,
-                    notes,
+                    name, phone, service, price,
+                    date, dateLabel: date, time, notes,
                     depositRequired: deposit.amount > 0,
                     depositAmount: deposit.amount,
-                    depositPaid: false
+                    depositPaid: deposit.amount <= 0
                 })
             }).catch(() => {});
 
@@ -1875,45 +1857,74 @@
                 const clean = phone.replace(/\D/g, '');
                 if (!clients[clean]) { clients[clean] = 'regular'; saveClients(clients); }
             }
+        }
+
+        document.getElementById('confirmBooking').addEventListener('click', () => {
+            const name = document.getElementById('clientName').value.trim();
+            const phone = document.getElementById('clientPhone').value.trim();
+            const code = document.getElementById('clientCode') ? document.getElementById('clientCode').value.trim() : '';
+            const notes = document.getElementById('clientNotes').value.trim();
+            if (!name || !phone) { alert('Please enter your name and phone number.'); return; }
+
+            const deposit = getDepositInfo(phone, code);
+
+            // If NO deposit required (returning/monthly client) — submit right away
+            if (deposit.amount <= 0) {
+                submitBookingToServer(name, phone, selectedService.name, selectedService.price, selectedDate, selectedTime, notes, deposit);
+
+                document.getElementById('finalSummary').innerHTML = `
+                    <h4>Request Sent! 🎉</h4>
+                    <div class="summary-row"><span class="label">Name</span><span>${name}</span></div>
+                    <div class="summary-row"><span class="label">Service</span><span>${selectedService.name}</span></div>
+                    <div class="summary-row"><span class="label">Date</span><span>${selectedDate}</span></div>
+                    <div class="summary-row"><span class="label">Time</span><span>${selectedTime}</span></div>
+                    <div class="summary-row summary-total"><span class="label">Price</span><span>${selectedService.price}</span></div>
+                    <div class="summary-row" style="color:#4CAF50;margin-top:8px;"><span>✅ No deposit required — Sly will confirm your appointment!</span></div>
+                `;
+                goToStep(4);
+                return;
+            }
+
+            // If deposit IS required — send them to pay FIRST, then submit after they come back
+            const squareLinks = {
+                8:  'https://square.link/u/TW7YhnpR',
+                13: 'https://square.link/u/UwY6p0Ex',
+                15: 'https://square.link/u/CW3bdun7',
+                20: 'https://square.link/u/ALKC6WMt',
+                23: 'https://square.link/u/hzmPM0aR',
+                30: 'https://square.link/u/sGbZmlBn'
+            };
+            const link = squareLinks[deposit.amount];
 
             document.getElementById('finalSummary').innerHTML = `
-                <h4>Your Appointment</h4>
-                <div class="summary-row"><span class="label">Name</span><span>${name}</span></div>
+                <h4>Deposit Required</h4>
                 <div class="summary-row"><span class="label">Service</span><span>${selectedService.name}</span></div>
                 <div class="summary-row"><span class="label">Date</span><span>${selectedDate}</span></div>
                 <div class="summary-row"><span class="label">Time</span><span>${selectedTime}</span></div>
-                <div class="summary-row summary-total"><span class="label">Price</span><span>${selectedService.price}</span></div>
-                ${deposit.amount > 0 ? `<div class="summary-row" style="color:#E74C3C;margin-top:8px;"><span class="label">Deposit Due</span><span>$${deposit.amount}</span></div>` : '<div class="summary-row" style="color:#4CAF50;margin-top:8px;"><span>✅ No deposit required</span></div>'}
+                <div class="summary-row summary-total"><span class="label">Deposit</span><span>$${deposit.amount}</span></div>
+                <div style="color:#E74C3C;font-size:13px;margin:12px 0;line-height:1.5">${deposit.message}</div>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Your request will be sent to Sly once the deposit is complete.</p>
+                ${link ? `<a href="${link}" target="_blank" id="payDepositBtn" class="cta-button" style="display:block;text-align:center;text-decoration:none;margin-bottom:12px;font-size:16px" onclick="window._depositPending={name:'${name.replace(/'/g,"\\'")}',phone:'${phone}',service:'${selectedService.name.replace(/'/g,"\\'")}',price:'${selectedService.price}',date:'${selectedDate}',time:'${selectedTime}',notes:'${notes.replace(/'/g,"\\'")}',deposit:${JSON.stringify(deposit)}};document.getElementById('confirmDepositBtn').style.display='block';">💳 Pay $${deposit.amount} Deposit</a>` : ''}
+                <button id="confirmDepositBtn" class="cta-button" style="display:none;width:100%;margin-top:8px;background:#4CAF50;font-size:16px" onclick="completeDepositBooking()">✅ I've Paid — Submit My Request</button>
             `;
-
-            // 🔔 Notify Sly via SMS
-            const NOTIFY_URL = 'https://script.google.com/macros/s/AKfycbxDs7_Gw-JQ7oA0gaCV8X2INaSGrLZiNQBJxFv75DJXlZ4uEXxgkX2fcPbgPTlSUOua/exec';
-            if (NOTIFY_URL) {
-                const msg = `🔔 NEW BOOKING REQUEST\n👤 ${name}\n📞 ${phone}\n✂️ ${selectedService.name}\n📅 ${selectedDate} @ ${selectedTime}\n💰 ${selectedService.price}${deposit.amount > 0 ? `\n💳 Deposit: $${deposit.amount}` : '\n✅ No deposit (returning client)'}${notes ? `\n📝 ${notes}` : ''}`;
-                fetch(NOTIFY_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ to: '+17703340126', msg })
-                }).catch(() => {});
-            }
-
-            if (deposit.amount > 0) {
-                const squareLinks = {
-                    8:  'https://square.link/u/TW7YhnpR',
-                    13: 'https://square.link/u/UwY6p0Ex',
-                    15: 'https://square.link/u/CW3bdun7',
-                    20: 'https://square.link/u/ALKC6WMt',
-                    23: 'https://square.link/u/hzmPM0aR',
-                    30: 'https://square.link/u/sGbZmlBn'
-                };
-                const link = squareLinks[deposit.amount];
-                if (link) {
-                    setTimeout(() => { window.open(link, '_blank'); }, 1500);
-                }
-            }
-
             goToStep(4);
         });
+
+        function completeDepositBooking() {
+            const d = window._depositPending;
+            if (!d) return;
+            submitBookingToServer(d.name, d.phone, d.service, d.price, d.date, d.time, d.notes, d.deposit);
+            document.getElementById('finalSummary').innerHTML = `
+                <h4>Request Sent! 🎉</h4>
+                <div class="summary-row"><span class="label">Name</span><span>${d.name}</span></div>
+                <div class="summary-row"><span class="label">Service</span><span>${d.service}</span></div>
+                <div class="summary-row"><span class="label">Date</span><span>${d.date}</span></div>
+                <div class="summary-row"><span class="label">Time</span><span>${d.time}</span></div>
+                <div class="summary-row summary-total"><span class="label">Price</span><span>${d.price}</span></div>
+                <div class="summary-row" style="color:#4CAF50;margin-top:8px;"><span>✅ Deposit paid — Sly will confirm your appointment!</span></div>
+            `;
+            window._depositPending = null;
+        }
 
         // ===== CHATBOT =====
         const chatToggle = document.getElementById('chatToggle');
