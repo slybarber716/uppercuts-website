@@ -1035,24 +1035,33 @@ function renderClients(list){
                 <a href="tel:+1${c.phone}" class="btn-sm btn-outline" style="text-decoration:none;font-size:11px">📞</a>
                 <div class="btn-sm btn-gold" style="font-size:11px;cursor:pointer" onclick="sendPromptToPhone('${c.phone}','ready')">✉️</div>
                 <div class="btn-sm" style="font-size:11px;cursor:pointer;background:var(--red);color:#fff" onclick="blockFromClients('${c.name}','${c.phone}')">🚫</div>
-                <div class="btn-sm" style="font-size:11px;cursor:pointer;background:#333;color:#fff" onclick="deleteClient(${list.indexOf(c)})">✕</div>
+                <div class="btn-sm" style="font-size:11px;cursor:pointer;background:#333;color:#fff" onclick="deleteClient('${c.name.replace(/'/g,"\\'")}','${c.phone}')">✕</div>
             </div>
         </div>`;
     }).join('');
 }
 
 function filterClients(){
+    const active=getActiveClients();
     const q=document.getElementById('clientSearch').value.toLowerCase();
-    if(!q){renderClients(ALL_CLIENTS);return;}
-    const filtered=ALL_CLIENTS.filter(c=>c.name.toLowerCase().includes(q)||c.phone.includes(q));
+    if(!q){renderClients(active);return;}
+    const filtered=active.filter(c=>c.name.toLowerCase().includes(q)||c.phone.includes(q));
     renderClients(filtered);
 }
 
-function deleteClient(idx){
-    const c=ALL_CLIENTS[idx];
-    if(!c) return;
-    if(!confirm(`Delete ${c.name} from your client list?`)) return;
-    ALL_CLIENTS.splice(idx,1);
+function getDeletedClients(){return getStore('uppercuts_deleted_clients',[])}
+function saveDeletedClients(list){setStore('uppercuts_deleted_clients',list)}
+
+function getActiveClients(){
+    const deleted=getDeletedClients();
+    return ALL_CLIENTS.filter(c=>!deleted.find(d=>d.name===c.name&&d.phone===c.phone));
+}
+
+function deleteClient(name,phone){
+    if(!confirm(`Delete ${name} from your client list?`)) return;
+    const deleted=getDeletedClients();
+    deleted.push({name,phone});
+    saveDeletedClients(deleted);
     filterClients();
 }
 
@@ -1077,7 +1086,7 @@ function switchPanel(id){
     if(id==='panelBookings')filterBookings('upcoming');
     if(id==='panelServices')renderServices();
     if(id==='panelMessages')loadCheckins();
-    if(id==='panelClients')renderClients(ALL_CLIENTS);
+    if(id==='panelClients')filterClients();
 }
 document.querySelectorAll('.anav').forEach(n=>{
     n.addEventListener('click',()=>switchPanel(n.dataset.panel));
