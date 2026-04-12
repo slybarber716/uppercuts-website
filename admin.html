@@ -646,16 +646,49 @@ function showCheckinAlert(checkin){
     setTimeout(dismiss,15000);
 }
 
-// Poll check-ins on ALL panels so alerts always fire
+// ===== BOOKING ALERT =====
+function showBookingAlert(booking){
+    playAlertSound();
+    if('Notification' in window && Notification.permission==='granted'){
+        new Notification('📅 New Booking Request!',{
+            body:`${booking.name} wants ${booking.service} on ${booking.dateLabel||booking.date} at ${booking.time}`,
+            tag:'booking-'+Date.now(),
+            requireInteraction:true
+        });
+    }
+    const popup=document.createElement('div');
+    popup.className='checkin-alert-popup';
+    popup.innerHTML=`
+        <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:32px">📅</div>
+            <div>
+                <div style="font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:1px;color:#C9A96E;">NEW BOOKING REQUEST</div>
+                <div style="font-size:18px;font-weight:600;margin:4px 0">${booking.name}</div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.6)">${booking.service} · ${booking.dateLabel||booking.date} @ ${booking.time}</div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.6)">${booking.phone||'No phone'} · ${booking.price||''}</div>
+            </div>
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.5)">Tap to dismiss</div>
+    `;
+    document.body.appendChild(popup);
+    setTimeout(()=>popup.classList.add('visible'),10);
+    const dismiss=()=>{popup.classList.remove('visible');setTimeout(()=>popup.remove(),300);};
+    popup.addEventListener('click',dismiss);
+    setTimeout(dismiss,15000);
+}
+
+// Poll check-ins AND bookings
 let checkinReady=false;
+let lastKnownBookings=0;
+let bookingReady=false;
+
 setInterval(async()=>{
+    // Poll check-ins
     try{
         const r=await fetch('https://uppercutsbysly.com/api/checkins');
         const data=await r.json();
         const todayCheckins=data.checkins||[];
         const count=todayCheckins.length;
-
-        // Only alert after first poll has set the baseline
         if(checkinReady && count>lastKnownCheckins){
             const newCount=count-lastKnownCheckins;
             const newOnes=todayCheckins.slice(todayCheckins.length-newCount);
@@ -663,11 +696,25 @@ setInterval(async()=>{
         }
         lastKnownCheckins=count;
         checkinReady=true;
-
-        // Update Messages panel if active
         const msgPanel=document.getElementById('panelMessages');
         if(msgPanel&&msgPanel.classList.contains('active')) loadCheckins();
-    }catch(e){console.log('poll error',e);}
+    }catch(e){}
+
+    // Poll bookings
+    try{
+        const r2=await fetch('https://uppercutsbysly.com/api/bookings');
+        const data2=await r2.json();
+        const allBookings=data2.bookings||[];
+        const pendingCount=allBookings.filter(b=>b.status==='pending').length;
+        if(bookingReady && allBookings.length>lastKnownBookings){
+            const newCount=allBookings.length-lastKnownBookings;
+            const newOnes=allBookings.slice(0,newCount);
+            newOnes.forEach(b=>showBookingAlert(b));
+            refreshDash();
+        }
+        lastKnownBookings=allBookings.length;
+        bookingReady=true;
+    }catch(e){}
 },5000); // Poll every 5 seconds
 
 async function sendPromptToPhone(phone,type){
