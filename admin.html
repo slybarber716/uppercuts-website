@@ -1485,14 +1485,18 @@ function approveBooking(idx){
     if(bookings[idx]){
         bookings[idx].status='confirmed';
         setStore(BOOKINGS_KEY,bookings);
-        // Open Google Voice to notify client
+        // Send confirmation via Twilio (when approved)
         const phone=bookings[idx].phone?.replace(/\D/g,'');
         const msg=`Your appointment at Uppercuts is confirmed! ${bookings[idx].dateLabel||bookings[idx].date} at ${bookings[idx].time}. See you at the suite! 💈`;
         if(phone){
-            navigator.clipboard.writeText(msg);
-            window.open('https://voice.google.com/u/0/messages?compose=+1'+phone);
+            fetch('https://uppercutsbysly.com/api/send-prompt',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({to:phone,message:msg})
+            }).catch(()=>{});
         }
         refreshDash();
+        alert('Approved! ✅ Confirmation sent to client.');
     }
 }
 
