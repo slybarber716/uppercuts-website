@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0A0A0A">
     <title>How It Works | Uppercuts</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Oswald:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Playfair+Display:wght@400;700&family=Oswald:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Inter',sans-serif;background:#0A0A0A;color:#fff;min-height:100vh;overflow-x:hidden}
@@ -18,11 +18,11 @@
             display:flex;align-items:center;justify-content:space-between;
             padding:16px 24px;
         }
-        .demo-nav .logo{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold)}
+        .demo-nav .logo{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--gold);letter-spacing:3px;text-transform:uppercase}
         .demo-nav a{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid var(--gold);padding:8px 16px;border-radius:6px}
 
         .hero{text-align:center;padding:140px 24px 80px;background:linear-gradient(180deg,rgba(201,169,110,0.06) 0%,transparent 60%)}
-        .hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,6vw,52px);margin-bottom:16px}
+        .hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,6vw,52px);margin-bottom:16px;font-weight:700}
         .hero h1 span{color:var(--gold)}
         .hero p{font-size:18px;color:var(--text2);max-width:500px;margin:0 auto 40px;line-height:1.6}
 
@@ -47,7 +47,7 @@
         @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
         .screen-title{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
-        .screen-heading{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:20px}
+        .screen-heading{font-family:'Cormorant Garamond',serif;font-size:26px;margin-bottom:20px;font-weight:700}
 
         .demo-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;cursor:pointer;transition:all 0.2s}
         .demo-card:hover{border-color:var(--gold)}
@@ -235,6 +235,10 @@
             <div class="checkin-reminder">
                 <strong>📍 When You Arrive</strong>
                 <p>Check in on the app when you get here — visit <strong style="color:#fff">uppercutsbysly.com</strong> and tap <strong style="color:#fff">Check In</strong>. Have a seat in the lobby and Sly will text you when he's ready for you.</p>
+            </div>
+            <div class="checkin-reminder" style="border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.03);margin-top:10px">
+                <strong style="color:#fff">🧴 Before You Come</strong>
+                <p>Please arrive with your hair freshly shampooed for the best results. Clean hair = cleaner cut.</p>
             </div>
             <button class="demo-btn btn-gold" onclick="goStep(4)" style="margin-top:20px">See What's Next →</button>
         </div>
