@@ -438,6 +438,14 @@
         </div>
     </div>
 
+    <div class="sec">Mass Text Blast</div>
+    <div class="acard">
+        <div style="font-weight:600;font-size:14px;margin-bottom:8px;color:var(--gold)">📢 Send to All Clients</div>
+        <textarea id="blastMsg" rows="4" style="width:100%;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;resize:vertical">Big news! Online booking is live. Private suite, same elite cuts, now easier than ever. Book now: uppercutsbysly.com 💈 Reply STOP to opt out.</textarea>
+        <div id="blastStatus" style="font-size:12px;color:var(--text2);margin-top:8px"></div>
+        <button class="btn btn-gold" onclick="sendBlast()" style="margin-top:12px">🚀 SEND TO ALL CLIENTS</button>
+    </div>
+
     <button class="btn btn-outline" onclick="switchPanel('panelDash')" style="margin-top:16px">Back to Dashboard</button>
 </div>
 
@@ -826,17 +834,42 @@ async function sendPromptToPhone(phone,type){
     }catch(e){alert('Error sending.');}
 }
 
+async function sendBlast(){
+    const msg=document.getElementById('blastMsg').value.trim();
+    if(!msg){alert('Enter a message first');return}
+    const clients=getActiveClients();
+    if(!clients.length){alert('No clients to send to');return}
+    if(!confirm(`Send this message to ${clients.length} clients?\n\n"${msg}"`))return;
+    const status=document.getElementById('blastStatus');
+    let sent=0,failed=0;
+    status.textContent=`Sending... 0/${clients.length}`;
+    for(const c of clients){
+        const phone=c.phone.replace(/\D/g,'');
+        if(phone.length<10){failed++;continue}
+        try{
+            const r=await fetch('https://uppercutsbysly.com/api/send-prompt',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({to:phone,message:msg})
+            });
+            if(r.ok)sent++;else failed++;
+        }catch(e){failed++;}
+        status.textContent=`Sending... ${sent+failed}/${clients.length} (${sent} sent, ${failed} failed)`;
+    }
+    status.innerHTML=`<span style="color:var(--green)">✅ Done! ${sent} sent</span>${failed?' · <span style="color:var(--red)">'+failed+' failed</span>':''}`;
+}
+
 // ===== DEFAULT SERVICES =====
 const DEFAULT_SERVICES=[
-    {id:'kids',name:'Kids Haircut',price:'$25-$30',duration:30,active:true},
+    {id:'kids',name:'Kids Haircut',price:'$25-$30',duration:45,active:true},
     {id:'adult',name:'Adult Haircut',price:'$45-$60',duration:45,active:true},
     {id:'premium',name:'Premium Cut',price:'$45',duration:60,active:true},
     {id:'signature',name:'Signature Cut',price:'$60',duration:75,active:true},
     {id:'sig_shampoo',name:'Signature + Shampoo',price:'$75',duration:90,active:true},
-    {id:'beard',name:'Beard / Line Up',price:'$30',duration:20,active:true},
+    {id:'beard',name:'Beard / Line Up',price:'$30',duration:30,active:true},
     {id:'color',name:'Color',price:'From $60',duration:60,active:true},
     {id:'facial',name:'Facial',price:'$35-$40',duration:30,active:true},
-    {id:'eyebrows',name:'Eyebrows (Razor)',price:'$15',duration:10,active:true}
+    {id:'eyebrows',name:'Eyebrows (Razor)',price:'$15',duration:20,active:true}
 ];
 
 function getServices(){
