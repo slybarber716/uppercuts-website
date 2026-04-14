@@ -1405,6 +1405,10 @@
                         <div class="check-circle">&#10003;</div>
                         <h2 style="font-family:'Playfair Display',serif;font-size:32px;margin-bottom:12px;">Request Sent!</h2>
                         <p style="color:var(--text-secondary);font-size:16px;line-height:1.6;margin-bottom:24px;">Your appointment request has been sent to Sly. You'll receive a text once it's confirmed. Thanks for choosing Uppercuts.</p>
+                        <div style="background:rgba(201,169,110,0.1);border:1.5px solid rgba(201,169,110,0.3);border-radius:10px;padding:16px;margin-bottom:20px;text-align:left">
+                            <div style="font-weight:600;color:#C9A96E;margin-bottom:6px">📍 When You Arrive</div>
+                            <p style="font-size:14px;color:var(--text-secondary);line-height:1.5;margin:0">Check in on the app when you get here — just visit <strong style="color:#fff">uppercutsbysly.com</strong> and tap <strong style="color:#fff">Check In</strong>. Have a seat in the lobby and Sly will text you when he's ready for you.</p>
+                        </div>
                         <div class="booking-summary" id="finalSummary"></div>
                     </div>
                 </div>
@@ -1943,6 +1947,7 @@
                     <div class="summary-row"><span class="label">Time</span><span>${selectedTime}</span></div>
                     <div class="summary-row summary-total"><span class="label">Price</span><span>${selectedService.price}</span></div>
                     <div class="summary-row" style="color:#4CAF50;margin-top:8px;"><span>✅ No deposit required — Sly will confirm your appointment!</span></div>
+                    <div class="summary-row" style="color:#C9A96E;margin-top:12px;font-size:13px;"><span>📍 Check in on the app when you arrive — Sly will text you when he's ready!</span></div>
                 `;
                 goToStep(4);
                 return;
@@ -1985,6 +1990,7 @@
                 <div class="summary-row"><span class="label">Time</span><span>${d.time}</span></div>
                 <div class="summary-row summary-total"><span class="label">Price</span><span>${d.price}</span></div>
                 <div class="summary-row" style="color:#4CAF50;margin-top:8px;"><span>✅ Deposit paid — Sly will confirm your appointment!</span></div>
+                <div class="summary-row" style="color:#C9A96E;margin-top:12px;font-size:13px;"><span>📍 Check in on the app when you arrive — Sly will text you when he's ready!</span></div>
             `;
             window._depositPending = null;
         }

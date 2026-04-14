@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0A0A0A">
+    <title>How It Works | Uppercuts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Oswald:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#0A0A0A;color:#fff;min-height:100vh;overflow-x:hidden}
+        :root{--gold:#C9A96E;--surface:#111;--surface2:#1a1a1a;--border:rgba(201,169,110,0.15);--text2:#999}
+
+        .demo-nav{
+            position:fixed;top:0;left:0;right:0;z-index:100;
+            background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);
+            border-bottom:1px solid var(--border);
+            display:flex;align-items:center;justify-content:space-between;
+            padding:16px 24px;
+        }
+        .demo-nav .logo{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold)}
+        .demo-nav a{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid var(--gold);padding:8px 16px;border-radius:6px}
+
+        .hero{text-align:center;padding:140px 24px 80px;background:linear-gradient(180deg,rgba(201,169,110,0.06) 0%,transparent 60%)}
+        .hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,6vw,52px);margin-bottom:16px}
+        .hero h1 span{color:var(--gold)}
+        .hero p{font-size:18px;color:var(--text2);max-width:500px;margin:0 auto 40px;line-height:1.6}
+
+        .steps{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:60px}
+        .step-dot{width:40px;height:40px;border-radius:50%;background:var(--surface2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:14px;color:var(--text2);cursor:pointer;transition:all 0.3s}
+        .step-dot.active{background:var(--gold);color:#0A0A0A;border-color:var(--gold);transform:scale(1.15)}
+        .step-dot.done{background:rgba(201,169,110,0.15);border-color:var(--gold);color:var(--gold)}
+        .step-line{width:40px;height:2px;background:var(--border);align-self:center}
+        .step-line.done{background:var(--gold)}
+
+        .container{max-width:440px;margin:0 auto;padding:0 24px 100px}
+
+        .phone-frame{
+            background:var(--surface);border:2px solid var(--border);
+            border-radius:32px;padding:20px;position:relative;
+            box-shadow:0 20px 60px rgba(0,0,0,0.5);
+        }
+        .phone-notch{width:120px;height:24px;background:#0A0A0A;border-radius:0 0 16px 16px;margin:0 auto 20px;border:1px solid var(--border);border-top:none}
+
+        .screen{display:none;animation:fadeUp 0.4s ease}
+        .screen.active{display:block}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+        .screen-title{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+        .screen-heading{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:20px}
+
+        .demo-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;cursor:pointer;transition:all 0.2s}
+        .demo-card:hover{border-color:var(--gold)}
+        .demo-card.selected{border-color:var(--gold);background:rgba(201,169,110,0.08)}
+        .demo-card h4{font-size:15px;margin-bottom:4px}
+        .demo-card span{font-size:12px;color:var(--text2)}
+        .demo-card .price{float:right;color:var(--gold);font-weight:600;font-size:16px}
+
+        .demo-input{
+            width:100%;padding:12px 16px;background:var(--surface2);
+            border:1px solid var(--border);border-radius:10px;
+            color:#fff;font-family:'Inter',sans-serif;font-size:14px;
+            margin-bottom:10px;outline:none;
+        }
+        .demo-input:focus{border-color:var(--gold)}
+
+        .demo-btn{
+            display:block;width:100%;padding:16px;text-align:center;
+            font-family:'Oswald',sans-serif;font-size:15px;font-weight:600;
+            letter-spacing:2px;text-transform:uppercase;border-radius:10px;
+            border:none;cursor:pointer;transition:all 0.2s;margin-top:16px;
+        }
+        .btn-gold{background:var(--gold);color:#0A0A0A}
+        .btn-gold:hover{filter:brightness(1.1)}
+        .btn-outline{background:transparent;color:var(--gold);border:1.5px solid rgba(201,169,110,0.3)}
+        .btn-green{background:#4CAF50;color:#fff}
+
+        .time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+        .time-btn{padding:10px;text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;transition:all 0.2s}
+        .time-btn:hover{border-color:var(--gold);color:var(--gold)}
+        .time-btn.selected{background:rgba(201,169,110,0.1);border-color:var(--gold);color:var(--gold)}
+
+        .summary-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
+        .summary-row:last-child{border:none}
+        .summary-row .label{color:var(--text2)}
+
+        .check-circle{
+            width:80px;height:80px;border-radius:50%;
+            background:rgba(201,169,110,0.12);border:3px solid var(--gold);
+            display:flex;align-items:center;justify-content:center;
+            font-size:36px;margin:0 auto 20px;
+        }
+
+        .checkin-reminder{
+            background:rgba(201,169,110,0.08);border:1.5px solid rgba(201,169,110,0.25);
+            border-radius:10px;padding:14px;margin-top:16px;text-align:left;
+        }
+        .checkin-reminder strong{color:var(--gold);font-size:13px}
+        .checkin-reminder p{font-size:12px;color:var(--text2);margin-top:4px;line-height:1.5}
+
+        .step-label{text-align:center;margin-bottom:30px}
+        .step-label .num{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:2px;color:var(--gold);text-transform:uppercase}
+        .step-label .desc{font-size:13px;color:var(--text2);margin-top:4px}
+
+        .tip-card{
+            background:rgba(76,175,80,0.08);border:1px solid rgba(76,175,80,0.25);
+            border-radius:10px;padding:14px;margin-top:16px;
+        }
+        .tip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+        .tip-opt{padding:10px 4px;text-align:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;transition:all 0.2s}
+        .tip-opt:hover{border-color:var(--gold)}
+        .tip-opt.selected{background:rgba(201,169,110,0.1);border-color:var(--gold);color:var(--gold)}
+
+        .pulse{animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+
+        footer{text-align:center;padding:40px 24px;border-top:1px solid var(--border)}
+        footer a{color:var(--gold);text-decoration:none;font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:1px}
+    </style>
+</head>
+<body>
+
+<nav class="demo-nav">
+    <div class="logo">Uppercuts</div>
+    <a href="index.html">Book Now</a>
+</nav>
+
+<div class="hero">
+    <h1>How <span>Uppercuts</span> Works</h1>
+    <p>From booking to checkout — here's what to expect at your private barber suite experience.</p>
+    <div class="steps" id="stepDots">
+        <div class="step-dot active" onclick="goStep(1)">1</div>
+        <div class="step-line"></div>
+        <div class="step-dot" onclick="goStep(2)">2</div>
+        <div class="step-line"></div>
+        <div class="step-dot" onclick="goStep(3)">3</div>
+        <div class="step-line"></div>
+        <div class="step-dot" onclick="goStep(4)">4</div>
+        <div class="step-line"></div>
+        <div class="step-dot" onclick="goStep(5)">5</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="phone-frame">
+        <div class="phone-notch"></div>
+
+        <!-- STEP 1: PICK SERVICE -->
+        <div class="screen active" id="screen1">
+            <div class="step-label">
+                <div class="num">Step 1 of 5</div>
+                <div class="desc">Choose your service</div>
+            </div>
+            <div class="screen-title">Services</div>
+            <div class="screen-heading">Pick Your Cut</div>
+            <div class="demo-card" onclick="pickService(this,'Premium Cut','$45')">
+                <h4>Premium Cut <span class="price">$45</span></h4>
+                <span>60 min &middot; Precision fade & custom style</span>
+            </div>
+            <div class="demo-card" onclick="pickService(this,'Signature Cut','$60')">
+                <h4>Signature Cut <span class="price">$60</span></h4>
+                <span>75 min &middot; Premium + beard w/ hot oil or dye</span>
+            </div>
+            <div class="demo-card" onclick="pickService(this,'Signature + Shampoo','$75')">
+                <h4>Signature + Shampoo <span class="price">$75</span></h4>
+                <span>90 min &middot; Full signature + premium shampoo</span>
+            </div>
+            <div class="demo-card" onclick="pickService(this,'Beard / Line Up','$30')">
+                <h4>Beard / Line Up <span class="price">$30</span></h4>
+                <span>30 min &middot; Sharp lines & sculpted beard</span>
+            </div>
+            <button class="demo-btn btn-gold" id="toStep2" onclick="goStep(2)" disabled>Next →</button>
+        </div>
+
+        <!-- STEP 2: DATE & TIME -->
+        <div class="screen" id="screen2">
+            <div class="step-label">
+                <div class="num">Step 2 of 5</div>
+                <div class="desc">Pick a date & time</div>
+            </div>
+            <div class="screen-title">Schedule</div>
+            <div class="screen-heading">When Works?</div>
+            <div class="demo-card selected" style="text-align:center;cursor:default">
+                <h4 style="color:var(--gold)" id="demoDate">Friday, Apr 18</h4>
+                <span>Available</span>
+            </div>
+            <div class="time-grid" id="demoTimes">
+                <div class="time-btn" onclick="pickTime(this)">11:00 AM</div>
+                <div class="time-btn" onclick="pickTime(this)">12:00 PM</div>
+                <div class="time-btn" onclick="pickTime(this)">1:30 PM</div>
+                <div class="time-btn" onclick="pickTime(this)">3:00 PM</div>
+                <div class="time-btn" onclick="pickTime(this)">4:30 PM</div>
+                <div class="time-btn" onclick="pickTime(this)">6:00 PM</div>
+            </div>
+            <button class="demo-btn btn-outline" onclick="goStep(1)" style="margin-top:12px">← Back</button>
+            <button class="demo-btn btn-gold" id="toStep3" onclick="goStep(3)" disabled>Next →</button>
+        </div>
+
+        <!-- STEP 3: INFO & DEPOSIT -->
+        <div class="screen" id="screen3">
+            <div class="step-label">
+                <div class="num">Step 3 of 5</div>
+                <div class="desc">Your info & deposit</div>
+            </div>
+            <div class="screen-title">Details</div>
+            <div class="screen-heading">Almost There</div>
+            <input class="demo-input" placeholder="Your Name" value="Marcus T." readonly>
+            <input class="demo-input" placeholder="Phone Number" value="(770) 555-1234" readonly>
+            <div style="margin:16px 0">
+                <div class="summary-row"><span class="label">Service</span><span id="sumService">Premium Cut</span></div>
+                <div class="summary-row"><span class="label">Date</span><span id="sumDate">Fri, Apr 18</span></div>
+                <div class="summary-row"><span class="label">Time</span><span id="sumTime">3:00 PM</span></div>
+                <div class="summary-row"><span class="label">Price</span><span id="sumPrice">$45</span></div>
+                <div class="summary-row" style="color:#E74C3C;font-size:13px"><span>💳 50% deposit required</span><span id="sumDeposit">$23</span></div>
+            </div>
+            <button class="demo-btn btn-gold" onclick="goStep('3b')">💳 Pay $23 Deposit</button>
+            <button class="demo-btn btn-outline" onclick="goStep(2)">← Back</button>
+        </div>
+
+        <!-- STEP 3B: DEPOSIT PAID -->
+        <div class="screen" id="screen3b">
+            <div class="step-label">
+                <div class="num">Step 3 of 5</div>
+                <div class="desc">Deposit complete</div>
+            </div>
+            <div style="text-align:center;padding:20px 0">
+                <div class="check-circle">✓</div>
+                <div class="screen-heading">Request Sent! 🎉</div>
+                <p style="color:var(--text2);font-size:14px;line-height:1.6;margin-bottom:16px">Your appointment request has been sent to Sly. You'll receive a text once it's confirmed.</p>
+                <div class="summary-row"><span class="label">Service</span><span id="sum2Service">Premium Cut</span></div>
+                <div class="summary-row"><span class="label">Date</span><span>Fri, Apr 18</span></div>
+                <div class="summary-row"><span class="label">Time</span><span id="sum2Time">3:00 PM</span></div>
+                <div class="summary-row" style="color:#4CAF50"><span>✅ Deposit paid — Sly will confirm!</span></div>
+            </div>
+            <div class="checkin-reminder">
+                <strong>📍 When You Arrive</strong>
+                <p>Check in on the app when you get here — visit <strong style="color:#fff">uppercutsbysly.com</strong> and tap <strong style="color:#fff">Check In</strong>. Have a seat in the lobby and Sly will text you when he's ready for you.</p>
+            </div>
+            <button class="demo-btn btn-gold" onclick="goStep(4)" style="margin-top:20px">See What's Next →</button>
+        </div>
+
+        <!-- STEP 4: CHECK IN -->
+        <div class="screen" id="screen4">
+            <div class="step-label">
+                <div class="num">Step 4 of 5</div>
+                <div class="desc">Day of your appointment</div>
+            </div>
+            <div style="text-align:center;padding:20px 0">
+                <div class="screen-title">Arrived?</div>
+                <div class="screen-heading">Check In</div>
+                <p style="color:var(--text2);font-size:14px;margin-bottom:24px;line-height:1.5">You're at the suite. Let Sly know you're here so he can get your chair ready.</p>
+                <input class="demo-input" placeholder="Your Name" value="Marcus T." readonly>
+                <input class="demo-input" placeholder="Phone Number" value="(770) 555-1234" readonly>
+                <button class="demo-btn btn-gold" onclick="demoCheckin()">📍 CHECK IN</button>
+                <div id="checkinResult" style="display:none;margin-top:20px">
+                    <div class="check-circle" style="border-color:#4CAF50;background:rgba(76,175,80,0.1)">✓</div>
+                    <p style="font-size:16px;font-weight:600;margin-bottom:8px">You're checked in! ✅</p>
+                    <p style="color:var(--text2);font-size:13px">Sly got the alert. Have a seat in the lobby — he'll text you when he's ready for you.</p>
+                    <button class="demo-btn btn-gold" onclick="goStep(5)" style="margin-top:16px">See Checkout →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 5: CHECKOUT & TIP -->
+        <div class="screen" id="screen5">
+            <div class="step-label">
+                <div class="num">Step 5 of 5</div>
+                <div class="desc">After your cut</div>
+            </div>
+            <div style="text-align:center">
+                <div class="screen-title">Checkout</div>
+                <div class="screen-heading">Looking Fresh 💈</div>
+            </div>
+            <div style="margin:16px 0">
+                <div class="summary-row"><span class="label">Service</span><span id="sum3Service">Premium Cut</span></div>
+                <div class="summary-row"><span class="label">Price</span><span id="sum3Price">$45</span></div>
+                <div class="summary-row" style="color:#4CAF50"><span>Deposit Paid</span><span>-$23</span></div>
+                <div class="summary-row" style="font-weight:600;font-size:16px"><span>Remaining</span><span id="sum3Remaining">$22</span></div>
+            </div>
+            <div class="tip-card">
+                <div style="font-weight:600;font-size:14px;margin-bottom:4px">💰 Add a Tip?</div>
+                <div style="font-size:12px;color:var(--text2)">Tips are always appreciated — never required</div>
+                <div class="tip-grid">
+                    <div class="tip-opt" onclick="pickTip(this,15)">15%</div>
+                    <div class="tip-opt" onclick="pickTip(this,20)">20%</div>
+                    <div class="tip-opt" onclick="pickTip(this,25)">25%</div>
+                    <div class="tip-opt" onclick="pickTip(this,30)">30%</div>
+                </div>
+                <div id="tipAmount" style="text-align:center;margin-top:10px;font-size:14px;color:var(--gold);display:none"></div>
+            </div>
+            <button class="demo-btn btn-gold" onclick="demoPay()">💳 Pay with Square</button>
+            <button class="demo-btn btn-outline" onclick="demoCash()" style="margin-top:0">💵 Pay Cash</button>
+            <div id="payResult" style="display:none;text-align:center;margin-top:20px">
+                <div class="check-circle" style="border-color:#4CAF50;background:rgba(76,175,80,0.1)">✓</div>
+                <p style="font-size:18px;font-weight:600;margin-bottom:8px">All Set! 🙌</p>
+                <p style="color:var(--text2);font-size:13px;line-height:1.5">Thanks for choosing Uppercuts. See you next time, king.</p>
+                <a href="index.html" class="demo-btn btn-gold" style="text-decoration:none;display:block;margin-top:16px">Book Your Next Cut</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<footer>
+    <a href="index.html">← Back to Uppercuts</a>
+</footer>
+
+<script>
+let currentStep=1;
+let demoService='Premium Cut';
+let demoPrice=45;
+let demoTime='3:00 PM';
+
+function goStep(n){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    const id = n==='3b' ? 'screen3b' : 'screen'+n;
+    document.getElementById(id).classList.add('active');
+
+    const stepNum = n==='3b' ? 3 : parseInt(n);
+    currentStep=stepNum;
+
+    // Update dots
+    const dots=document.querySelectorAll('.step-dot');
+    const lines=document.querySelectorAll('.step-line');
+    dots.forEach((d,i)=>{
+        d.classList.remove('active','done');
+        if(i+1===stepNum) d.classList.add('active');
+        else if(i+1<stepNum) d.classList.add('done');
+    });
+    lines.forEach((l,i)=>{
+        l.classList.remove('done');
+        if(i+1<stepNum) l.classList.add('done');
+    });
+
+    window.scrollTo({top:document.querySelector('.container').offsetTop-100,behavior:'smooth'});
+}
+
+function pickService(el,name,price){
+    document.querySelectorAll('#screen1 .demo-card').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected');
+    demoService=name;
+    demoPrice=parseInt(price.replace('$',''));
+    document.getElementById('toStep2').disabled=false;
+    // Update all summaries
+    const dep=Math.ceil(demoPrice*0.5);
+    document.getElementById('sumService').textContent=name;
+    document.getElementById('sumPrice').textContent=price;
+    document.getElementById('sumDeposit').textContent='$'+dep;
+    document.getElementById('sum2Service').textContent=name;
+    document.getElementById('sum3Service').textContent=name;
+    document.getElementById('sum3Price').textContent=price;
+    document.getElementById('sum3Remaining').textContent='$'+(demoPrice-dep);
+    // Update deposit button
+    document.querySelector('#screen3 .btn-gold').textContent='💳 Pay $'+dep+' Deposit';
+}
+
+function pickTime(el){
+    document.querySelectorAll('.time-btn').forEach(t=>t.classList.remove('selected'));
+    el.classList.add('selected');
+    demoTime=el.textContent;
+    document.getElementById('toStep3').disabled=false;
+    document.getElementById('sumTime').textContent=demoTime;
+    document.getElementById('sum2Time').textContent=demoTime;
+}
+
+function demoCheckin(){
+    document.getElementById('checkinResult').style.display='block';
+    document.querySelector('#screen4 .btn-gold').style.display='none';
+    document.querySelectorAll('#screen4 .demo-input').forEach(i=>i.style.display='none');
+    document.querySelector('#screen4 p').style.display='none';
+}
+
+function pickTip(el,pct){
+    document.querySelectorAll('.tip-opt').forEach(t=>t.classList.remove('selected'));
+    el.classList.add('selected');
+    const dep=Math.ceil(demoPrice*0.5);
+    const remaining=demoPrice-dep;
+    const tipAmt=Math.round(demoPrice*pct/100);
+    document.getElementById('tipAmount').style.display='block';
+    document.getElementById('tipAmount').textContent='Tip: $'+tipAmt+' · Total: $'+(remaining+tipAmt);
+}
+
+function demoPay(){
+    document.getElementById('payResult').style.display='block';
+    document.querySelectorAll('#screen5 .demo-btn').forEach(b=>b.style.display='none');
+    document.querySelector('.tip-card').style.display='none';
+    document.querySelectorAll('#screen5 .summary-row').forEach(r=>r.style.display='none');
+    document.querySelector('#screen5 .screen-heading').textContent='Paid! 💈';
+}
+function demoCash(){demoPay()}
+</script>
+
+</body>
+</html>
