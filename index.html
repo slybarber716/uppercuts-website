@@ -7,11 +7,11 @@
     <meta name="theme-color" content="#0A0A0A">
     <meta property="og:title" content="Uppercuts | Premium Barber Suite - Decatur, GA">
     <meta property="og:description" content="Private barber suite in Decatur, GA. Expert fades, cuts, beard work, color, and facials. Book online instantly.">
-    <meta property="og:image" content="https://uppercutsbysly.com/images/20220705_183600.jpg">
+    <meta property="og:image" content="https://uppercutsbysly.com/images/Tezza-2903.jpg">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://uppercutsbysly.com">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://uppercutsbysly.com/images/20220705_183600.jpg">
+    <meta name="twitter:image" content="https://uppercutsbysly.com/images/Tezza-2903.jpg">
     <link rel="manifest" href="manifest.json">
     <title>Uppercuts | Premium Barber Suite - Decatur, GA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1734,7 +1734,7 @@
         let monthlyCode = '';
 
         // Facial addon eligible services
-        const FACIAL_ELIGIBLE = ['Premium Cut', 'Signature Cut', 'Signature + Shampoo', 'Beard / Line Up'];
+        const FACIAL_ELIGIBLE = ['Kids Cut (13 & Under)', 'Teen Cut (14-17)', 'Premium Cut', 'Signature Cut', 'Signature + Shampoo', 'Beard / Line Up', 'Color', 'Eyebrows'];
         let facialAdded = false;
         let baseService = null;
 
@@ -1953,7 +1953,7 @@
                 return;
             }
 
-            // If deposit IS required — send them to pay FIRST, then submit after they come back
+            // If deposit IS required — submit booking FIRST, then send to pay
             const squareLinks = {
                 8:  'https://square.link/u/TW7YhnpR',
                 13: 'https://square.link/u/UwY6p0Ex',
@@ -1964,36 +1964,29 @@
             };
             const link = squareLinks[deposit.amount];
 
+            // Submit booking immediately so Sly always sees it
+            submitBookingToServer(name, phone, selectedService.name, selectedService.price, selectedDate, selectedTime, notes + ' [DEPOSIT: $' + deposit.amount + ']', deposit);
+
             document.getElementById('finalSummary').innerHTML = `
-                <h4>Deposit Required</h4>
+                <h4>Request Sent! 🎉</h4>
                 <div class="summary-row"><span class="label">Service</span><span>${selectedService.name}</span></div>
                 <div class="summary-row"><span class="label">Date</span><span>${selectedDate}</span></div>
                 <div class="summary-row"><span class="label">Time</span><span>${selectedTime}</span></div>
                 <div class="summary-row summary-total"><span class="label">Deposit</span><span>$${deposit.amount}</span></div>
-                <div style="color:#E74C3C;font-size:13px;margin:12px 0;line-height:1.5">${deposit.message}</div>
-                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Your request will be sent to Sly once the deposit is complete.</p>
-                ${link ? `<a href="${link}" target="_blank" id="payDepositBtn" class="cta-button" style="display:block;text-align:center;text-decoration:none;margin-bottom:12px;font-size:16px" onclick="window._depositPending={name:'${name.replace(/'/g,"\\'")}',phone:'${phone}',service:'${selectedService.name.replace(/'/g,"\\'")}',price:'${selectedService.price}',date:'${selectedDate}',time:'${selectedTime}',notes:'${notes.replace(/'/g,"\\'")}',deposit:${JSON.stringify(deposit)}};document.getElementById('confirmDepositBtn').style.display='block';">💳 Pay $${deposit.amount} Deposit</a>` : ''}
-                <button id="confirmDepositBtn" class="cta-button" style="display:none;width:100%;margin-top:8px;background:#4CAF50;font-size:16px" onclick="completeDepositBooking()">✅ I've Paid — Submit My Request</button>
+                <div style="color:#4CAF50;font-size:13px;margin:12px 0;line-height:1.5">✅ Your appointment request has been sent to Sly!</div>
+                <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5">Now pay your deposit below to secure your spot. Sly will confirm once payment is received.</p>
+                ${link ? `<a href="${link}" target="_blank" class="cta-button" style="display:block;text-align:center;text-decoration:none;margin-bottom:12px;font-size:16px">💳 Pay $${deposit.amount} Deposit Now</a>` : ''}
+                <div style="background:rgba(201,169,110,0.08);border:1.5px solid rgba(201,169,110,0.25);border-radius:10px;padding:14px;margin-top:12px;text-align:left">
+                    <div style="font-weight:600;color:#C9A96E;margin-bottom:6px">📍 When You Arrive</div>
+                    <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0">Check in on the app — Sly will text you when he's ready for you.</p>
+                </div>
+                <div style="background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:14px;margin-top:10px;text-align:left">
+                    <div style="font-weight:600;color:#fff;margin-bottom:6px">🧴 Before You Come</div>
+                    <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0">Please arrive with your hair freshly shampooed for the best results.</p>
+                </div>
             `;
             goToStep(4);
         });
-
-        function completeDepositBooking() {
-            const d = window._depositPending;
-            if (!d) return;
-            submitBookingToServer(d.name, d.phone, d.service, d.price, d.date, d.time, d.notes, d.deposit);
-            document.getElementById('finalSummary').innerHTML = `
-                <h4>Request Sent! 🎉</h4>
-                <div class="summary-row"><span class="label">Name</span><span>${d.name}</span></div>
-                <div class="summary-row"><span class="label">Service</span><span>${d.service}</span></div>
-                <div class="summary-row"><span class="label">Date</span><span>${d.date}</span></div>
-                <div class="summary-row"><span class="label">Time</span><span>${d.time}</span></div>
-                <div class="summary-row summary-total"><span class="label">Price</span><span>${d.price}</span></div>
-                <div class="summary-row" style="color:#4CAF50;margin-top:8px;"><span>✅ Deposit paid — Sly will confirm your appointment!</span></div>
-                <div class="summary-row" style="color:#C9A96E;margin-top:12px;font-size:13px;"><span>📍 Check in on the app when you arrive — Sly will text you when he's ready!</span></div>
-            `;
-            window._depositPending = null;
-        }
 
         // ===== CHATBOT =====
         const chatToggle = document.getElementById('chatToggle');
