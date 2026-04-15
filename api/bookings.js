@@ -1,4 +1,21 @@
-let bookings = [];
+const fs = require('fs');
+const path = require('path');
+const DB_PATH = path.join('/tmp', 'bookings.json');
+
+function loadBookings() {
+  try {
+    if (fs.existsSync(DB_PATH)) {
+      return JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
+    }
+  } catch (e) {}
+  return [];
+}
+
+function saveBookings(bookings) {
+  try {
+    fs.writeFileSync(DB_PATH, JSON.stringify(bookings));
+  } catch (e) {}
+}
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -6,6 +23,8 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  let bookings = loadBookings();
 
   // POST - client submits booking request
   if (req.method === 'POST') {
@@ -28,7 +47,8 @@ module.exports = async (req, res) => {
       created: new Date().toISOString()
     };
     bookings.unshift(booking);
-    if (bookings.length > 200) bookings = bookings.slice(0, 200);
+    if (bookings.length > 500) bookings = bookings.slice(0, 500);
+    saveBookings(bookings);
 
     return res.status(200).json({ success: true, booking });
   }
@@ -38,7 +58,8 @@ module.exports = async (req, res) => {
     const { id, status } = req.body;
     const booking = bookings.find(b => b.id === id);
     if (!booking) return res.status(404).json({ error: 'Booking not found' });
-    booking.status = status; // 'confirmed' or 'denied'
+    booking.status = status;
+    saveBookings(bookings);
     return res.status(200).json({ success: true, booking });
   }
 
