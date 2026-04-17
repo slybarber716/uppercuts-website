@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0a0a1a">
+    <meta name="site-version" content="2026041701">
+    <script>
+    (function(){
+        var v='uppercuts_admin_v';
+        var current='2026041701';
+        if(localStorage.getItem(v)!==current){
+            localStorage.setItem(v,current);
+            if(performance.navigation&&performance.navigation.type!==1){
+                location.reload(true);
+            }
+        }
+    })();
+    </script>
     <title>Uppercuts Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
