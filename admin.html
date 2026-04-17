@@ -87,8 +87,16 @@
             width:100%;padding:12px 14px;background:var(--surface2);
             border:1px solid var(--border);border-radius:8px;
             color:#fff;font-family:'Inter',sans-serif;font-size:14px;
+            color-scheme:dark;
         }
         .fg input:focus,.fg select:focus{outline:none;border-color:var(--gold)}
+        .fg input[type="date"]{
+            background:var(--surface2);color:var(--gold);
+        }
+        .fg input[type="date"]::-webkit-calendar-picker-indicator{
+            filter:invert(0.8) sepia(1) saturate(3) hue-rotate(10deg);
+            cursor:pointer;
+        }
 
         /* CHECK-IN ALERT POPUP */
         .checkin-alert-popup{
