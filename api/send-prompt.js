@@ -22,6 +22,10 @@ module.exports = async (req, res) => {
     return res.status(200).json({ success: true, sid: msg.sid });
   } catch (err) {
     console.error('Prompt SMS error:', err);
-    return res.status(500).json({ error: 'Failed to send message' });
+    return res.status(500).json({
+      error: 'Failed to send message',
+      twilioError: err.message || String(err),
+      code: err.code || null
+    });
   }
 };
