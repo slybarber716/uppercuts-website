@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="site-version" content="2026041701">
+    <meta name="site-version" content="2026041702">
     <script>
     // Force reload if client has stale cached version
     (function(){
         var v='uppercuts_site_v';
-        var current='2026041701';
+        var current='2026041702';
         if(localStorage.getItem(v)!==current){
             localStorage.setItem(v,current);
-            if(performance.navigation&&performance.navigation.type!==1){
-                location.reload(true);
-            }
+            location.reload(true);
         }
     })();
     </script>
@@ -2271,8 +2269,13 @@
                 return;
             }
 
-            // If deposit IS required — show pay link FIRST, DO NOT submit to server until paid
+            // Deposit IS required — submit booking IMMEDIATELY with depositPaid:'pending',
+            // then show the Square payment link. This guarantees the booking reaches
+            // the server even if the client closes the tab after paying in Square.
             console.log('TAKING DEPOSIT REQUIRED BRANCH');
+            deposit.depositPaid = 'pending';
+            submitBookingToServer(name, phone, selectedService.name, selectedService.price, selectedDate, selectedTime, notes + ' [DEPOSIT: $' + deposit.amount + ']', deposit);
+
             const squareLinks = {
                 8:  'https://square.link/u/TW7YhnpR',
                 13: 'https://square.link/u/UwY6p0Ex',
@@ -2284,30 +2287,17 @@
             const link = squareLinks[deposit.amount];
             console.log('Deposit amount:', deposit.amount, 'Square link:', link);
 
-            // Stash the pending booking in memory — it won't be sent until deposit is paid
-            pendingBooking = {
-                name, phone,
-                service: selectedService.name,
-                price: selectedService.price,
-                date: selectedDate,
-                time: selectedTime,
-                notes: notes + ' [DEPOSIT: $' + deposit.amount + ']',
-                deposit
-            };
-            depositPaymentOpened = false;
-
             document.getElementById('finalSummary').innerHTML = `
-                <h4>Pay Deposit to Lock Your Spot</h4>
+                <h4>Request Sent! 🎉</h4>
                 <div class="summary-row"><span class="label">Service</span><span>${selectedService.name}</span></div>
                 <div class="summary-row"><span class="label">Date</span><span>${selectedDate}</span></div>
                 <div class="summary-row"><span class="label">Time</span><span>${selectedTime}</span></div>
                 <div class="summary-row summary-total"><span class="label">Deposit</span><span>$${deposit.amount}</span></div>
-                <div style="background:rgba(231,76,60,0.12);border:1.5px solid rgba(231,76,60,0.45);border-radius:10px;padding:14px;margin-top:12px;text-align:left">
-                    <div style="font-weight:700;color:#E74C3C;margin-bottom:6px">⚠️ Your spot is NOT held yet</div>
-                    <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0">Pay your deposit to lock in this time. Your appointment is only sent to Sly <b>after</b> the deposit is paid. No deposit, no booking — no exceptions.</p>
+                <div style="background:rgba(201,169,110,0.12);border:1.5px solid rgba(201,169,110,0.35);border-radius:10px;padding:14px;margin-top:12px;text-align:left">
+                    <div style="font-weight:700;color:#C9A96E;margin-bottom:6px">💳 Pay Your Deposit Now</div>
+                    <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0">Your booking has been sent to Sly. <b>Pay your deposit below to confirm.</b> Sly will verify the payment — unpaid bookings will not be confirmed.</p>
                 </div>
-                ${link ? `<a href="${link}" target="_blank" onclick="markDepositOpened()" class="cta-button" style="display:block;text-align:center;text-decoration:none;margin-top:14px;font-size:16px">💳 Pay $${deposit.amount} Deposit Now</a>` : '<div style="color:#E74C3C;margin-top:12px">No Square link configured for this amount. Please contact Sly.</div>'}
-                <button id="confirmPaidBtn" onclick="confirmDepositPaid()" class="cta-button" disabled style="display:block;width:100%;margin-top:10px;background:#555;border-color:#555;color:#aaa;font-size:15px;cursor:not-allowed;opacity:0.6" title="Open the payment link above first">⏳ Pay the deposit to unlock</button>
+                ${link ? `<a href="${link}" target="_blank" class="cta-button" style="display:block;text-align:center;text-decoration:none;margin-top:14px;font-size:16px">💳 Pay $${deposit.amount} Deposit Now</a>` : '<div style="color:#E74C3C;margin-top:12px">No Square link configured for this amount. Please contact Sly.</div>'}
                 <div style="background:rgba(201,169,110,0.08);border:1.5px solid rgba(201,169,110,0.25);border-radius:10px;padding:14px;margin-top:14px;text-align:left">
                     <div style="font-weight:600;color:#C9A96E;margin-bottom:6px">📍 When You Arrive</div>
                     <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0">Check in on the app — Sly will text you when he's ready for you.</p>
@@ -2320,57 +2310,9 @@
             goToStep(4);
         });
 
-        // Deposit enforcement state — button only unlocks after Square link clicked + cooldown
+        // Legacy deposit state (no longer used — bookings submit immediately now)
         let pendingBooking = null;
         let depositPaymentOpened = false;
-        function markDepositOpened(){
-            if (depositPaymentOpened) return; // ignore repeat clicks
-            depositPaymentOpened = true;
-            const btn = document.getElementById('confirmPaidBtn');
-            if (!btn) return;
-            // Start a 25-second cooldown; real Square checkout takes longer than this to fill out
-            let remaining = 25;
-            btn.textContent = `⏳ Complete payment… (${remaining}s)`;
-            const tick = setInterval(() => {
-                remaining--;
-                if (remaining > 0) {
-                    btn.textContent = `⏳ Complete payment… (${remaining}s)`;
-                } else {
-                    clearInterval(tick);
-                    btn.disabled = false;
-                    btn.style.background = '#4CAF50';
-                    btn.style.borderColor = '#4CAF50';
-                    btn.style.color = '#fff';
-                    btn.style.cursor = 'pointer';
-                    btn.style.opacity = '1';
-                    btn.textContent = "✅ I've Paid — Submit My Booking";
-                }
-            }, 1000);
-        }
-        function confirmDepositPaid(){
-            if (!pendingBooking) { alert('No pending booking. Please start again.'); return; }
-            // Hard gate — if the deposit link was never opened, refuse
-            if (!depositPaymentOpened) {
-                alert('Please tap the "Pay Deposit" button above first. Your booking cannot be submitted until the deposit is paid.');
-                return;
-            }
-            const p = pendingBooking;
-            p.deposit.depositPaid = 'pending';
-            submitBookingToServer(p.name, p.phone, p.service, p.price, p.date, p.time, p.notes, p.deposit);
-            document.getElementById('finalSummary').innerHTML = `
-                <h4>Request Sent! 🎉</h4>
-                <div class="summary-row"><span class="label">Service</span><span>${p.service}</span></div>
-                <div class="summary-row"><span class="label">Date</span><span>${p.date}</span></div>
-                <div class="summary-row"><span class="label">Time</span><span>${p.time}</span></div>
-                <div class="summary-row summary-total"><span class="label">Deposit</span><span>$${p.deposit.amount}</span></div>
-                <div style="color:#C9A96E;font-size:13px;margin:12px 0;line-height:1.5">⏳ Your appointment request has been sent to Sly. He'll verify your deposit and confirm. If you haven't paid yet, your booking will not be confirmed.</div>
-                <div style="background:rgba(201,169,110,0.08);border:1.5px solid rgba(201,169,110,0.25);border-radius:10px;padding:14px;margin-top:12px;text-align:left">
-                    <div style="font-weight:600;color:#C9A96E;margin-bottom:6px">📍 When You Arrive</div>
-                    <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0">Check in on the app — Sly will text you when he's ready for you.</p>
-                </div>
-            `;
-            pendingBooking = null;
-        }
 
         // ===== REVIEWS =====
         function openReviewForm(){
