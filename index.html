@@ -2181,8 +2181,14 @@
             }).then(r => {
                 if (r.status === 409) {
                     alert('That time slot was just booked by someone else. Please go back and choose a different time.');
+                } else if (r.status === 402) {
+                    alert('Deposit payment required. Please pay the deposit before booking.');
+                } else if (!r.ok) {
+                    alert('Something went wrong submitting your booking. Please try again or contact Sly directly.');
                 }
-            }).catch(() => {});
+            }).catch(() => {
+                alert('Could not reach the booking server. Please check your connection and try again, or contact Sly directly.');
+            });
 
             // Auto-register new clients
             if (deposit.type === 'new') {
