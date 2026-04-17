@@ -66,9 +66,9 @@ module.exports = async (req, res) => {
     // Normalize canonical format "H:00 AM/PM"
     time = parseInt(timeMatch[1], 10) + ':00 ' + timeMatch[3].toUpperCase();
 
-    // Deposit enforcement — if a deposit is required, the client must mark it paid.
-    // Blocks direct-API bypass (curl/fetch/DOM-edited submissions) that would otherwise
-    // skip the Square payment modal on the website.
+    // Deposit enforcement — if a deposit is required, the client must have at least
+    // opened the Square payment link. depositPaid can be true, 'pending', etc.
+    // Only hard-reject if depositPaid is explicitly false/null/undefined (never touched the pay flow).
     if (depositRequired && !depositPaid) {
       return res.status(402).json({ error: 'Deposit required. Please pay the deposit before submitting your booking.' });
     }

@@ -3,6 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="site-version" content="2026041701">
+    <script>
+    // Force reload if client has stale cached version
+    (function(){
+        var v='uppercuts_site_v';
+        var current='2026041701';
+        if(localStorage.getItem(v)!==current){
+            localStorage.setItem(v,current);
+            if(performance.navigation&&performance.navigation.type!==1){
+                location.reload(true);
+            }
+        }
+    })();
+    </script>
     <meta name="description" content="Uppercuts - Premium barber suite in Decatur, GA. Expert fades, cuts, beard work, color, and facials. Book online instantly.">
     <meta name="theme-color" content="#0A0A0A">
     <meta property="og:title" content="Uppercuts | Premium Barber Suite - Decatur, GA">
@@ -2150,8 +2164,8 @@
         }
 
         function submitBookingToServer(name, phone, service, price, date, time, notes, deposit) {
-            // If deposit is 0 (monthly), it's inherently paid; otherwise respect the deposit.depositPaid flag set at confirm time
-            const paid = deposit.amount <= 0 ? true : !!deposit.depositPaid;
+            // If deposit is 0 (monthly), it's inherently paid; otherwise pass through the actual value ('pending' or true)
+            const paid = deposit.amount <= 0 ? true : (deposit.depositPaid || false);
             // Save locally
             const bookings = getBookings();
             bookings.push({
@@ -2341,7 +2355,7 @@
                 return;
             }
             const p = pendingBooking;
-            p.deposit.depositPaid = true;
+            p.deposit.depositPaid = 'pending';
             submitBookingToServer(p.name, p.phone, p.service, p.price, p.date, p.time, p.notes, p.deposit);
             document.getElementById('finalSummary').innerHTML = `
                 <h4>Request Sent! 🎉</h4>
@@ -2349,7 +2363,7 @@
                 <div class="summary-row"><span class="label">Date</span><span>${p.date}</span></div>
                 <div class="summary-row"><span class="label">Time</span><span>${p.time}</span></div>
                 <div class="summary-row summary-total"><span class="label">Deposit</span><span>$${p.deposit.amount}</span></div>
-                <div style="color:#4CAF50;font-size:13px;margin:12px 0;line-height:1.5">✅ Your appointment request has been sent to Sly! He'll confirm once he verifies your deposit.</div>
+                <div style="color:#C9A96E;font-size:13px;margin:12px 0;line-height:1.5">⏳ Your appointment request has been sent to Sly. He'll verify your deposit and confirm. If you haven't paid yet, your booking will not be confirmed.</div>
                 <div style="background:rgba(201,169,110,0.08);border:1.5px solid rgba(201,169,110,0.25);border-radius:10px;padding:14px;margin-top:12px;text-align:left">
                     <div style="font-weight:600;color:#C9A96E;margin-bottom:6px">📍 When You Arrive</div>
                     <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0">Check in on the app — Sly will text you when he's ready for you.</p>
