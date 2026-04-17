@@ -16,7 +16,7 @@
     <title>Uppercuts | Premium Barber Suite - Decatur, GA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Playfair+Display:wght@400;700&family=Oswald:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Playfair+Display:wght@400;700&family=Oswald:wght@400;500;600&family=Inter:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
         /* ===== RESET & BASE ===== */
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -113,10 +113,11 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         .nav-logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 32px;
-            font-weight: 700;
-            letter-spacing: 4px;
+            font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+            font-size: 30px;
+            font-weight: 500;
+            font-style: italic;
+            letter-spacing: 2px;
             color: var(--primary-accent);
         }
         .nav-links {
@@ -165,6 +166,37 @@
             box-shadow: 0 6px 20px rgba(201, 169, 110, 0.4);
         }
         .nav-cta::after { display: none !important; }
+
+        /* Check In pill — outlined gold, distinct from Book Now */
+        .nav-checkin {
+            border: 1.5px solid var(--primary-accent) !important;
+            color: var(--primary-accent) !important;
+            padding: 10px 22px !important;
+            font-family: 'Oswald', sans-serif !important;
+            font-size: 13px !important;
+            font-weight: 500 !important;
+            letter-spacing: 2px !important;
+            text-transform: uppercase !important;
+            border-radius: 30px !important;
+            transition: all 0.25s ease !important;
+        }
+        .nav-checkin:hover {
+            background: rgba(201,169,110,0.12) !important;
+            color: var(--primary-accent) !important;
+            transform: translateY(-1px);
+        }
+        .nav-checkin::after { display: none !important; }
+
+        /* Mobile check-in highlight */
+        .nav-checkin-mobile {
+            color: var(--primary-accent) !important;
+            border: 1.5px solid var(--primary-accent);
+            border-radius: 30px;
+            padding: 10px 22px !important;
+            display: inline-block !important;
+            align-self: flex-start;
+            font-size: 15px !important;
+        }
 
         /* Hamburger */
         .hamburger {
@@ -223,15 +255,22 @@
             animation: fadeInUp 0.8s ease forwards;
         }
         .hero-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 80px;
-            font-weight: 700;
-            line-height: 1.1;
+            font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+            font-size: 108px;
+            font-weight: 300;
+            font-style: italic;
+            line-height: 1;
+            letter-spacing: 1px;
             margin-bottom: 20px;
             animation: fadeInUp 0.8s ease 0.2s forwards;
             opacity: 0;
+            color: #f5efe3;
         }
-        .hero-title span { color: var(--primary-accent); }
+        .hero-title span {
+            color: var(--primary-accent);
+            font-style: italic;
+            font-weight: 400;
+        }
         .hero-subtitle {
             font-size: 20px;
             color: var(--text-secondary);
@@ -1123,7 +1162,7 @@
             .mobile-menu { display: block; }
             .mobile-book { display: block; }
             .hero { min-height: 85vh; }
-            .hero-title { font-size: 44px; }
+            .hero-title { font-size: 64px; letter-spacing: 1px; line-height: 1.05; }
             .hero-subtitle { font-size: 16px; }
             .section-heading { font-size: 32px; }
             .services-grid { grid-template-columns: 1fr; }
@@ -1134,6 +1173,7 @@
             .stat-num { font-size: 32px; }
             .cta-banner h2 { font-size: 32px; }
             .booking-container { padding: 28px 20px; }
+            .checkin-qr-desktop { display: none; }
             .time-grid { grid-template-columns: repeat(3, 1fr); }
             .date-grid { grid-template-columns: repeat(7, 1fr); gap: 4px; }
             .chatbox { width: calc(100% - 48px); right: 24px; bottom: 90px; }
@@ -1157,9 +1197,10 @@
     <nav class="navbar" id="navbar">
         <a href="#" class="nav-logo">UPPERCUTS</a>
         <ul class="nav-links">
+            <li><a href="demo.html">How It Works</a></li>
             <li><a href="#services">Services</a></li>
             <li><a href="#booking">Book</a></li>
-            <li><a href="demo.html">How It Works</a></li>
+            <li><a href="checkin.html" class="nav-checkin">Check In</a></li>
             <li><a href="#gallery">Gallery</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
@@ -1173,9 +1214,10 @@
     <!-- MOBILE MENU -->
     <div class="mobile-overlay" id="mobileOverlay"></div>
     <div class="mobile-menu" id="mobileMenu">
+        <a href="demo.html">How It Works</a>
         <a href="#services">Services</a>
         <a href="#booking">Book Now</a>
-        <a href="demo.html">How It Works</a>
+        <a href="checkin.html" class="nav-checkin-mobile">✓ Check In</a>
         <a href="#gallery">Gallery</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
@@ -1330,15 +1372,6 @@
                         <div class="svc-info"><h4>Signature + Shampoo</h4><span>90 min · full signature cut + premium shampoo</span></div>
                         <span class="svc-price">$75</span>
                     </div>
-                    <div id="facialAddon" style="display:none;margin:10px 0 14px;padding:14px 16px;background:rgba(201,169,110,0.08);border:1.5px solid rgba(201,169,110,0.25);border-radius:10px;cursor:pointer" onclick="toggleFacialAddon()">
-                        <label style="display:flex;align-items:center;gap:12px;cursor:pointer;margin:0">
-                            <input type="checkbox" id="facialCheck" style="width:20px;height:20px;accent-color:#C9A96E" onclick="event.stopPropagation();toggleFacialAddon()">
-                            <div>
-                                <div style="font-weight:600;font-size:14px;color:#fff">Add Facial <span style="color:#C9A96E">+$35</span></div>
-                                <div style="font-size:12px;color:#8888aa;margin-top:2px">Adds 30 min · hot towel, cleanse & glow up</div>
-                            </div>
-                        </label>
-                    </div>
                     <div class="service-option" data-service="Beard / Line Up" data-price="30">
                         <div class="svc-info"><h4>Beard / Line Up</h4><span>30 min</span></div>
                         <span class="svc-price">$30</span>
@@ -1355,6 +1388,19 @@
                         <div class="svc-info"><h4>Eyebrows (Razor)</h4><span>20 min</span></div>
                         <span class="svc-price">$15</span>
                     </div>
+
+                    <!-- Facial Add-on — prominently placed below service list -->
+                    <div id="facialAddon" style="display:none;margin:18px 0 6px;padding:18px 20px;background:linear-gradient(135deg,rgba(201,169,110,0.14),rgba(201,169,110,0.04));border:1.5px solid rgba(201,169,110,0.45);border-radius:12px;cursor:pointer;box-shadow:0 4px 18px rgba(201,169,110,0.08)" onclick="toggleFacialAddon()">
+                        <label style="display:flex;align-items:center;gap:14px;cursor:pointer;margin:0">
+                            <input type="checkbox" id="facialCheck" style="width:22px;height:22px;accent-color:#C9A96E;flex-shrink:0" onclick="event.stopPropagation();toggleFacialAddon()">
+                            <div style="flex:1">
+                                <div style="font-weight:700;font-size:15px;color:#fff;letter-spacing:0.3px">✨ Add Facial <span style="color:#C9A96E;font-weight:700">+$35</span></div>
+                                <div style="font-size:12px;color:#aaa9b8;margin-top:3px">+30 min · hot towel, cleanse & glow up</div>
+                            </div>
+                            <div id="facialTotalDur" style="font-size:11px;color:#C9A96E;font-family:'Oswald',sans-serif;letter-spacing:1px;text-transform:uppercase"></div>
+                        </label>
+                    </div>
+
                     <div class="step-nav">
                         <div></div>
                         <button class="btn-next" id="toStep2" disabled>Next &rarr;</button>
@@ -1367,9 +1413,35 @@
                     <div class="date-grid" id="dateGrid"></div>
                     <h3 style="font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:1px;text-transform:uppercase;color:var(--primary-accent);margin-bottom:16px;margin-top:8px;">Select a Time</h3>
                     <div class="time-grid" id="timeGrid"></div>
+                    <div style="margin-top:20px;padding:16px;background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.2);border-radius:10px;text-align:center">
+                        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:10px">Don't see a time that works?</div>
+                        <button type="button" onclick="openWaitlistForm()" style="background:transparent;color:#C9A96E;border:1.5px solid #C9A96E;padding:10px 20px;border-radius:4px;cursor:pointer;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:1.5px;text-transform:uppercase">⏰ Join Waitlist</button>
+                    </div>
                     <div class="step-nav">
                         <button class="btn-back" id="backTo1">&larr; Back</button>
                         <button class="btn-next" id="toStep3" disabled>Next &rarr;</button>
+                    </div>
+                </div>
+
+                <!-- Waitlist Modal -->
+                <div id="waitlistModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+                    <div style="background:#111;border:1px solid rgba(201,169,110,0.3);border-radius:16px;max-width:480px;width:100%;padding:32px;position:relative;max-height:90vh;overflow-y:auto">
+                        <button type="button" onclick="closeWaitlistForm()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#999;font-size:28px;cursor:pointer;">×</button>
+                        <h3 style="font-family:'Playfair Display',serif;font-size:28px;color:#C9A96E;margin-bottom:8px;">Join the Waitlist</h3>
+                        <p style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:24px;">We'll text you if a spot opens up that fits your dates.</p>
+                        <form onsubmit="submitWaitlist(event)">
+                            <input type="text" id="wlName" placeholder="Your Name" required style="width:100%;padding:14px;margin-bottom:12px;background:#1a1a1a;border:1px solid rgba(201,169,110,0.2);border-radius:6px;color:#fff;font-family:inherit;font-size:14px;">
+                            <input type="tel" id="wlPhone" placeholder="Phone Number" required style="width:100%;padding:14px;margin-bottom:12px;background:#1a1a1a;border:1px solid rgba(201,169,110,0.2);border-radius:6px;color:#fff;font-family:inherit;font-size:14px;">
+                            <label style="font-size:13px;color:#999;display:block;margin-bottom:6px">Earliest date you'd take</label>
+                            <input type="date" id="wlFrom" style="width:100%;padding:14px;margin-bottom:12px;background:#1a1a1a;border:1px solid rgba(201,169,110,0.2);border-radius:6px;color:#fff;font-family:inherit;font-size:14px;">
+                            <label style="font-size:13px;color:#999;display:block;margin-bottom:6px">Latest date you'd take</label>
+                            <input type="date" id="wlTo" style="width:100%;padding:14px;margin-bottom:16px;background:#1a1a1a;border:1px solid rgba(201,169,110,0.2);border-radius:6px;color:#fff;font-family:inherit;font-size:14px;">
+                            <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#999;margin-bottom:16px;cursor:pointer">
+                                <input type="checkbox" id="wlAny"> Any date works — just alert me anytime something opens
+                            </label>
+                            <button type="submit" class="cta-button" style="width:100%;">Add Me to the Waitlist</button>
+                            <div id="wlMsg" style="margin-top:12px;text-align:center;font-size:14px;"></div>
+                        </form>
                     </div>
                 </div>
 
@@ -1389,8 +1461,9 @@
                         <input type="email" id="clientEmail" placeholder="your@email.com">
                     </div>
                     <div class="form-group">
-                        <label>Monthly Client Code (if applicable)</label>
-                        <input type="text" id="clientCode" placeholder="Enter code to skip deposit">
+                        <label>Promo Code (optional)</label>
+                        <input type="text" id="clientCode" placeholder="Have a code from Sly? Enter it here" oninput="checkMonthlyCode()">
+                        <div id="monthlyStatus" style="margin-top:6px;font-size:12px;height:16px;"></div>
                     </div>
                     <div class="form-group">
                         <label>Notes (optional)</label>
@@ -1418,6 +1491,29 @@
                         </div>
                         <div class="booking-summary" id="finalSummary"></div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHECK IN -->
+    <section class="checkin-section" id="checkin" style="padding:80px 24px;text-align:center;background:#0f1a2e;">
+        <div class="container fade-in">
+            <p class="section-label" style="font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:5px;text-transform:uppercase;color:#C9A96E;margin-bottom:16px;">Arriving?</p>
+            <h2 class="section-heading" style="font-family:'Playfair Display',serif;font-size:40px;margin-bottom:12px;">Check In</h2>
+            <div class="gold-line" style="width:60px;height:2px;background:#C9A96E;margin:0 auto 24px;"></div>
+            <p style="color:rgba(255,255,255,0.6);font-size:16px;max-width:520px;margin:0 auto 32px;line-height:1.6;">When you arrive, tap the button below to let Sly know you're here.</p>
+
+            <!-- Primary CTA — works on any device, especially mobile -->
+            <a href="checkin.html" class="cta-button" style="display:inline-block;padding:18px 48px;font-size:18px;font-family:'Oswald',sans-serif;letter-spacing:3px;text-transform:uppercase;text-decoration:none;background:linear-gradient(135deg,#C9A96E 0%,#A8894E 100%);color:#0A0A0A;border-radius:50px;font-weight:600;box-shadow:0 4px 20px rgba(201,169,110,0.35);transition:transform 0.2s,box-shadow 0.2s;">✓ Tap to Check In</a>
+
+            <p style="color:rgba(201,169,110,0.7);font-size:14px;max-width:480px;margin:24px auto 32px;line-height:1.6;font-style:italic;">Out of respect for the client currently being served, please have a seat in the lobby until Sly comes to get you. Your time in the chair is just as private.</p>
+
+            <!-- Secondary: QR for in-lobby printed use, hidden on mobile -->
+            <div class="checkin-qr-desktop" style="margin-top:8px;">
+                <p style="color:rgba(255,255,255,0.35);font-size:12px;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">— or scan —</p>
+                <div style="background:#0A0A0A;border-radius:20px;padding:28px;display:inline-block;border:1px solid rgba(201,169,110,0.15);">
+                    <img src="images/checkin-qr.png" alt="Check-in QR Code" style="width:180px;height:180px;border-radius:12px;">
                 </div>
             </div>
         </div>
@@ -1505,10 +1601,10 @@
                 <h2 class="section-heading">What Clients Say</h2>
                 <div class="gold-line"></div>
             </div>
-            <div class="testimonials-grid">
+            <div class="testimonials-grid" id="testimonialsGrid">
                 <div class="testimonial-card fade-in">
                     <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                    <p class="testimonial-text">"Best barber in Decatur, hands down. The private suite is a game changer — no waiting, no distractions. Sly takes his time and the fade is always perfect."</p>
+                    <p class="testimonial-text">"Best barber in Decatur, hands down. The private suite is a game changer — no distractions, just focus. Sly takes his time and the fade is always perfect."</p>
                     <p class="testimonial-author">Marcus T.</p>
                     <p class="testimonial-label">Regular Client</p>
                 </div>
@@ -1524,6 +1620,51 @@
                     <p class="testimonial-author">James R.</p>
                     <p class="testimonial-label">Client</p>
                 </div>
+                <div class="testimonial-card fade-in">
+                    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testimonial-text">"The facial add-on is fire. Came in for a cut, left feeling brand new. Sly really runs his suite like a luxury spot. 10/10."</p>
+                    <p class="testimonial-author">Trey B.</p>
+                    <p class="testimonial-label">Regular Client</p>
+                </div>
+                <div class="testimonial-card fade-in">
+                    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testimonial-text">"Booking online is easy, check in is simple, and Sly never rushes you. This is how a barber should run it."</p>
+                    <p class="testimonial-author">Kenny P.</p>
+                    <p class="testimonial-label">Monthly Client</p>
+                </div>
+                <div class="testimonial-card fade-in">
+                    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testimonial-text">"Went in for a beard line up and Sly hooked it up. The suite is clean, the music was right, and the lineup was crispy. Found my new spot."</p>
+                    <p class="testimonial-author">Andre L.</p>
+                    <p class="testimonial-label">Client</p>
+                </div>
+            </div>
+            <div style="text-align:center;margin-top:40px;" class="fade-in">
+                <button type="button" onclick="openReviewForm()" class="btn-dark" style="padding:14px 32px;font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:2px;text-transform:uppercase;background:transparent;color:#C9A96E;border:1.5px solid #C9A96E;border-radius:4px;cursor:pointer;transition:all 0.3s;">
+                    ★ Leave a Review
+                </button>
+            </div>
+
+            <!-- Review Form Modal -->
+            <div id="reviewModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+                <div style="background:#111;border:1px solid rgba(201,169,110,0.3);border-radius:16px;max-width:480px;width:100%;padding:32px;position:relative;">
+                    <button type="button" onclick="closeReviewForm()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#999;font-size:28px;cursor:pointer;">×</button>
+                    <h3 style="font-family:'Playfair Display',serif;font-size:28px;color:#C9A96E;margin-bottom:8px;">Leave a Review</h3>
+                    <p style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:24px;">Your review will appear after Sly approves it.</p>
+                    <form onsubmit="submitReview(event)">
+                        <input type="text" id="revName" placeholder="Your Name" required style="width:100%;padding:14px;margin-bottom:12px;background:#1a1a1a;border:1px solid rgba(201,169,110,0.2);border-radius:6px;color:#fff;font-family:inherit;font-size:14px;">
+                        <div style="margin-bottom:12px;">
+                            <label style="font-size:13px;color:#999;margin-bottom:6px;display:block;">Rating</label>
+                            <div id="revStars" style="font-size:28px;cursor:pointer;color:#444;letter-spacing:4px;">
+                                <span data-rate="1">★</span><span data-rate="2">★</span><span data-rate="3">★</span><span data-rate="4">★</span><span data-rate="5">★</span>
+                            </div>
+                            <input type="hidden" id="revRating" value="5">
+                        </div>
+                        <textarea id="revText" placeholder="Tell us about your experience..." required rows="4" style="width:100%;padding:14px;margin-bottom:16px;background:#1a1a1a;border:1px solid rgba(201,169,110,0.2);border-radius:6px;color:#fff;font-family:inherit;font-size:14px;resize:vertical;"></textarea>
+                        <button type="submit" class="cta-button" style="width:100%;">Submit Review</button>
+                        <div id="revMsg" style="margin-top:12px;text-align:center;font-size:14px;"></div>
+                    </form>
+                </div>
             </div>
         </div>
     </section>
@@ -1534,21 +1675,6 @@
             <h2>Ready for a Fresh Cut?</h2>
             <p>Book your appointment and experience the Uppercuts difference.</p>
             <a href="#booking" class="btn-dark">Book Now</a>
-        </div>
-    </section>
-
-    <!-- CHECK IN -->
-    <section class="checkin-section" id="checkin" style="padding:80px 24px;text-align:center;background:#0f1a2e;">
-        <div class="container fade-in">
-            <p class="section-label" style="font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:5px;text-transform:uppercase;color:#C9A96E;margin-bottom:16px;">Arriving?</p>
-            <h2 class="section-heading" style="font-family:'Playfair Display',serif;font-size:40px;margin-bottom:12px;">Check In</h2>
-            <div class="gold-line" style="width:60px;height:2px;background:#C9A96E;margin:0 auto 24px;"></div>
-            <p style="color:rgba(255,255,255,0.6);font-size:16px;max-width:480px;margin:0 auto 20px;line-height:1.6;">When you arrive, scan this QR code to let Sly know you're here.</p>
-            <p style="color:rgba(201,169,110,0.7);font-size:14px;max-width:480px;margin:0 auto 32px;line-height:1.6;font-style:italic;">Out of respect for the client currently being served, please have a seat in the lobby until Sly comes to get you. Your time in the chair is just as private.</p>
-            <div style="background:#0A0A0A;border-radius:20px;padding:32px;display:inline-block;border:1px solid rgba(201,169,110,0.15);">
-                <img src="images/checkin-qr.png" alt="Check-in QR Code" style="width:200px;height:200px;border-radius:12px;">
-            </div>
-            <p style="color:rgba(255,255,255,0.4);font-size:13px;margin-top:16px;">Or visit <a href="checkin.html" style="color:#C9A96E;text-decoration:underline;">uppercutsbysly.com/checkin</a></p>
         </div>
     </section>
 
@@ -1728,20 +1854,46 @@
         // ===== BOOKING SYSTEM =====
         let selectedService = null;
         let selectedDate = null;
+        let selectedDateISO = null;
         let selectedTime = null;
         let currentStep = 1;
         let clientStatus = null;
         let monthlyCode = '';
+
+        // Service duration map (minutes) — used to block the right number of hour slots
+        const SERVICE_DURATIONS = {
+            'Kids Cut (13 & Under)': 45,
+            'Teen Cut (14-17)': 45,
+            'Premium Cut': 60,
+            'Signature Cut': 75,
+            'Signature + Shampoo': 90,
+            'Beard / Line Up': 30,
+            'Color': 60,
+            'Facial': 30,
+            'Eyebrows': 20
+        };
+        function getServiceDuration(name) {
+            if (!name) return 60;
+            let extra = 0;
+            let base = name;
+            if (base.endsWith(' + Facial')) { base = base.replace(' + Facial', ''); extra = 30; }
+            return (SERVICE_DURATIONS[base] || 60) + extra;
+        }
+        // How many 1-hour slots does this service consume
+        function getServiceSlots(name) {
+            return Math.max(1, Math.ceil(getServiceDuration(name) / 60));
+        }
 
         // Facial addon eligible services
         const FACIAL_ELIGIBLE = ['Kids Cut (13 & Under)', 'Teen Cut (14-17)', 'Premium Cut', 'Signature Cut', 'Signature + Shampoo', 'Beard / Line Up', 'Color', 'Eyebrows'];
         let facialAdded = false;
         let baseService = null;
 
-        function toggleFacialAddon() {
+        function toggleFacialAddon(ev) {
             const cb = document.getElementById('facialCheck');
+            const e = ev || window.event;
             // If called from the div, toggle the checkbox; if from checkbox itself, it already toggled
-            if(event && event.currentTarget !== cb) cb.checked = !cb.checked;
+            if(e && e.currentTarget !== cb) cb.checked = !cb.checked;
             facialAdded = cb.checked;
             if(baseService) {
                 selectedService = {
@@ -1750,6 +1902,19 @@
                     rawPrice: facialAdded ? baseService.rawPrice + 35 : baseService.rawPrice
                 };
             }
+            updateFacialDurationBadge();
+            // If user is already on step 2, regenerate the time grid so blocking updates
+            if (currentStep === 2 && typeof generateTimes === 'function') {
+                const sel = document.querySelector('.date-cell.selected');
+                generateTimes(sel ? parseInt(sel.dataset.dow) : undefined);
+            }
+        }
+        function updateFacialDurationBadge() {
+            const badge = document.getElementById('facialTotalDur');
+            if (!badge || !selectedService) return;
+            const mins = getServiceDuration(selectedService.name);
+            const slots = getServiceSlots(selectedService.name);
+            badge.textContent = `${mins} min · ${slots} hr slot${slots > 1 ? 's' : ''}`;
         }
 
         // Service selection
@@ -1778,6 +1943,7 @@
                     price: baseService.price,
                     rawPrice: baseService.rawPrice
                 };
+                updateFacialDurationBadge();
                 document.getElementById('toStep2').disabled = false;
             });
         });
@@ -1814,6 +1980,10 @@
                 cell.className = 'date-cell';
                 cell.innerHTML = `<span class="day-name">${days[d.getDay()]}</span>${d.getDate()}`;
                 cell.dataset.date = d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                cell.dataset.iso = `${yyyy}-${mm}-${dd}`;
                 const dow = d.getDay();
                 if (dow === 0 || dow === 4) {
                     cell.classList.add('unavailable');
@@ -1823,6 +1993,7 @@
                         document.querySelectorAll('.date-cell').forEach(c => c.classList.remove('selected'));
                         cell.classList.add('selected');
                         selectedDate = cell.dataset.date;
+                        selectedDateISO = cell.dataset.iso;
                         generateTimes(parseInt(cell.dataset.dow));
                         selectedTime = '';
                         checkStep2Ready();
@@ -1833,29 +2004,73 @@
             generateTimes();
         }
 
-        function generateTimes(dow) {
+        async function generateTimes(dow) {
             const grid = document.getElementById('timeGrid');
             grid.innerHTML = '';
             // Mon(1):3-9, Tue(2):11-9, Wed(3):12-7, Fri(5):11-9, Sat(6):11-9
             const hoursByDay = {1:[15,21], 2:[11,21], 3:[12,19], 5:[11,21], 6:[11,21]};
             const range = hoursByDay[dow] || [11,21];
             const times = [];
+            // Generate hourly slots only (on the hour)
             for(let h=range[0]; h<range[1]; h++){
                 const hr = h > 12 ? h-12 : h;
                 const ampm = h >= 12 ? 'PM' : 'AM';
                 times.push(hr+':00 '+ampm);
-                times.push(hr+':30 '+ampm);
             }
-            times.forEach(t => {
+
+            // Fetch bookings for selected date, then expand each into
+            // the full hourly block it actually occupies (based on service duration)
+            const blockedTimes = new Set();
+            if (selectedDate) {
+                try {
+                    const resp = await fetch('https://uppercutsbysly.com/api/bookings');
+                    const data = await resp.json();
+                    const dayBookings = (data.bookings || [])
+                        .filter(b => b.date === selectedDate && b.status !== 'denied');
+                    dayBookings.forEach(b => {
+                        const slots = getServiceSlots(b.service);
+                        const startIdx = times.indexOf(b.time);
+                        if (startIdx === -1) { blockedTimes.add(b.time); return; }
+                        for (let k = 0; k < slots; k++) {
+                            if (startIdx + k < times.length) blockedTimes.add(times[startIdx + k]);
+                        }
+                    });
+                } catch(e) {}
+            }
+
+            // How many hour slots THIS booking needs
+            const needSlots = selectedService ? getServiceSlots(selectedService.name) : 1;
+
+            times.forEach((t, idx) => {
                 const slot = document.createElement('div');
                 slot.className = 'time-slot';
                 slot.textContent = t;
-                slot.addEventListener('click', () => {
-                    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
-                    slot.classList.add('selected');
-                    selectedTime = t;
-                    checkStep2Ready();
-                });
+
+                // A slot is unavailable if:
+                //   1) it's already blocked by another appointment
+                //   2) the selected service would overflow past closing time
+                //   3) any of the hours it would occupy are blocked
+                let unavailable = blockedTimes.has(t);
+                if (!unavailable && idx + needSlots > times.length) unavailable = true;
+                if (!unavailable && needSlots > 1) {
+                    for (let k = 1; k < needSlots; k++) {
+                        if (blockedTimes.has(times[idx + k])) { unavailable = true; break; }
+                    }
+                }
+
+                if (unavailable) {
+                    slot.classList.add('unavailable');
+                    slot.style.opacity = '0.35';
+                    slot.style.pointerEvents = 'none';
+                    slot.title = 'Already booked';
+                } else {
+                    slot.addEventListener('click', () => {
+                        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                        slot.classList.add('selected');
+                        selectedTime = t;
+                        checkStep2Ready();
+                    });
+                }
                 grid.appendChild(slot);
             });
         }
@@ -1864,9 +2079,51 @@
             document.getElementById('toStep3').disabled = !(selectedDate && selectedTime);
         }
 
+        // Tiers that have Square payment links — deposit snaps to one of these
+        const DEPOSIT_TIERS = [8, 13, 15, 20, 23, 30];
+        function snapDepositToTier(raw) {
+            // Snap DOWN to the largest tier <= raw, or clamp to min/max
+            if (raw <= DEPOSIT_TIERS[0]) return DEPOSIT_TIERS[0];
+            let pick = DEPOSIT_TIERS[0];
+            for (const t of DEPOSIT_TIERS) {
+                if (t <= raw) pick = t;
+            }
+            return pick; // caps at 30 for anything higher
+        }
+
         function getDepositInfo(phone, code) {
-            if (code.toUpperCase() === 'MONTHLY') return { type: 'monthly', label: 'Monthly Client', amount: 0, message: '✅ Monthly client verified — no deposit required!' };
-            return { type: 'standard', label: 'Deposit Required', amount: Math.ceil(selectedService.rawPrice * 0.5), message: '💳 50% deposit required to confirm your booking.' };
+            console.log('getDepositInfo called with:', { phone, code, servicePrice: selectedService?.rawPrice });
+
+            // Clean up the code - trim and uppercase
+            const cleanCode = code ? code.toString().trim().toUpperCase() : '';
+
+            // ONLY monthly code users get no deposit - everyone else pays
+            if (cleanCode === 'MONTHLY') {
+                console.log('Monthly code detected - no deposit required');
+                return { type: 'monthly', label: 'Monthly Client', amount: 0, message: '✅ Monthly client verified — no deposit required!' };
+            }
+
+            // All other clients (new, returning, regular) pay deposit snapped to existing Square tier
+            const rawDeposit = Math.ceil(selectedService.rawPrice * 0.5);
+            const depositAmount = snapDepositToTier(rawDeposit);
+            console.log('Standard booking - raw 50%:', rawDeposit, 'snapped deposit:', depositAmount);
+            return { type: 'standard', label: 'Deposit Required', amount: depositAmount, message: '💳 Deposit required to confirm your booking.' };
+        }
+
+        function checkMonthlyCode() {
+            const codeInput = document.getElementById('clientCode');
+            const statusDiv = document.getElementById('monthlyStatus');
+            const code = codeInput.value.trim().toUpperCase();
+            
+            if (code === 'MONTHLY') {
+                statusDiv.innerHTML = '<span style="color:#4CAF50">✅ Monthly client verified - no deposit required!</span>';
+                statusDiv.style.display = 'block';
+            } else if (code.length > 0) {
+                statusDiv.innerHTML = '<span style="color:#E74C3C">❌ Invalid code</span>';
+                statusDiv.style.display = 'block';
+            } else {
+                statusDiv.style.display = 'none';
+            }
         }
 
         function showSummary() {
@@ -1893,29 +2150,38 @@
         }
 
         function submitBookingToServer(name, phone, service, price, date, time, notes, deposit) {
+            // If deposit is 0 (monthly), it's inherently paid; otherwise respect the deposit.depositPaid flag set at confirm time
+            const paid = deposit.amount <= 0 ? true : !!deposit.depositPaid;
             // Save locally
             const bookings = getBookings();
             bookings.push({
                 id: Date.now(), name, phone,
                 service, price, date, time,
                 status: 'pending',
-                depositPaid: deposit.amount <= 0,
+                depositPaid: paid,
                 depositAmount: deposit.amount,
                 notes, createdAt: new Date().toISOString()
             });
             saveBookings(bookings);
 
             // Save to server
+            const bookingData = {
+                name, phone, service, price,
+                date, dateLabel: date, time, notes,
+                depositRequired: deposit.amount > 0,
+                depositAmount: deposit.amount,
+                depositPaid: paid
+            };
+            console.log('Sending booking data to server:', bookingData);
+            
             fetch('https://uppercutsbysly.com/api/bookings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name, phone, service, price,
-                    date, dateLabel: date, time, notes,
-                    depositRequired: deposit.amount > 0,
-                    depositAmount: deposit.amount,
-                    depositPaid: deposit.amount <= 0
-                })
+                body: JSON.stringify(bookingData)
+            }).then(r => {
+                if (r.status === 409) {
+                    alert('That time slot was just booked by someone else. Please go back and choose a different time.');
+                }
             }).catch(() => {});
 
             // Auto-register new clients
@@ -1929,14 +2195,46 @@
         document.getElementById('confirmBooking').addEventListener('click', () => {
             const name = document.getElementById('clientName').value.trim();
             const phone = document.getElementById('clientPhone').value.trim();
-            const code = document.getElementById('clientCode') ? document.getElementById('clientCode').value.trim() : '';
+            const code = document.getElementById('clientCode') ? document.getElementById('clientCode').value.trim().toUpperCase() : '';
             const notes = document.getElementById('clientNotes').value.trim();
             if (!name || !phone) { alert('Please enter your name and phone number.'); return; }
 
             const deposit = getDepositInfo(phone, code);
+            console.log('Deposit info result:', deposit);
+            
+            // FINAL SAFETY CHECK - if not monthly, MUST have deposit
+            if (code !== 'MONTHLY' && deposit.amount <= 0) {
+                console.log('SAFETY: Forcing deposit because code is not MONTHLY');
+                deposit.amount = snapDepositToTier(Math.ceil(selectedService.rawPrice * 0.5));
+                deposit.type = 'standard';
+                deposit.label = 'Deposit Required';
+                deposit.message = '💳 Deposit required to confirm your booking.';
+            }
+
+            // Check if booking is at least 1 hour in advance (robust parsing — ISO date + 12h time)
+            const iso = selectedDateISO; // e.g. "2026-04-29"
+            const tm = String(selectedTime).trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+            let bookingDateTime = null;
+            if (iso && tm) {
+                let h = parseInt(tm[1], 10);
+                const ampm = tm[3].toUpperCase();
+                if (ampm === 'PM' && h !== 12) h += 12;
+                if (ampm === 'AM' && h === 12) h = 0;
+                const [yy, mo, dd] = iso.split('-').map(Number);
+                bookingDateTime = new Date(yy, mo - 1, dd, h, parseInt(tm[2], 10), 0, 0);
+            }
+            const now = new Date();
+            const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
+
+            if (!bookingDateTime || isNaN(bookingDateTime.getTime()) || bookingDateTime < oneHourFromNow) {
+                alert('Appointments must be booked at least 1 hour in advance. Please choose a later time.');
+                return;
+            }
 
             // If NO deposit required (returning/monthly client) — submit right away
+            console.log('About to check deposit branch - deposit.amount:', deposit.amount);
             if (deposit.amount <= 0) {
+                console.log('TAKING NO DEPOSIT BRANCH - should only happen for MONTHLY');
                 submitBookingToServer(name, phone, selectedService.name, selectedService.price, selectedDate, selectedTime, notes, deposit);
 
                 document.getElementById('finalSummary').innerHTML = `
@@ -1953,7 +2251,8 @@
                 return;
             }
 
-            // If deposit IS required — submit booking FIRST, then send to pay
+            // If deposit IS required — show pay link FIRST, DO NOT submit to server until paid
+            console.log('TAKING DEPOSIT REQUIRED BRANCH');
             const squareLinks = {
                 8:  'https://square.link/u/TW7YhnpR',
                 13: 'https://square.link/u/UwY6p0Ex',
@@ -1963,20 +2262,33 @@
                 30: 'https://square.link/u/sGbZmlBn'
             };
             const link = squareLinks[deposit.amount];
+            console.log('Deposit amount:', deposit.amount, 'Square link:', link);
 
-            // Submit booking immediately so Sly always sees it
-            submitBookingToServer(name, phone, selectedService.name, selectedService.price, selectedDate, selectedTime, notes + ' [DEPOSIT: $' + deposit.amount + ']', deposit);
+            // Stash the pending booking in memory — it won't be sent until deposit is paid
+            pendingBooking = {
+                name, phone,
+                service: selectedService.name,
+                price: selectedService.price,
+                date: selectedDate,
+                time: selectedTime,
+                notes: notes + ' [DEPOSIT: $' + deposit.amount + ']',
+                deposit
+            };
+            depositPaymentOpened = false;
 
             document.getElementById('finalSummary').innerHTML = `
-                <h4>Request Sent! 🎉</h4>
+                <h4>Pay Deposit to Lock Your Spot</h4>
                 <div class="summary-row"><span class="label">Service</span><span>${selectedService.name}</span></div>
                 <div class="summary-row"><span class="label">Date</span><span>${selectedDate}</span></div>
                 <div class="summary-row"><span class="label">Time</span><span>${selectedTime}</span></div>
                 <div class="summary-row summary-total"><span class="label">Deposit</span><span>$${deposit.amount}</span></div>
-                <div style="color:#4CAF50;font-size:13px;margin:12px 0;line-height:1.5">✅ Your appointment request has been sent to Sly!</div>
-                <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5">Now pay your deposit below to secure your spot. Sly will confirm once payment is received.</p>
-                ${link ? `<a href="${link}" target="_blank" class="cta-button" style="display:block;text-align:center;text-decoration:none;margin-bottom:12px;font-size:16px">💳 Pay $${deposit.amount} Deposit Now</a>` : ''}
-                <div style="background:rgba(201,169,110,0.08);border:1.5px solid rgba(201,169,110,0.25);border-radius:10px;padding:14px;margin-top:12px;text-align:left">
+                <div style="background:rgba(231,76,60,0.12);border:1.5px solid rgba(231,76,60,0.45);border-radius:10px;padding:14px;margin-top:12px;text-align:left">
+                    <div style="font-weight:700;color:#E74C3C;margin-bottom:6px">⚠️ Your spot is NOT held yet</div>
+                    <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0">Pay your deposit to lock in this time. Your appointment is only sent to Sly <b>after</b> the deposit is paid. No deposit, no booking — no exceptions.</p>
+                </div>
+                ${link ? `<a href="${link}" target="_blank" onclick="markDepositOpened()" class="cta-button" style="display:block;text-align:center;text-decoration:none;margin-top:14px;font-size:16px">💳 Pay $${deposit.amount} Deposit Now</a>` : '<div style="color:#E74C3C;margin-top:12px">No Square link configured for this amount. Please contact Sly.</div>'}
+                <button id="confirmPaidBtn" onclick="confirmDepositPaid()" class="cta-button" disabled style="display:block;width:100%;margin-top:10px;background:#555;border-color:#555;color:#aaa;font-size:15px;cursor:not-allowed;opacity:0.6" title="Open the payment link above first">⏳ Pay the deposit to unlock</button>
+                <div style="background:rgba(201,169,110,0.08);border:1.5px solid rgba(201,169,110,0.25);border-radius:10px;padding:14px;margin-top:14px;text-align:left">
                     <div style="font-weight:600;color:#C9A96E;margin-bottom:6px">📍 When You Arrive</div>
                     <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0">Check in on the app — Sly will text you when he's ready for you.</p>
                 </div>
@@ -1987,6 +2299,163 @@
             `;
             goToStep(4);
         });
+
+        // Deposit enforcement state — button only unlocks after Square link clicked + cooldown
+        let pendingBooking = null;
+        let depositPaymentOpened = false;
+        function markDepositOpened(){
+            if (depositPaymentOpened) return; // ignore repeat clicks
+            depositPaymentOpened = true;
+            const btn = document.getElementById('confirmPaidBtn');
+            if (!btn) return;
+            // Start a 25-second cooldown; real Square checkout takes longer than this to fill out
+            let remaining = 25;
+            btn.textContent = `⏳ Complete payment… (${remaining}s)`;
+            const tick = setInterval(() => {
+                remaining--;
+                if (remaining > 0) {
+                    btn.textContent = `⏳ Complete payment… (${remaining}s)`;
+                } else {
+                    clearInterval(tick);
+                    btn.disabled = false;
+                    btn.style.background = '#4CAF50';
+                    btn.style.borderColor = '#4CAF50';
+                    btn.style.color = '#fff';
+                    btn.style.cursor = 'pointer';
+                    btn.style.opacity = '1';
+                    btn.textContent = "✅ I've Paid — Submit My Booking";
+                }
+            }, 1000);
+        }
+        function confirmDepositPaid(){
+            if (!pendingBooking) { alert('No pending booking. Please start again.'); return; }
+            // Hard gate — if the deposit link was never opened, refuse
+            if (!depositPaymentOpened) {
+                alert('Please tap the "Pay Deposit" button above first. Your booking cannot be submitted until the deposit is paid.');
+                return;
+            }
+            const p = pendingBooking;
+            p.deposit.depositPaid = true;
+            submitBookingToServer(p.name, p.phone, p.service, p.price, p.date, p.time, p.notes, p.deposit);
+            document.getElementById('finalSummary').innerHTML = `
+                <h4>Request Sent! 🎉</h4>
+                <div class="summary-row"><span class="label">Service</span><span>${p.service}</span></div>
+                <div class="summary-row"><span class="label">Date</span><span>${p.date}</span></div>
+                <div class="summary-row"><span class="label">Time</span><span>${p.time}</span></div>
+                <div class="summary-row summary-total"><span class="label">Deposit</span><span>$${p.deposit.amount}</span></div>
+                <div style="color:#4CAF50;font-size:13px;margin:12px 0;line-height:1.5">✅ Your appointment request has been sent to Sly! He'll confirm once he verifies your deposit.</div>
+                <div style="background:rgba(201,169,110,0.08);border:1.5px solid rgba(201,169,110,0.25);border-radius:10px;padding:14px;margin-top:12px;text-align:left">
+                    <div style="font-weight:600;color:#C9A96E;margin-bottom:6px">📍 When You Arrive</div>
+                    <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0">Check in on the app — Sly will text you when he's ready for you.</p>
+                </div>
+            `;
+            pendingBooking = null;
+        }
+
+        // ===== REVIEWS =====
+        function openReviewForm(){
+            document.getElementById('reviewModal').style.display='flex';
+            document.getElementById('revMsg').textContent='';
+        }
+        function closeReviewForm(){
+            document.getElementById('reviewModal').style.display='none';
+            document.getElementById('revName').value='';
+            document.getElementById('revText').value='';
+            document.getElementById('revRating').value='5';
+            setStars(5);
+        }
+        function setStars(n){
+            document.querySelectorAll('#revStars span').forEach(s=>{
+                s.style.color = parseInt(s.dataset.rate) <= n ? '#C9A96E' : '#444';
+            });
+        }
+        document.querySelectorAll('#revStars span').forEach(s=>{
+            s.addEventListener('click',()=>{
+                const r=parseInt(s.dataset.rate);
+                document.getElementById('revRating').value=r;
+                setStars(r);
+            });
+        });
+        setStars(5);
+        async function submitReview(e){
+            e.preventDefault();
+            const name=document.getElementById('revName').value.trim();
+            const rating=document.getElementById('revRating').value;
+            const text=document.getElementById('revText').value.trim();
+            const msg=document.getElementById('revMsg');
+            if(!name||!text){msg.innerHTML='<span style="color:#E74C3C">Please fill in all fields</span>';return}
+            msg.innerHTML='<span style="color:#999">Submitting...</span>';
+            try{
+                const r=await fetch('https://uppercutsbysly.com/api/reviews',{
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({name,rating,text,label:'Client'})
+                });
+                if(r.ok){
+                    msg.innerHTML='<span style="color:#4CAF50">Thank you! Your review will appear after Sly approves it. 🙏</span>';
+                    setTimeout(closeReviewForm, 2500);
+                } else {
+                    msg.innerHTML='<span style="color:#E74C3C">Something went wrong. Please try again.</span>';
+                }
+            }catch(err){
+                msg.innerHTML='<span style="color:#E74C3C">Connection error. Please try again.</span>';
+            }
+        }
+
+        // Load approved reviews from server and prepend them
+        async function loadApprovedReviews(){
+            try{
+                const r=await fetch('https://uppercutsbysly.com/api/reviews');
+                const data=await r.json();
+                const reviews=data.reviews||[];
+                if(!reviews.length)return;
+                const grid=document.getElementById('testimonialsGrid');
+                reviews.forEach(rv=>{
+                    const card=document.createElement('div');
+                    card.className='testimonial-card fade-in visible';
+                    const stars='★'.repeat(rv.rating||5);
+                    card.innerHTML=`<div class="stars">${stars}</div><p class="testimonial-text">"${rv.text.replace(/</g,'&lt;')}"</p><p class="testimonial-author">${rv.name.replace(/</g,'&lt;')}</p><p class="testimonial-label">${(rv.label||'Client').replace(/</g,'&lt;')}</p>`;
+                    grid.insertBefore(card,grid.firstChild);
+                });
+            }catch(e){}
+        }
+        loadApprovedReviews();
+
+        // ===== WAITLIST =====
+        function openWaitlistForm(){
+            document.getElementById('waitlistModal').style.display='flex';
+            document.getElementById('wlMsg').textContent='';
+        }
+        function closeWaitlistForm(){
+            document.getElementById('waitlistModal').style.display='none';
+        }
+        async function submitWaitlist(e){
+            e.preventDefault();
+            const name=document.getElementById('wlName').value.trim();
+            const phone=document.getElementById('wlPhone').value.trim();
+            const dateFrom=document.getElementById('wlFrom').value;
+            const dateTo=document.getElementById('wlTo').value;
+            const anyTime=document.getElementById('wlAny').checked;
+            const msg=document.getElementById('wlMsg');
+            if(!name||!phone){msg.innerHTML='<span style="color:#E74C3C">Name and phone required</span>';return}
+            if(!anyTime && (!dateFrom || !dateTo)){msg.innerHTML='<span style="color:#E74C3C">Pick dates or check "Any date"</span>';return}
+            msg.innerHTML='<span style="color:#999">Adding...</span>';
+            try{
+                const r=await fetch('https://uppercutsbysly.com/api/waitlist',{
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({name,phone,dateFrom,dateTo,anyTime,service:(selectedService&&selectedService.name)||''})
+                });
+                if(r.ok){
+                    msg.innerHTML='<span style="color:#4CAF50">You\'re on the list! We\'ll text you if a spot opens. 🙏</span>';
+                    setTimeout(closeWaitlistForm, 2500);
+                } else {
+                    msg.innerHTML='<span style="color:#E74C3C">Something went wrong</span>';
+                }
+            }catch(err){
+                msg.innerHTML='<span style="color:#E74C3C">Connection error</span>';
+            }
+        }
 
         // ===== CHATBOT =====
         const chatToggle = document.getElementById('chatToggle');

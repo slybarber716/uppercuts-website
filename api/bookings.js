@@ -1,20 +1,44 @@
-const fs = require('fs');
-const path = require('path');
-const DB_PATH = path.join('/tmp', 'bookings.json');
+const { Redis } = require('@upstash/redis');
 
-function loadBookings() {
-  try {
-    if (fs.existsSync(DB_PATH)) {
-      return JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
-    }
-  } catch (e) {}
-  return [];
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
+});
+
+const BOOKINGS_KEY = 'uppercuts:bookings';
+
+// Service duration map (minutes) — keep in sync with the site
+const SERVICE_DURATIONS = {
+  'Kids Cut (13 & Under)': 45,
+  'Teen Cut (14-17)': 45,
+  'Premium Cut': 60,
+  'Signature Cut': 75,
+  'Signature + Shampoo': 90,
+  'Beard / Line Up': 30,
+  'Color': 60,
+  'Facial': 30,
+  'Eyebrows': 20
+};
+function getServiceDuration(name) {
+  if (!name) return 60;
+  let extra = 0;
+  let base = name;
+  if (base.endsWith(' + Facial')) { base = base.replace(' + Facial', ''); extra = 30; }
+  return (SERVICE_DURATIONS[base] || 60) + extra;
 }
-
-function saveBookings(bookings) {
-  try {
-    fs.writeFileSync(DB_PATH, JSON.stringify(bookings));
-  } catch (e) {}
+function getServiceSlots(name) {
+  return Math.max(1, Math.ceil(getServiceDuration(name) / 60));
+}
+// Convert "3:00 PM" -> 15 (hour of day, 0-23)
+function timeToHour(t) {
+  if (!t) return null;
+  const m = String(t).trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!m) return null;
+  let h = parseInt(m[1], 10);
+  const ampm = m[3].toUpperCase();
+  if (ampm === 'PM' && h !== 12) h += 12;
+  if (ampm === 'AM' && h === 12) h = 0;
+  return h;
 }
 
 module.exports = async (req, res) => {
@@ -24,13 +48,29 @@ module.exports = async (req, res) => {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  let bookings = loadBookings();
-
   // POST - client submits booking request
   if (req.method === 'POST') {
-    const { name, phone, service, price, date, dateLabel, time, notes } = req.body;
+    const { name, phone, service, price, date, dateLabel, notes, depositRequired, depositAmount, depositPaid } = req.body;
+    let { time } = req.body;
     if (!name || !service || !date || !time) {
       return res.status(400).json({ error: 'Name, service, date, and time are required' });
+    }
+    // Enforce ON-THE-HOUR bookings only — reject anything that isn't :00
+    const timeMatch = String(time).trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (!timeMatch) {
+      return res.status(400).json({ error: 'Invalid time format' });
+    }
+    if (timeMatch[2] !== '00') {
+      return res.status(400).json({ error: 'Only on-the-hour appointments are allowed.' });
+    }
+    // Normalize canonical format "H:00 AM/PM"
+    time = parseInt(timeMatch[1], 10) + ':00 ' + timeMatch[3].toUpperCase();
+
+    // Deposit enforcement — if a deposit is required, the client must mark it paid.
+    // Blocks direct-API bypass (curl/fetch/DOM-edited submissions) that would otherwise
+    // skip the Square payment modal on the website.
+    if (depositRequired && !depositPaid) {
+      return res.status(402).json({ error: 'Deposit required. Please pay the deposit before submitting your booking.' });
     }
 
     const booking = {
@@ -44,11 +84,36 @@ module.exports = async (req, res) => {
       time,
       notes: notes || '',
       status: 'pending',
+      depositRequired: depositRequired || false,
+      depositAmount: depositAmount || 0,
+      depositPaid: depositPaid || false,
       created: new Date().toISOString()
     };
+
+    let bookings = (await redis.get(BOOKINGS_KEY)) || [];
+
+    // Prevent double bookings — check if this booking's hour range overlaps
+    // any existing booking's hour range on the same date
+    const newStart = timeToHour(time);
+    const newSlots = getServiceSlots(service);
+    if (newStart === null) {
+      return res.status(400).json({ error: 'Invalid time format' });
+    }
+    const newEnd = newStart + newSlots; // exclusive
+    const conflict = bookings.find(b => {
+      if (b.date !== date || b.status === 'denied') return false;
+      const bStart = timeToHour(b.time);
+      if (bStart === null) return b.time === time;
+      const bEnd = bStart + getServiceSlots(b.service);
+      return newStart < bEnd && bStart < newEnd; // ranges overlap
+    });
+    if (conflict) {
+      return res.status(409).json({ error: 'That time slot overlaps another booking. Please choose another time.' });
+    }
+
     bookings.unshift(booking);
     if (bookings.length > 500) bookings = bookings.slice(0, 500);
-    saveBookings(bookings);
+    await redis.set(BOOKINGS_KEY, bookings);
 
     return res.status(200).json({ success: true, booking });
   }
@@ -56,15 +121,17 @@ module.exports = async (req, res) => {
   // PUT - admin approves or denies
   if (req.method === 'PUT') {
     const { id, status } = req.body;
+    let bookings = (await redis.get(BOOKINGS_KEY)) || [];
     const booking = bookings.find(b => b.id === id);
     if (!booking) return res.status(404).json({ error: 'Booking not found' });
     booking.status = status;
-    saveBookings(bookings);
+    await redis.set(BOOKINGS_KEY, bookings);
     return res.status(200).json({ success: true, booking });
   }
 
   // GET - return all bookings
   if (req.method === 'GET') {
+    const bookings = (await redis.get(BOOKINGS_KEY)) || [];
     return res.status(200).json({ bookings });
   }
 

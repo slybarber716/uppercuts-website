@@ -110,6 +110,92 @@
         }
         .toggle.on::after{transform:translateX(20px)}
 
+        /* CALENDAR */
+        .cal-tabs{display:flex;gap:8px;margin-bottom:14px}
+        .cal-tab{
+            flex:1;padding:10px;background:transparent;
+            border:1.5px solid var(--border);color:var(--text2);
+            border-radius:8px;font-family:'Oswald',sans-serif;
+            font-size:13px;letter-spacing:1.5px;text-transform:uppercase;
+            transition:all 0.2s;
+        }
+        .cal-tab.active{background:var(--gold);color:#0a0a1a;border-color:var(--gold)}
+        .cal-nav{
+            display:flex;align-items:center;justify-content:space-between;
+            gap:8px;margin-bottom:16px;padding:10px 12px;
+            background:var(--surface);border:1px solid var(--border);border-radius:10px;
+        }
+        .cal-nav button{
+            background:transparent;color:var(--gold);border:1px solid var(--border);
+            border-radius:6px;padding:6px 12px;font-size:14px;
+        }
+        .cal-nav button:hover{background:var(--gold-dim)}
+        .cal-date{
+            flex:1;text-align:center;font-family:'Oswald',sans-serif;
+            font-size:14px;letter-spacing:1.5px;color:#fff;
+        }
+        .cal-date.today-flag{color:var(--gold)}
+
+        /* DAY VIEW */
+        .cal-day{display:flex;flex-direction:column;gap:0}
+        .cal-hour{
+            display:flex;gap:10px;padding:8px 0;
+            border-top:1px solid rgba(255,255,255,0.04);
+            min-height:54px;
+        }
+        .cal-hour:first-child{border-top:none}
+        .cal-hour-label{
+            flex:0 0 70px;font-family:'Oswald',sans-serif;font-size:12px;
+            letter-spacing:1px;color:var(--text2);padding-top:8px;text-align:right;
+        }
+        .cal-hour-slot{flex:1;display:flex;flex-direction:column;gap:6px}
+        .cal-empty{
+            font-size:11px;color:rgba(255,255,255,0.15);
+            font-style:italic;padding-top:10px;
+        }
+        .cal-booking{
+            background:var(--surface);border:1px solid var(--border);
+            border-left:4px solid var(--gold);border-radius:8px;
+            padding:10px 12px;display:flex;flex-direction:column;gap:2px;
+        }
+        .cal-booking-name{font-size:14px;font-weight:600;color:#fff}
+        .cal-booking-meta{font-size:11px;color:var(--text2);letter-spacing:0.3px}
+        .cal-booking-time{
+            font-family:'Oswald',sans-serif;font-size:11px;
+            letter-spacing:1px;color:var(--gold);margin-top:2px;
+        }
+
+        /* WEEK VIEW */
+        .cal-week{display:flex;flex-direction:column;gap:10px}
+        .cal-day-row{
+            background:var(--surface);border:1px solid var(--border);
+            border-radius:10px;padding:12px 14px;
+        }
+        .cal-day-row.is-today{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold-dim)}
+        .cal-day-head{
+            display:flex;align-items:baseline;gap:10px;margin-bottom:8px;
+            padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.05);
+        }
+        .cal-day-name{font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:1.5px;color:var(--gold)}
+        .cal-day-num{font-size:18px;font-weight:600;color:#fff}
+        .cal-day-count{margin-left:auto;font-size:11px;color:var(--text2);letter-spacing:0.5px}
+        .cal-day-bookings{display:flex;flex-direction:column;gap:6px}
+        .cal-mini{
+            display:grid;grid-template-columns:80px 1fr;
+            align-items:center;gap:10px;padding:6px 8px;
+            background:var(--surface2);border-radius:6px;
+        }
+        .cal-mini-time{
+            font-family:'Oswald',sans-serif;font-size:11px;
+            letter-spacing:1px;color:var(--gold);
+        }
+        .cal-mini-body{display:flex;flex-direction:column;gap:1px;min-width:0}
+        .cal-mini-name{font-size:13px;color:#fff;font-weight:500;
+            white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .cal-mini-svc{font-size:10px;color:var(--text2);
+            white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .cal-empty-week{font-size:12px;color:var(--text2);font-style:italic;padding:6px 0}
+
         /* SCHEDULE */
         .sched-date{
             display:flex;align-items:center;justify-content:space-between;
@@ -228,12 +314,35 @@
     <div id="upcomingList"></div>
 
     <div class="sec">Quick Actions</div>
-    <button class="btn btn-gold" onclick="switchPanel('panelSchedule')">Manage Schedule</button>
+    <button class="btn btn-gold" onclick="switchPanel('panelManualBook')">+ Manual Book</button>
+    <button class="btn btn-outline" onclick="switchPanel('panelSchedule')">Manage Schedule</button>
     <button class="btn btn-outline" onclick="switchPanel('panelServices')">Edit Services</button>
     <button class="btn btn-outline" onclick="switchPanel('panelBlock')">Block List</button>
 </div>
 
 <!-- ===== SCHEDULE ===== -->
+<!-- ===== CALENDAR ===== -->
+<div class="panel" id="panelCalendar">
+    <div class="hdr">Calendar</div>
+    <div class="hdr-sub">Your booked appointments at a glance</div>
+
+    <div class="cal-tabs">
+        <button class="cal-tab active" id="calTabDay" onclick="setCalView('day')">Day</button>
+        <button class="cal-tab" id="calTabWeek" onclick="setCalView('week')">Week</button>
+    </div>
+
+    <div class="cal-nav">
+        <button onclick="calNav(-1)">&larr;</button>
+        <div class="cal-date" id="calDateLabel">—</div>
+        <button onclick="calNav(1)">&rarr;</button>
+        <button onclick="calToday()" style="margin-left:6px">Today</button>
+    </div>
+
+    <div id="calGrid"></div>
+
+    <button class="btn btn-outline" onclick="switchPanel('panelDash')" style="margin-top:16px">Back to Dashboard</button>
+</div>
+
 <div class="panel" id="panelSchedule">
     <div class="hdr">Schedule Manager</div>
     <div class="hdr-sub">Set your availability daily, weekly, or monthly</div>
@@ -271,6 +380,65 @@
     <button class="btn btn-outline" onclick="switchPanel('panelDash')" style="margin-top:8px">Back to Dashboard</button>
 </div>
 
+<!-- ===== MANUAL BOOKING ===== -->
+<div class="panel" id="panelManualBook">
+    <div class="hdr">Manual Booking</div>
+    <div class="hdr-sub">Book clients directly — no deposit required</div>
+
+    <form id="manualBookForm" onsubmit="saveManualBooking(event)">
+        <div class="fg">
+            <label>Client Name *</label>
+            <input type="text" id="manualName" required placeholder="Full name">
+        </div>
+        
+        <div class="fg">
+            <label>Phone Number</label>
+            <input type="tel" id="manualPhone" placeholder="(xxx) xxx-xxxx">
+        </div>
+        
+        <div class="fg">
+            <label>Monthly Code (optional)</label>
+            <input type="text" id="manualCode" placeholder="Enter MONTHLY if applicable">
+        </div>
+        
+        <div class="fg">
+            <label>Service *</label>
+            <select id="manualService" required>
+                <option value="">Select a service...</option>
+                <option value="Kids Cut (13 & Under)">Kids Cut ($25)</option>
+                <option value="Teen Cut (14-17)">Teen Cut ($30)</option>
+                <option value="Premium Cut">Premium Cut ($45)</option>
+                <option value="Signature Cut">Signature Cut ($60)</option>
+                <option value="Signature + Shampoo">Signature + Shampoo ($75)</option>
+                <option value="Beard / Line Up">Beard / Line Up ($30)</option>
+                <option value="Color">Color ($60)</option>
+                <option value="Facial">Facial ($40)</option>
+                <option value="Eyebrows">Eyebrows ($15)</option>
+            </select>
+        </div>
+        
+        <div class="fg">
+            <label>Date *</label>
+            <input type="date" id="manualDate" required>
+        </div>
+        
+        <div class="fg">
+            <label>Time *</label>
+            <select id="manualTime" required>
+                <option value="">Select time...</option>
+            </select>
+        </div>
+        
+        <div class="fg">
+            <label>Notes (optional)</label>
+            <textarea id="manualNotes" rows="2" placeholder="Any special requests..."></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-gold">Book Appointment</button>
+        <button type="button" class="btn btn-outline" onclick="switchPanel('panelDash')">Cancel</button>
+    </form>
+</div>
+
 <!-- ===== BOOKINGS ===== -->
 <div class="panel" id="panelBookings">
     <div class="hdr">All Bookings</div>
@@ -305,18 +473,16 @@
         <div id="customTimesSection" style="display:none">
             <div class="fg">
                 <label>Start Time</label>
-                <input type="time" id="customStart" value="09:00">
+                <input type="time" id="customStart" value="09:00" step="3600">
             </div>
             <div class="fg">
                 <label>End Time</label>
-                <input type="time" id="customEnd" value="18:30">
+                <input type="time" id="customEnd" value="18:00" step="3600">
             </div>
             <div class="fg">
                 <label>Interval</label>
                 <select id="customInterval">
-                    <option value="30">Every 30 min</option>
-                    <option value="45">Every 45 min</option>
-                    <option value="60">Every 60 min</option>
+                    <option value="60" selected>Every 60 min (Hourly)</option>
                 </select>
             </div>
             <div class="sec">Preview Time Slots</div>
@@ -423,7 +589,7 @@
         <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
                 <div style="font-weight:600;font-size:14px;margin-bottom:4px;">🔔 Reminder</div>
-                <div style="font-size:12px;color:var(--text2)">Reminder: you have an appointment tomorrow at Uppercuts.</div>
+                <div style="font-size:12px;color:var(--text2)">Appt tomorrow + respect-the-chair reminder.</div>
             </div>
             <div style="font-size:20px;">→</div>
         </div>
@@ -461,7 +627,7 @@
         </div>
         <div class="fg">
             <label>Time</label>
-            <input type="time" id="editTime">
+            <input type="time" id="editTime" step="3600" min="08:00" max="22:00">
         </div>
         <div class="fg">
             <label>Service</label>
@@ -541,6 +707,32 @@
     <button class="btn btn-outline" onclick="switchPanel('panelDash')" style="margin-top:16px">Back to Dashboard</button>
 </div>
 
+<!-- ===== REVIEWS PANEL ===== -->
+<div class="panel" id="panelReviews">
+    <div class="hdr">Reviews</div>
+    <div style="margin-bottom:16px;font-size:13px;color:var(--text2)">Approve reviews to make them show on the homepage.</div>
+    <div id="reviewsList"></div>
+    <button class="btn btn-outline" onclick="switchPanel('panelDash')" style="margin-top:16px">Back to Dashboard</button>
+</div>
+
+<!-- ===== WAITLIST PANEL ===== -->
+<div class="panel" id="panelWaitlist">
+    <div class="hdr">Waitlist</div>
+    <div class="acard" style="margin-bottom:16px">
+        <div style="font-weight:600;font-size:14px;margin-bottom:10px;color:var(--gold)">📢 Notify Everyone of a New Opening</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Texts everyone on the waitlist whose date range covers the opening.</div>
+        <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px">Date (optional)</label>
+        <input type="date" id="wlOpenDate" style="width:100%;padding:10px;margin-bottom:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:#fff;font-size:14px">
+        <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:4px">Time (optional, e.g. 2:00 PM)</label>
+        <input type="text" id="wlOpenTime" placeholder="2:00 PM" style="width:100%;padding:10px;margin-bottom:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:#fff;font-size:14px">
+        <button class="btn btn-gold" onclick="notifyWaitlist()" style="width:100%">Send Waitlist Alert</button>
+        <div id="wlNotifyStatus" style="margin-top:8px;font-size:13px;text-align:center"></div>
+    </div>
+    <div style="margin-bottom:12px;font-size:13px;color:var(--text2)">People on the waitlist</div>
+    <div id="waitlistList"></div>
+    <button class="btn btn-outline" onclick="switchPanel('panelDash')" style="margin-top:16px">Back to Dashboard</button>
+</div>
+
 <!-- ===== SEND PROMPT MODAL ===== -->
 <div class="modal-overlay" id="promptModal">
     <div class="modal-sheet">
@@ -564,6 +756,9 @@
     <div class="anav active" data-panel="panelDash">
         <span class="icon">&#128200;</span>Dash
     </div>
+    <div class="anav" data-panel="panelCalendar">
+        <span class="icon">&#128467;</span>Calendar
+    </div>
     <div class="anav" data-panel="panelSchedule">
         <span class="icon">&#128197;</span>Schedule
     </div>
@@ -576,8 +771,17 @@
     <div class="anav" data-panel="panelClients">
         <span class="icon">👥</span>Clients
     </div>
+    <div class="anav" data-panel="panelReviews">
+        <span class="icon">⭐</span>Reviews
+    </div>
+    <div class="anav" data-panel="panelWaitlist">
+        <span class="icon">⏰</span>Waitlist
+    </div>
     <div class="anav" data-panel="panelBlock">
         <span class="icon">&#128683;</span>Block
+    </div>
+    <div class="anav" data-panel="panelManualBook">
+        <span class="icon">&#10133;</span>Book
     </div>
     <div class="anav" data-panel="panelBookings">
         <span class="icon">&#128203;</span>Bookings
@@ -590,8 +794,20 @@ const SCHED_KEY='uppercuts_schedule';
 const BLOCK_KEY='uppercuts_blocklist';
 const BOOKINGS_KEY='uppercuts_bookings';
 const SERVICES_KEY='uppercuts_services';
+const SCHEDULE_KEY='uppercuts_schedule'; // For manual booking compatibility
 function getStore(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}
 function setStore(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+// ===== DEFAULT SCHEDULE =====
+const defaultSchedule = {
+    monday: ['09:00', '18:00'],
+    tuesday: ['11:00', '21:00'],
+    wednesday: ['12:00', '19:00'],
+    thursday: [], // Off
+    friday: ['11:00', '21:00'],
+    saturday: ['11:00', '21:00'],
+    sunday: [] // Off
+};
 
 // ===== MESSAGES & PROMPTS =====
 const CHECKIN_KEY='uppercuts_checkins';
@@ -601,7 +817,7 @@ const PROMPTS={
     confirmed:"Your appointment is confirmed. See you at Uppercuts! 📅",
     thanks:"Thanks for coming in! Appreciate you. See you next time 🤝 - Uppercuts",
     review:"If you liked the cut, I'd really appreciate a review! It helps a lot ⭐ - Uppercuts",
-    reminder:"Reminder: you have an appointment tomorrow at Uppercuts. See you then! 🔔",
+    reminder:"Reminder: you have an appointment tomorrow at Uppercuts. When you arrive, please have a seat in the lobby — out of respect for the client currently in the chair, Sly will come get you when he's ready. Your time in the chair is private too. Appreciate your patience! 🔔 - Uppercuts",
     shampoo:"Hey! Quick reminder — please arrive with your hair freshly shampooed for your appointment. Clean hair helps Sly give you the best cut possible. Appreciate you! 💈 - Uppercuts"
 };
 let currentPrompt='';
@@ -818,7 +1034,129 @@ setInterval(async()=>{
         lastKnownBookings=allBookings.length;
         bookingReady=true;
     }catch(e){}
+
+    // Poll reviews (refresh list if viewing)
+    const revPanel=document.getElementById('panelReviews');
+    if(revPanel&&revPanel.classList.contains('active')) loadReviews();
 },5000); // Poll every 5 seconds
+
+// ===== REVIEWS =====
+async function loadReviews(){
+    try{
+        const r=await fetch('https://uppercutsbysly.com/api/reviews?all=1');
+        const data=await r.json();
+        const reviews=data.reviews||[];
+        const list=document.getElementById('reviewsList');
+        if(!reviews.length){
+            list.innerHTML='<div class="acard" style="text-align:center;color:var(--text2)">No reviews yet.</div>';
+            return;
+        }
+        list.innerHTML=reviews.map(rv=>{
+            const stars='★'.repeat(rv.rating||5);
+            const statusColor=rv.status==='approved'?'#4CAF50':rv.status==='denied'?'#E74C3C':'#C9A96E';
+            const statusLabel=rv.status==='approved'?'APPROVED':rv.status==='denied'?'DENIED':'PENDING';
+            return `<div class="acard" style="margin-bottom:12px">
+                <div style="display:flex;justify-content:space-between;align-items:start;gap:8px;margin-bottom:6px">
+                    <div style="font-weight:600">${rv.name.replace(/</g,'&lt;')}</div>
+                    <div style="font-size:11px;color:${statusColor};font-weight:600">${statusLabel}</div>
+                </div>
+                <div style="color:#C9A96E;letter-spacing:2px;margin-bottom:6px">${stars}</div>
+                <div style="font-size:13px;line-height:1.5;color:var(--text2);margin-bottom:10px">"${rv.text.replace(/</g,'&lt;')}"</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    ${rv.status!=='approved'?`<button class="btn btn-gold" style="flex:1;padding:8px 12px;font-size:12px" onclick="setReviewStatus('${rv.id}','approved')">✓ Approve</button>`:''}
+                    ${rv.status!=='denied'?`<button class="btn btn-outline" style="flex:1;padding:8px 12px;font-size:12px" onclick="setReviewStatus('${rv.id}','denied')">✗ Deny</button>`:''}
+                    <button class="btn btn-outline" style="flex:1;padding:8px 12px;font-size:12px;border-color:#E74C3C;color:#E74C3C" onclick="deleteReview('${rv.id}')">Delete</button>
+                </div>
+            </div>`;
+        }).join('');
+    }catch(e){
+        document.getElementById('reviewsList').innerHTML='<div class="acard" style="color:#E74C3C">Error loading reviews.</div>';
+    }
+}
+async function setReviewStatus(id,status){
+    try{
+        await fetch('https://uppercutsbysly.com/api/reviews',{
+            method:'PUT',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({id,status})
+        });
+        loadReviews();
+    }catch(e){alert('Failed to update')}
+}
+async function deleteReview(id){
+    if(!confirm('Delete this review permanently?'))return;
+    try{
+        await fetch('https://uppercutsbysly.com/api/reviews',{
+            method:'DELETE',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({id})
+        });
+        loadReviews();
+    }catch(e){alert('Failed to delete')}
+}
+
+// ===== WAITLIST =====
+async function loadWaitlist(){
+    try{
+        const r=await fetch('https://uppercutsbysly.com/api/waitlist');
+        const data=await r.json();
+        const list=data.waitlist||[];
+        const el=document.getElementById('waitlistList');
+        if(!list.length){
+            el.innerHTML='<div class="acard" style="text-align:center;color:var(--text2)">Nobody on the waitlist yet.</div>';
+            return;
+        }
+        el.innerHTML=list.map(w=>{
+            const range=w.anyTime?'Any date':(w.dateFrom||'?')+' → '+(w.dateTo||'?');
+            return `<div class="acard" style="margin-bottom:10px">
+                <div style="display:flex;justify-content:space-between;gap:8px">
+                    <div>
+                        <div style="font-weight:600">${w.name.replace(/</g,'&lt;')}</div>
+                        <div style="font-size:12px;color:var(--text2)">${w.phone}</div>
+                        <div style="font-size:12px;color:#C9A96E;margin-top:4px">${range}</div>
+                        ${w.service?`<div style="font-size:11px;color:var(--text2);margin-top:2px">Wants: ${w.service.replace(/</g,'&lt;')}</div>`:''}
+                    </div>
+                    <button class="btn btn-outline" style="padding:6px 12px;font-size:12px;border-color:#E74C3C;color:#E74C3C" onclick="removeFromWaitlist('${w.id}')">Remove</button>
+                </div>
+            </div>`;
+        }).join('');
+    }catch(e){
+        document.getElementById('waitlistList').innerHTML='<div class="acard" style="color:#E74C3C">Error loading waitlist.</div>';
+    }
+}
+async function removeFromWaitlist(id){
+    if(!confirm('Remove this person from the waitlist?'))return;
+    try{
+        await fetch('https://uppercutsbysly.com/api/waitlist',{
+            method:'DELETE',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({id})
+        });
+        loadWaitlist();
+    }catch(e){alert('Failed to remove')}
+}
+async function notifyWaitlist(){
+    const openingDate=document.getElementById('wlOpenDate').value;
+    const openingTime=document.getElementById('wlOpenTime').value.trim();
+    if(!confirm('Send waitlist alert to everyone whose dates match?'))return;
+    const status=document.getElementById('wlNotifyStatus');
+    status.innerHTML='<span style="color:#999">Sending...</span>';
+    try{
+        const r=await fetch('https://uppercutsbysly.com/api/waitlist',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({action:'notify',openingDate,openingTime})
+        });
+        const data=await r.json();
+        if(r.ok){
+            status.innerHTML=`<span style="color:#4CAF50">✓ Notified ${data.notified} of ${data.total} matching clients</span>`;
+        } else {
+            status.innerHTML='<span style="color:#E74C3C">Failed to send</span>';
+        }
+    }catch(e){
+        status.innerHTML='<span style="color:#E74C3C">Connection error</span>';
+    }
+}
 
 async function sendPromptToPhone(phone,type){
     currentPrompt=PROMPTS[type];
@@ -1120,6 +1458,8 @@ function switchPanel(id){
     if(id==='panelServices')renderServices();
     if(id==='panelMessages')loadCheckins();
     if(id==='panelClients')filterClients();
+    if(id==='panelReviews')loadReviews();
+    if(id==='panelWaitlist')loadWaitlist();
 }
 document.querySelectorAll('.anav').forEach(n=>{
     n.addEventListener('click',()=>switchPanel(n.dataset.panel));
@@ -1131,6 +1471,185 @@ const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov',
 function fmtDate(d){return `${DAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}`}
 function isoDate(d){return d.toISOString().slice(0,10)}
 function parseISO(s){const[y,m,d]=s.split('-');return new Date(y,m-1,d)}
+
+// ===== CALENDAR =====
+const CAL_SERVICE_DURATIONS={
+    'Kids Cut (13 & Under)':45,'Teen Cut (14-17)':45,'Premium Cut':60,
+    'Signature Cut':75,'Signature + Shampoo':90,'Beard / Line Up':30,
+    'Color':60,'Facial':30,'Eyebrows':20
+};
+function calDur(name){
+    if(!name)return 60;
+    let extra=0,base=name;
+    if(base.endsWith(' + Facial')){base=base.replace(' + Facial','');extra=30;}
+    return (CAL_SERVICE_DURATIONS[base]||60)+extra;
+}
+function calParseHour(t){
+    const m=String(t||'').trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if(!m)return -1;
+    let h=parseInt(m[1],10);
+    const ap=m[3].toUpperCase();
+    if(ap==='PM'&&h!==12)h+=12;
+    if(ap==='AM'&&h===12)h=0;
+    return h;
+}
+let calView='day';
+let calOffset=0; // days from today (day mode) or weeks from current week (week mode)
+
+function setCalView(v){
+    calView=v;
+    calOffset=0;
+    document.getElementById('calTabDay').classList.toggle('active',v==='day');
+    document.getElementById('calTabWeek').classList.toggle('active',v==='week');
+    renderCalendar();
+}
+function calNav(dir){
+    calOffset += (calView==='day'?dir:dir*7);
+    renderCalendar();
+}
+function calToday(){calOffset=0;renderCalendar();}
+
+async function renderCalendar(){
+    // Pull fresh server bookings + merge local manual bookings
+    let serverBookings=[];
+    try{
+        const r=await fetch('https://uppercutsbysly.com/api/bookings');
+        const data=await r.json();
+        serverBookings=data.bookings||[];
+    }catch(e){}
+    const localBookings=getStore(BOOKINGS_KEY,[]);
+    // Merge — prefer local for status updates, add server-only entries
+    const merged=[...localBookings];
+    serverBookings.forEach(sb=>{
+        const exists=merged.find(lb=>lb.name===sb.name&&lb.date===sb.date&&lb.time===sb.time);
+        if(!exists)merged.push(sb);
+    });
+    const bookings=merged.filter(b=>b.status!=='denied');
+
+    const today=new Date();
+    const target=new Date();
+    target.setDate(today.getDate()+calOffset);
+
+    if(calView==='day') renderDayView(target,today,bookings);
+    else renderWeekView(target,today,bookings);
+}
+
+function renderDayView(d, today, bookings){
+    const dayLabel=fmtDate(d);
+    const isToday=(d.toDateString()===today.toDateString());
+    const lbl=document.getElementById('calDateLabel');
+    lbl.textContent = isToday ? `TODAY · ${dayLabel}` : dayLabel.toUpperCase();
+    lbl.classList.toggle('today-flag',isToday);
+
+    const dayBookings = bookings.filter(b=>b.date===dayLabel);
+    let html = '';
+    if(dayBookings.length===0){
+        html += `<div style="text-align:center;padding:30px 20px;color:var(--text2)">
+            <div style="font-size:42px;margin-bottom:10px;opacity:0.5">&#128467;</div>
+            <div style="font-size:14px">No appointments ${isToday?'today':'on this day'}.</div>
+        </div>`;
+    }
+    html += '<div class="cal-day">';
+    for(let h=8; h<22; h++){
+        const ampm=h>=12?'PM':'AM';
+        const hr=h>12?h-12:(h===0?12:h);
+        const hourLabel=`${hr}:00 ${ampm}`;
+        const hourBookings=dayBookings.filter(b=>calParseHour(b.time)===h)
+            .sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+        html += `<div class="cal-hour">
+            <div class="cal-hour-label">${hourLabel}</div>
+            <div class="cal-hour-slot">`;
+        if(hourBookings.length===0){
+            html += '<div class="cal-empty">—</div>';
+        }else{
+            html += hourBookings.map(b=>calBookingCard(b)).join('');
+        }
+        html += '</div></div>';
+    }
+    html += '</div>';
+    document.getElementById('calGrid').innerHTML = html;
+}
+
+function calBookingCard(b){
+    const status=(b.status||'pending').toLowerCase();
+    const color = status==='confirmed'||status==='approved' ? 'var(--green)'
+        : status==='pending' ? 'var(--yellow)'
+        : 'var(--text2)';
+    const statusLabel = status==='confirmed'||status==='approved'?'CONFIRMED'
+        : status==='pending'?'PENDING'
+        : status.toUpperCase();
+    const dur=calDur(b.service);
+    const phone=b.phone?`<a href="tel:${b.phone}" style="color:var(--gold);text-decoration:none">&#9742; ${b.phone}</a>`:'';
+    const safeName=(b.name||'').replace(/</g,'&lt;');
+    const safeSvc=(b.service||'').replace(/</g,'&lt;');
+    return `<div class="cal-booking" style="border-left-color:${color}">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+            <div class="cal-booking-name">${safeName}</div>
+            <div style="font-size:10px;font-weight:700;color:${color};letter-spacing:1px">${statusLabel}</div>
+        </div>
+        <div class="cal-booking-meta">${safeSvc} · ${dur} min · ${b.price||''}</div>
+        <div class="cal-booking-time">${b.time}${phone?' · '+phone:''}</div>
+    </div>`;
+}
+
+function renderWeekView(centerDate, today, bookings){
+    // Week starts Sunday
+    const sunday=new Date(centerDate);
+    sunday.setDate(centerDate.getDate()-centerDate.getDay());
+    const weekEnd=new Date(sunday);
+    weekEnd.setDate(sunday.getDate()+6);
+
+    const lbl=document.getElementById('calDateLabel');
+    lbl.textContent = `${MONTHS[sunday.getMonth()]} ${sunday.getDate()} – ${MONTHS[weekEnd.getMonth()]} ${weekEnd.getDate()}`;
+    lbl.classList.remove('today-flag');
+
+    let html = '<div class="cal-week">';
+    let weekTotal=0;
+    for(let i=0;i<7;i++){
+        const d=new Date(sunday);
+        d.setDate(sunday.getDate()+i);
+        const label=fmtDate(d);
+        const isToday = d.toDateString()===today.toDateString();
+        const dayBookings = bookings.filter(b=>b.date===label)
+            .sort((a,b)=>calParseHour(a.time)-calParseHour(b.time));
+        weekTotal += dayBookings.length;
+
+        html += `<div class="cal-day-row${isToday?' is-today':''}">
+            <div class="cal-day-head">
+                <span class="cal-day-name">${DAYS[d.getDay()]}</span>
+                <span class="cal-day-num">${d.getDate()}</span>
+                <span class="cal-day-count">${dayBookings.length} ${dayBookings.length===1?'appt':'appts'}${isToday?' · TODAY':''}</span>
+            </div>`;
+        if(dayBookings.length===0){
+            html += '<div class="cal-empty-week">No appointments</div>';
+        }else{
+            html += '<div class="cal-day-bookings">';
+            html += dayBookings.map(b=>{
+                const status=(b.status||'pending').toLowerCase();
+                const color = status==='confirmed'||status==='approved'?'var(--green)':status==='pending'?'var(--yellow)':'var(--text2)';
+                const safeName=(b.name||'').replace(/</g,'&lt;');
+                const safeSvc=(b.service||'').replace(/</g,'&lt;');
+                return `<div class="cal-mini" style="border-left:3px solid ${color}">
+                    <span class="cal-mini-time">${b.time||''}</span>
+                    <div class="cal-mini-body">
+                        <span class="cal-mini-name">${safeName}</span>
+                        <span class="cal-mini-svc">${safeSvc}</span>
+                    </div>
+                </div>`;
+            }).join('');
+            html += '</div>';
+        }
+        html += '</div>';
+    }
+    html += '</div>';
+    if(weekTotal===0){
+        html = `<div style="text-align:center;padding:30px 20px;color:var(--text2)">
+            <div style="font-size:42px;margin-bottom:10px;opacity:0.5">&#128467;</div>
+            <div style="font-size:14px">No appointments this week.</div>
+        </div>` + html;
+    }
+    document.getElementById('calGrid').innerHTML = html;
+}
 
 // ===== SCHEDULE =====
 let schedView='day';
@@ -1167,7 +1686,7 @@ function renderSchedule(){
                 </div>
                 ${status==='off'?'<p style="color:var(--text2);font-size:13px">Day off — no bookings accepted</p>':
                   status==='custom'?`<div class="time-pills">${ds.times.map(t=>`<span class="tpill selected">${t}</span>`).join('')}</div>`:
-                  '<p style="color:var(--text2);font-size:13px">Default hours: 9:00 AM - 6:30 PM (30 min slots)</p>'}
+                  '<p style="color:var(--text2);font-size:13px">Default hours: hourly slots only</p>'}
             </div>
         `;
     } else if(schedView==='week'){
@@ -1260,15 +1779,15 @@ function previewTimeSlots(){
 }
 
 function generateSlots(start,end,interval){
+    // HOURLY ONLY — ignore typed minutes, force :00
     const slots=[];
-    let[sh,sm]=start.split(':').map(Number);
-    const[eh,em]=end.split(':').map(Number);
-    while(sh<eh||(sh===eh&&sm<=em)){
-        const h=sh>12?sh-12:sh===0?12:sh;
-        const ampm=sh>=12?'PM':'AM';
-        slots.push(`${h}:${sm.toString().padStart(2,'0')} ${ampm}`);
-        sm+=interval;
-        if(sm>=60){sh++;sm-=60}
+    let[sh]=start.split(':').map(Number);
+    const[eh]=end.split(':').map(Number);
+    // Always step by 60 min, regardless of the interval arg
+    for(let cur=sh;cur<eh;cur++){
+        const h=cur>12?cur-12:cur===0?12:cur;
+        const ampm=cur>=12?'PM':'AM';
+        slots.push(`${h}:00 ${ampm}`);
     }
     return slots;
 }
@@ -1282,7 +1801,7 @@ function saveHours(){
     } else if(status==='custom'){
         const start=document.getElementById('customStart').value;
         const end=document.getElementById('customEnd').value;
-        const interval=parseInt(document.getElementById('customInterval').value);
+        const interval=60; // Force hourly intervals only
         schedule[selectedSchedDate]={times:generateSlots(start,end,interval)};
     } else {
         delete schedule[selectedSchedDate]; // revert to default
@@ -1383,13 +1902,50 @@ function blockFromBooking(name,phone){
     openBlockModal();
 }
 
-function cancelBooking(idx){
-    if(!confirm('Cancel this booking?'))return;
+async function cancelBooking(idx){
     const bookings=getStore(BOOKINGS_KEY,[]);
-    bookings.splice(idx,1);
+    const b=bookings[idx];
+    if(!b) return;
+
+    const who=b.name+' · '+(b.dateLabel||b.date)+' at '+b.time;
+    const notify=confirm(`Cancel this appointment?\n\n${who}\n\nOK = Cancel + text client.\nCancel = Don't cancel.`);
+    if(!notify) return;
+
+    // 1) Mark as denied locally so the slot opens up in admin views
+    bookings[idx].status='denied';
     setStore(BOOKINGS_KEY,bookings);
-    filterBookings('upcoming');
+
+    // 2) Tell the server — this is what actually frees the slot on the public website
+    if(b.id){
+        try{
+            await fetch('https://uppercutsbysly.com/api/bookings',{
+                method:'PUT',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({id:b.id,status:'denied'})
+            });
+        }catch(e){console.warn('Server cancel sync failed:',e)}
+    }
+
+    // 3) Text the client so they know it's cancelled
+    if(b.phone){
+        const phone=String(b.phone).replace(/\D/g,'');
+        if(phone.length>=10){
+            const msg=`Hey ${b.name.split(' ')[0]} — Sly had to cancel your ${b.service} on ${b.dateLabel||b.date} at ${b.time}. Sorry about that! Book a new time anytime at uppercutsbysly.com. Any deposit will be refunded. — Uppercuts`;
+            try{
+                await fetch('https://uppercutsbysly.com/api/send-prompt',{
+                    method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({to:phone,message:msg})
+                });
+            }catch(e){console.warn('Cancel SMS failed:',e)}
+        }
+    }
+
+    // 4) Refresh every view that shows bookings
+    if(typeof filterBookings==='function') filterBookings('upcoming');
+    if(typeof renderCalendar==='function') renderCalendar();
     refreshDash();
+    alert('✅ Appointment cancelled. Client has been texted.');
 }
 
 // ===== INSIGHTS =====
@@ -1528,6 +2084,14 @@ function approveBooking(idx){
     if(bookings[idx]){
         bookings[idx].status='confirmed';
         setStore(BOOKINGS_KEY,bookings);
+        // Sync status to server so client-facing site reflects approval
+        if(bookings[idx].id){
+            fetch('https://uppercutsbysly.com/api/bookings',{
+                method:'PUT',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({id:bookings[idx].id,status:'confirmed'})
+            }).catch(e=>console.warn('Server sync failed (approve):',e));
+        }
         // Send confirmation via Twilio (when approved)
         const phone=bookings[idx].phone?.replace(/\D/g,'');
         const msg=`Your appointment at Uppercuts is confirmed! ${bookings[idx].dateLabel||bookings[idx].date} at ${bookings[idx].time}. See you at the suite! 💈`;
@@ -1560,7 +2124,8 @@ function editBooking(idx){
         const ap=match[3].toUpperCase();
         if(ap==='PM'&&h!==12) h+=12;
         if(ap==='AM'&&h===12) h=0;
-        document.getElementById('editTime').value=String(h).padStart(2,'0')+':'+m;
+        // Round down to the hour so the picker always lands on :00
+        document.getElementById('editTime').value=String(h).padStart(2,'0')+':00';
     }
     // Set service dropdown
     const sel=document.getElementById('editService');
@@ -1577,14 +2142,15 @@ function saveEditBooking(){
     const newDate=document.getElementById('editDate').value;
     const rawTime=document.getElementById('editTime').value;
     const newService=document.getElementById('editService').value;
-    // Convert 24hr to 12hr display
+    // Convert 24hr to 12hr display — FORCE on-the-hour slots only
     if(rawTime){
         const[h,m]=rawTime.split(':');
         let hr=parseInt(h);
         const ap=hr>=12?'PM':'AM';
         if(hr>12) hr-=12;
         if(hr===0) hr=12;
-        b.time=hr+':'+m+' '+ap;
+        // Ignore the minute portion entirely — all appointments are on the hour
+        b.time=hr+':00 '+ap;
     }
     if(newDate){
         b.date=newDate;
@@ -1683,11 +2249,243 @@ function markPaidCash(){
     alert(`Marked as paid cash — $${total} total ($${cashOutData.tip} tip) ✅`);
 }
 
+// ===== MANUAL BOOKING FUNCTIONS =====
+function saveManualBooking(event){
+    event.preventDefault();
+    
+    const name = document.getElementById('manualName').value.trim();
+    const phone = document.getElementById('manualPhone').value.trim();
+    const code = document.getElementById('manualCode').value.trim();
+    const service = document.getElementById('manualService').value;
+    const date = document.getElementById('manualDate').value;
+    const time = document.getElementById('manualTime').value;
+    const notes = document.getElementById('manualNotes').value.trim();
+    
+    if(!name || !service || !date || !time){
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    // Check if booking is at least 1 hour in advance
+    const bookingDateTime = new Date(`${date}T${time}`);
+    const now = new Date();
+    const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
+    
+    if(bookingDateTime < oneHourFromNow){
+        alert('Appointments must be booked at least 1 hour in advance. Please choose a later time.');
+        return;
+    }
+    
+    // Get existing bookings
+    const bookings = getStore(BOOKINGS_KEY, []);
+
+    // Check if time slot is already taken — match across BOTH date+time formats
+    const dispDate = isoToDisplayDate(date);
+    const dispTime = h24ToDisplayTime(time);
+    const existingBooking = bookings.find(b => {
+        if(b.status === 'denied') return false;
+        const dateMatches = (b.date === date || b.date === dispDate);
+        const timeMatches = (b.time === time || b.time === dispTime);
+        return dateMatches && timeMatches;
+    });
+    if(existingBooking){
+        alert('This time slot is already booked. Please choose a different time.');
+        return;
+    }
+    
+    // Service prices for deposit calculation — matches website
+    const servicePrices = {
+        'Kids Cut (13 & Under)': 25,
+        'Teen Cut (14-17)': 30,
+        'Premium Cut': 45,
+        'Signature Cut': 60,
+        'Signature + Shampoo': 75,
+        'Beard / Line Up': 30,
+        'Color': 60,
+        'Facial': 40,
+        'Eyebrows': 15
+    };
+    
+    const servicePrice = servicePrices[service] || 30;
+    
+    // Check monthly code - only monthly code users skip deposit
+    const cleanCode = code ? code.toString().trim().toUpperCase() : '';
+    const isMonthly = cleanCode === 'MONTHLY';
+    const depositAmount = isMonthly ? 0 : Math.ceil(servicePrice * 0.5);
+    
+    console.log('Manual booking deposit check:', { code: cleanCode, isMonthly, servicePrice, depositAmount });
+    
+    // Convert to web-booking format so manual + web bookings share data shape
+    // (date "Wed, Apr 29" / time "1:00 PM") — required for Calendar + double-booking checks to work
+    const displayDate = isoToDisplayDate(date);
+    const displayTime = h24ToDisplayTime(time);
+
+    // Create new manual booking
+    const newBooking = {
+        id: Date.now().toString(),
+        name: name,
+        phone: phone || 'No phone',
+        service: service,
+        date: displayDate,
+        time: displayTime,
+        notes: notes,
+        status: 'confirmed', // Auto-confirmed for manual bookings
+        depositRequired: depositAmount > 0,
+        depositAmount: depositAmount,
+        depositPaid: depositAmount === 0, // Paid if no deposit required
+        manualBooking: true, // Flag to identify manual bookings
+        monthlyCode: isMonthly,
+        createdAt: new Date().toISOString(),
+        dateISO: date,
+        dateLabel: displayDate
+    };
+    
+    // Add to bookings
+    bookings.push(newBooking);
+    setStore(BOOKINGS_KEY, bookings);
+    
+    // Reset form
+    document.getElementById('manualBookForm').reset();
+    
+    // Show success message
+    const depositMsg = depositAmount > 0 ? ` - $${depositAmount} deposit required` : ' - No deposit required (Monthly)';
+    alert(`✅ Manual booking confirmed for ${name} on ${newBooking.dateLabel} at ${newBooking.time}${depositMsg}`);
+    
+    console.log('Manual booking completed:', newBooking);
+    
+    // DEBUG: Show what actually happened
+    if (depositAmount > 0) {
+        console.log('DEPOSIT WAS REQUIRED - this booking needs payment');
+    } else {
+        console.log('NO DEPOSIT REQUIRED - monthly code was used');
+    }
+    
+    // Refresh dashboard and go back
+    refreshDash();
+    switchPanel('panelDash');
+}
+
+// Convert "13:00" → "1:00 PM" (matches web booking format)
+function h24ToDisplayTime(t){
+    if(!t) return '';
+    const [h,m] = t.split(':').map(Number);
+    const hr12 = h>12 ? h-12 : (h===0 ? 12 : h);
+    const ampm = h>=12 ? 'PM' : 'AM';
+    return `${hr12}:${String(m||0).padStart(2,'0')} ${ampm}`;
+}
+// Convert ISO "2026-04-29" → "Wed, Apr 29" (matches web booking format)
+function isoToDisplayDate(iso){
+    if(!iso) return '';
+    const [y,mo,da] = iso.split('-').map(Number);
+    return fmtDate(new Date(y, mo-1, da));
+}
+
+function updateManualTimeSlots(){
+    const dateInput = document.getElementById('manualDate');
+    const timeSelect = document.getElementById('manualTime');
+    const selectedDate = dateInput.value;
+
+    if(!selectedDate){
+        timeSelect.innerHTML = '<option value="">Select date first...</option>';
+        return;
+    }
+
+    // Parse the ISO date as LOCAL time (avoid UTC offset day-shift)
+    const [yy, mm, dd] = selectedDate.split('-').map(Number);
+    const localDate = new Date(yy, mm-1, dd);
+    const dayOfWeek = localDate.getDay();
+    const dayNames = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+    const dayName = dayNames[dayOfWeek];
+
+    // Check explicit schedule override for this date
+    const schedule = getStore(SCHEDULE_KEY, {});
+    const daySchedule = schedule[selectedDate];
+    if(daySchedule && daySchedule.status === 'off'){
+        timeSelect.innerHTML = '<option value="">Day off — no bookings</option>';
+        return;
+    }
+
+    // Get available times
+    let availableTimes = [];
+    if(daySchedule && daySchedule.status === 'custom' && Array.isArray(daySchedule.times) && daySchedule.times.length){
+        availableTimes = daySchedule.times;
+    } else {
+        const def = defaultSchedule[dayName];
+        // Empty array OR missing entry = day off (was crashing silently before)
+        if(!def || !Array.isArray(def) || def.length < 2){
+            timeSelect.innerHTML = `<option value="">${dayName.charAt(0).toUpperCase()+dayName.slice(1)} is normally off — set custom hours in Schedule</option>`;
+            return;
+        }
+        const [start, end] = def;
+        availableTimes = generateTimeSlots(start, end, 60);
+    }
+
+    // Filter out already-booked times. Bookings come in two date formats
+    // (ISO from manual, "Wed, Apr 29" from web) and two time formats
+    // (24h "13:00" from manual, "1:00 PM" from web). Match both.
+    const displayDate = isoToDisplayDate(selectedDate);
+    const bookings = getStore(BOOKINGS_KEY, []);
+    const bookedTimes = new Set();
+    bookings.filter(b => b.status !== 'denied' && (b.date===selectedDate || b.date===displayDate))
+        .forEach(b => {
+            // Normalize to 24h "13:00" so we can match against availableTimes
+            const t = b.time || '';
+            const m = t.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+            if(m){
+                let h = parseInt(m[1],10);
+                if(m[3].toUpperCase()==='PM' && h!==12) h+=12;
+                if(m[3].toUpperCase()==='AM' && h===12) h=0;
+                bookedTimes.add(`${String(h).padStart(2,'0')}:${m[2]}`);
+            } else {
+                bookedTimes.add(t);
+            }
+        });
+
+    const freeTimes = availableTimes.filter(time => !bookedTimes.has(time));
+
+    if(freeTimes.length === 0){
+        timeSelect.innerHTML = '<option value="">No available times — fully booked</option>';
+        return;
+    }
+
+    timeSelect.innerHTML = '<option value="">Select time...</option>' +
+        freeTimes.map(time => {
+            const [hour] = time.split(':');
+            const hourNum = parseInt(hour);
+            const displayHour = hourNum > 12 ? hourNum - 12 : (hourNum === 0 ? 12 : hourNum);
+            const ampm = hourNum >= 12 ? 'pm' : 'am';
+            return `<option value="${time}">${displayHour}${ampm}</option>`;
+        }).join('');
+}
+
+function generateTimeSlots(start, end, interval){
+    const times = [];
+    const [startHour, startMin] = start.split(':').map(Number);
+    const [endHour, endMin] = end.split(':').map(Number);
+    
+    // Generate hourly slots only (on the hour)
+    for(let hour = startHour; hour < endHour; hour++){
+        const timeStr = `${hour.toString().padStart(2, '0')}:00`;
+        times.push(timeStr);
+    }
+    
+    return times;
+}
+
 function denyBooking(idx){
     const bookings=getStore(BOOKINGS_KEY,[]);
     if(bookings[idx]){
         bookings[idx].status='denied';
         setStore(BOOKINGS_KEY,bookings);
+        // CRITICAL: tell the server too, otherwise the slot stays blocked
+        // for clients (the website fetches from /api/bookings, not localStorage)
+        if(bookings[idx].id){
+            fetch('https://uppercutsbysly.com/api/bookings',{
+                method:'PUT',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({id:bookings[idx].id,status:'denied'})
+            }).catch(e=>console.warn('Server sync failed (deny):',e));
+        }
         refreshDash();
     }
 }
@@ -1738,6 +2536,7 @@ async function refreshDash(){
                         ${b.depositRequired && !b.depositPaid ? `<div style="font-size:11px;color:var(--red);margin-top:4px;font-weight:600">⚠️ DEPOSIT NOT PAID — $${b.depositAmount} required</div>` : ''}
                         ${b.depositRequired && b.depositPaid ? `<div style="font-size:11px;color:var(--green);margin-top:4px;font-weight:600">✅ Deposit paid — $${b.depositAmount}</div>` : ''}
                         ${!b.depositRequired ? `<div style="font-size:11px;color:var(--green);margin-top:4px">✅ No deposit required (returning client)</div>` : ''}
+                        ${b.manualBooking ? `<div style="font-size:11px;color:var(--gold);margin-top:4px;font-weight:600">📝 Manual Booking</div>` : ''}
                         ${b.notes?`<div style="font-size:11px;color:var(--gold);margin-top:4px">"${b.notes}"</div>`:''}
                     </div>
                     <div style="font-size:11px;background:${b.depositRequired && !b.depositPaid ? 'var(--red)' : 'var(--yellow)'};color:#fff;padding:2px 8px;border-radius:4px;font-weight:600">${b.depositRequired && !b.depositPaid ? '💰 UNPAID' : 'PENDING'}</div>
@@ -1764,21 +2563,104 @@ async function refreshDash(){
                     <span class="bc-name">${b.name}</span>
                     <span class="bc-svc">${b.service}</span>
                 </div>
-                <div class="bc-detail">${b.dateLabel||b.date} at ${b.time} &middot; ${b.phone}</div>
-                <div style="margin-top:8px;display:flex;gap:8px">
-                    <button class="btn-sm btn-outline" style="font-size:11px" onclick="editBooking(${bIdx})">✏️ Edit</button>
-                    <button class="btn-sm btn-gold" style="font-size:11px" onclick="openCashOut(${bIdx})">💰 Cash Out</button>
+                <div class="bc-detail">${b.dateLabel||b.date} at ${b.time} &middot; ${b.phone}${b.manualBooking ? ' &middot; <span style="color:var(--gold)">Manual</span>' : ''}${b.depositRequired && !b.depositPaid ? ` &middot; <span style="color:var(--red)">Deposit: $${b.depositAmount}</span>` : ''}${b.monthlyCode ? ' &middot; <span style="color:var(--green)">Monthly</span>' : ''}</div>
+                <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+                    <button class="btn-sm btn-outline" style="font-size:11px;flex:1;min-width:80px" onclick="editBooking(${bIdx})">✏️ Edit</button>
+                    <button class="btn-sm btn-gold" style="font-size:11px;flex:1;min-width:80px" onclick="openCashOut(${bIdx})">💰 Cash Out</button>
+                    <button class="btn-sm btn-outline" style="font-size:11px;flex:1;min-width:80px;color:var(--red);border-color:rgba(231,76,60,0.4)" onclick="cancelBooking(${bIdx})">❌ Cancel</button>
                 </div>
             </div>`;
         }).join('');
     }
 }
 
+// ===== PANEL NAVIGATION =====
+function switchPanel(panelId){
+    // Hide all panels
+    document.querySelectorAll('.panel').forEach(panel => {
+        panel.classList.remove('active');
+    });
+    
+    // Remove active class from all nav items
+    document.querySelectorAll('.anav').forEach(nav => {
+        nav.classList.remove('active');
+    });
+    
+    // Show selected panel
+    document.getElementById(panelId).classList.add('active');
+    
+    // Mark nav item as active
+    document.querySelector(`[data-panel="${panelId}"]`)?.classList.add('active');
+
+    // Per-panel render hooks
+    if(panelId==='panelCalendar') renderCalendar();
+}
+
+// Add click listeners to navigation items
+document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('.anav').forEach(nav => {
+        nav.addEventListener('click', function() {
+            const panelId = this.getAttribute('data-panel');
+            if(panelId) switchPanel(panelId);
+        });
+    });
+});
+
 // ===== INIT =====
 document.getElementById('adminDate').textContent=fmtDate(new Date());
 selectedSchedDate=isoDate(new Date());
+
+// Manual booking event listeners
+document.getElementById('manualDate').addEventListener('change', updateManualTimeSlots);
+
+// Set minimum date to today
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('manualDate').setAttribute('min', today);
+
 renderSchedule();
 refreshDash();
+
+// One-time backfill: sync any locally-denied bookings to the server.
+// Bookings denied BEFORE the server-sync fix only got marked denied in
+// localStorage, so the website was still seeing them as 'pending' and
+// blocking those slots. This walks every locally-denied booking and PUTs
+// status='denied' to the server, then sets a flag so it never re-runs.
+(async function backfillDeniedToServer(){
+    if(localStorage.getItem('uppercuts_denied_backfill_done')==='1') return;
+    try{
+        const local = getStore(BOOKINGS_KEY,[]);
+        const candidates = local.filter(b=>b.status==='denied' && b.id);
+        if(!candidates.length){
+            localStorage.setItem('uppercuts_denied_backfill_done','1');
+            return;
+        }
+        let synced=0, failed=0;
+        for(const b of candidates){
+            try{
+                const r = await fetch('https://uppercutsbysly.com/api/bookings',{
+                    method:'PUT',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({id:b.id,status:'denied'})
+                });
+                if(r.ok) synced++; else failed++;
+            }catch(e){ failed++; }
+        }
+        localStorage.setItem('uppercuts_denied_backfill_done','1');
+        if(synced>0){
+            console.log(`Backfill: synced ${synced} denied booking(s) to server${failed?', '+failed+' failed':''}`);
+            // Brief notification — bookings list will reflect on next refresh
+            const note = document.createElement('div');
+            note.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#4CAF50;color:#fff;padding:12px 20px;border-radius:10px;font-family:Oswald,sans-serif;letter-spacing:1px;font-size:13px;z-index:99999;box-shadow:0 8px 30px rgba(0,0,0,0.4)';
+            note.textContent=`✅ Reopened ${synced} previously-denied slot${synced>1?'s':''} on the server`;
+            document.body.appendChild(note);
+            setTimeout(()=>note.remove(), 5000);
+            // Refresh the bookings view so the website sees the server change
+            setTimeout(()=>refreshDash(), 1000);
+        }
+    }catch(e){
+        console.warn('Denied-backfill failed:',e);
+    }
+})();
 
 // Initialize check-in count so we don't alert for existing check-ins on page load
 (async()=>{

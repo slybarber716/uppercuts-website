@@ -149,6 +149,33 @@
             font-family: 'Oswald', sans-serif;
             letter-spacing: 1px;
         }
+        .chair-reminder {
+            background: rgba(201,169,110,0.08);
+            border: 1px solid rgba(201,169,110,0.3);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin: 0 0 24px;
+            text-align: left;
+        }
+        .chair-reminder .title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #C9A96E;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .chair-reminder .body {
+            font-size: 13px;
+            line-height: 1.55;
+            color: rgba(255,255,255,0.75);
+            font-style: italic;
+        }
+        .chair-reminder .body em {
+            color: #C9A96E;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -160,6 +187,10 @@
             <div class="checkin-icon">📍</div>
             <h2>You've Arrived</h2>
             <p class="desc">Let Sly know you're here. Enter your name below and check in.</p>
+            <div class="chair-reminder">
+                <div class="title">🔔 Before You Check In</div>
+                <div class="body">Out of respect for the client currently in the chair, please have a seat in the lobby — <em>Sly will come get you when he's ready</em>. Your time in the chair is private too. Appreciate your patience.</div>
+            </div>
             <div class="input-group">
                 <input type="text" id="clientName" placeholder="Your name" autocomplete="name" required>
             </div>
@@ -175,13 +206,13 @@
             <div class="subtitle">Premium Grooming</div>
             <div class="check-circle">✓</div>
             <h2>You're Checked In</h2>
-            <p class="success-msg">Sly knows you're here. Have a seat and relax — he'll be with you shortly.</p>
+            <p class="success-msg">Sly knows you're here! Please have a seat in the lobby — out of respect for the client currently being served, we ask that you wait until Sly comes to get you. Your time in the chair is just as private. Appreciate your patience!</p>
             <p class="timestamp" id="checkinTime"></p>
         </div>
     </div>
 
     <script>
-        function checkIn() {
+        async function checkIn() {
             const name = document.getElementById('clientName').value.trim();
             const phone = document.getElementById('clientPhone').value.trim();
             if (!name) { document.getElementById('clientName').focus(); return; }
@@ -197,11 +228,16 @@
                 timeDisplay: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
             };
 
-            // Store check-ins in localStorage for admin panel
-            const KEY = 'uppercuts_checkins';
-            const checkins = JSON.parse(localStorage.getItem(KEY) || '[]');
-            checkins.unshift(checkin);
-            localStorage.setItem(KEY, JSON.stringify(checkins));
+            // Send check-in to server so admin panel sees it
+            try {
+                await fetch('/api/checkins', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone })
+                });
+            } catch (err) {
+                console.error('Check-in error:', err);
+            }
 
             setTimeout(() => {
                 document.getElementById('formView').classList.add('hidden');
