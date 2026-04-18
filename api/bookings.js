@@ -1,9 +1,26 @@
 const { Redis } = require('@upstash/redis');
+const twilio = require('twilio');
 
 const redis = new Redis({
   url: process.env.KV_REST_API_URL,
   token: process.env.KV_REST_API_TOKEN,
 });
+
+async function notifySly(booking) {
+  try {
+    const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+    const depositLine = booking.depositRequired
+      ? (booking.depositPaid === 'pending' ? ` | 💰 Deposit $${booking.depositAmount} PENDING` : ` | ✅ Deposit $${booking.depositAmount} paid`)
+      : ' | No deposit';
+    await client.messages.create({
+      body: `📅 NEW BOOKING\n${booking.name} (${booking.phone || 'no phone'})\n${booking.service} — ${booking.dateLabel || booking.date} @ ${booking.time}${depositLine}\nAdmin: uppercutsbysly.com/admin.html`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: process.env.SLY_PHONE
+    });
+  } catch (e) {
+    console.error('Booking notify SMS failed:', e.message);
+  }
+}
 
 const BOOKINGS_KEY = 'uppercuts:bookings';
 
@@ -111,6 +128,9 @@ module.exports = async (req, res) => {
     bookings.unshift(booking);
     if (bookings.length > 500) bookings = bookings.slice(0, 500);
     await redis.set(BOOKINGS_KEY, bookings);
+
+    // Text Sly immediately when a new booking comes in
+    notifySly(booking);
 
     return res.status(200).json({ success: true, booking });
   }
