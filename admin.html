@@ -1501,6 +1501,21 @@ const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov',
 function fmtDate(d){return `${DAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}`}
 function isoDate(d){return d.toISOString().slice(0,10)}
 function parseISO(s){const[y,m,d]=s.split('-');return new Date(y,m-1,d)}
+// Convert stored "Sat, Apr 18" format to ISO "2026-04-18" for date comparisons
+function bookingDateToISO(dateStr){
+    if(!dateStr)return '';
+    if(/^\d{4}-\d{2}-\d{2}$/.test(dateStr))return dateStr;
+    const m=dateStr.match(/\w+,?\s+(\w+)\s+(\d+)/);
+    if(!m)return '';
+    const monthIdx=MONTHS.indexOf(m[1]);
+    if(monthIdx<0)return '';
+    const day=parseInt(m[2],10);
+    const now=new Date();
+    let year=now.getFullYear();
+    const candidate=new Date(year,monthIdx,day);
+    if(candidate<new Date(now.getFullYear(),now.getMonth(),now.getDate()-180))year++;
+    return `${year}-${String(monthIdx+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+}
 
 // ===== CALENDAR =====
 const CAL_SERVICE_DURATIONS={
@@ -1899,9 +1914,9 @@ function filterBookings(type){
     const bookings=getStore(BOOKINGS_KEY,[]);
     const today=isoDate(new Date());
     let filtered=bookings;
-    if(type==='upcoming')filtered=bookings.filter(b=>b.date>=today);
-    if(type==='past')filtered=bookings.filter(b=>b.date<today);
-    filtered.sort((a,b)=>a.date>b.date?1:-1);
+    if(type==='upcoming')filtered=bookings.filter(b=>bookingDateToISO(b.date)>=today);
+    if(type==='past')filtered=bookings.filter(b=>bookingDateToISO(b.date)<today);
+    filtered.sort((a,b)=>bookingDateToISO(a.date)>bookingDateToISO(b.date)?1:-1);
     const c=document.getElementById('allBookingsList');
     if(!filtered.length){
         c.innerHTML='<div class="acard" style="text-align:center;color:var(--text2)">No bookings yet. Share your booking link to get started!</div>';
@@ -1988,17 +2003,17 @@ function renderInsights(){
     const dayOfWeek=today.getDay()||7;
     const weekStart=new Date(today);weekStart.setDate(today.getDate()-(dayOfWeek-1));
     const weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+6);
-    const thisWeek=bookings.filter(b=>b.date>=isoDate(weekStart)&&b.date<=isoDate(weekEnd));
+    const thisWeek=bookings.filter(b=>bookingDateToISO(b.date)>=isoDate(weekStart)&&bookingDateToISO(b.date)<=isoDate(weekEnd));
 
     // Last week
     const lastWeekStart=new Date(weekStart);lastWeekStart.setDate(weekStart.getDate()-7);
     const lastWeekEnd=new Date(weekStart);lastWeekEnd.setDate(weekStart.getDate()-1);
-    const lastWeek=bookings.filter(b=>b.date>=isoDate(lastWeekStart)&&b.date<=isoDate(lastWeekEnd));
+    const lastWeek=bookings.filter(b=>bookingDateToISO(b.date)>=isoDate(lastWeekStart)&&bookingDateToISO(b.date)<=isoDate(lastWeekEnd));
 
     // This month
     const monthStart=isoDate(new Date(today.getFullYear(),today.getMonth(),1));
     const monthEnd=isoDate(new Date(today.getFullYear(),today.getMonth()+1,0));
-    const thisMonth=bookings.filter(b=>b.date>=monthStart&&b.date<=monthEnd);
+    const thisMonth=bookings.filter(b=>bookingDateToISO(b.date)>=monthStart&&bookingDateToISO(b.date)<=monthEnd);
 
     // Service breakdown
     const svcCount={};
@@ -2540,10 +2555,10 @@ async function refreshDash(){
     const bookings=localBookings;
     const blocked=getStore(BLOCK_KEY,[]);
     const today=isoDate(new Date());
-    const todayBookings=bookings.filter(b=>b.date>=today&&b.status!=='denied');
+    const todayBookings=bookings.filter(b=>bookingDateToISO(b.date)>=today&&b.status!=='denied');
 
     document.getElementById('statBookings').textContent=bookings.filter(b=>b.status==='confirmed').length;
-    document.getElementById('statToday').textContent=bookings.filter(b=>b.date===today&&b.status!=='denied').length;
+    document.getElementById('statToday').textContent=bookings.filter(b=>bookingDateToISO(b.date)===today&&b.status!=='denied').length;
     document.getElementById('statBlocked').textContent=blocked.length;
     document.getElementById('adminDate').textContent=fmtDate(new Date());
 
@@ -2581,7 +2596,7 @@ async function refreshDash(){
     }
 
     // Upcoming confirmed bookings
-    const upcoming=bookings.filter(b=>b.date>=today&&b.status==='confirmed').sort((a,b)=>a.date>b.date?1:-1).slice(0,5);
+    const upcoming=bookings.filter(b=>bookingDateToISO(b.date)>=today&&b.status==='confirmed').sort((a,b)=>bookingDateToISO(a.date)>bookingDateToISO(b.date)?1:-1).slice(0,5);
     const c=document.getElementById('upcomingList');
     if(!upcoming.length){
         c.innerHTML='<div class="acard" style="text-align:center;color:var(--text2)">No confirmed bookings yet</div>';
